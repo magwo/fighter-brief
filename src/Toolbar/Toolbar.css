@@ -1,0 +1,37 @@
+.Toolbar {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    width: 80px;
+    border: 1px solid #333;
+}
+
+.Toolbar .buttons {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    background-color: #666;
+    width: 100%;
+    min-height: 600px;
+}
+
+.Toolbar .buttons button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    background-color: #666;
+    border: .5px solid #444;
+}
+.Toolbar .buttons button.toggled {
+    background-color: #333;
+    border: 1px solid #222;
+}
+
+.Toolbar .buttons button > img {
+    display: block;
+    height: 80%;
+}
