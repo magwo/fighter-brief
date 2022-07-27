@@ -12,28 +12,45 @@ interface WorkspaceProps {
 
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [objects, setObjects] = useState<BattlefieldObject[]>([]);
+  const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
 
-  const [pressed, setPresed] = useState<{x: number, y: number}>({x: 0, y: 0});
+  const [pressed, setPressed] = useState<{x: number, y: number}>({x: 0, y: 0});
 
-  const pressedWorkspace = (e: React.MouseEvent) => {
-    setPresed({x: e.clientX, y: e.clientY});
+  const startPressWorkspace = (e: React.MouseEvent) => {
+    setMousePressed(true);
+    setPressed({x: e.clientX, y: e.clientY});
+    
+    if (props.activeTool !== '') {
+      setObjectBeingPlaced(new BattlefieldObject("", props.activeTool as AircraftType, new Position(e.clientX, e.clientY), new Heading(0), new Speed(0)));
+    }
   }
 
-  // TODO: Move handler
+  const stopPressWorkspace = (e: React.MouseEvent) => {
+    setMousePressed(false);
+    // TODO: Create from beingPlaced
+
+    if (objectBeingPlaced) {
+      const newObjects = [...objects];
+      newObjects.push(objectBeingPlaced);
+      setObjects(newObjects);
+      setObjectBeingPlaced(null);
+    }
+  }
+
+  const movedMouse = (e: React.MouseEvent) => {
+    if (mousePressed && objectBeingPlaced) {
+      const dx = e.clientX - pressed.x;
+      const dy = e.clientY - pressed.y;
+      const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360/(Math.PI*2)) + 90 : 0;
+      const speed = 0.6 * Math.sqrt(dx * dx + dy * dy);
+      objectBeingPlaced.heading.heading = heading;
+      objectBeingPlaced.speed.metersPerSecond = speed;
+    }
+  }
 
   const clickedWorkspace = (e: React.MouseEvent) => {
     // TODO: Differentiate between unit creation tools and other tools
-    const dx = e.clientX - pressed.x;
-    const dy = e.clientY - pressed.y;
-    const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360/(Math.PI*2)) + 90 : 0;
-    const speed = 0.6 * Math.sqrt(dx * dx + dy * dy);
-    if (props.activeTool !== '') {
-      const newObj = new BattlefieldObject("", props.activeTool as AircraftType, new Position(pressed.x, pressed.y), new Heading(heading), new Speed(speed));
-      const newObjects = [...objects];
-      newObjects.push(newObj);
-      setObjects(newObjects);
-    }
   }
 
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -49,14 +66,16 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   return (
     <div className="Workspace" data-testid="Workspace"
-      onMouseDown={(e: React.MouseEvent) => pressedWorkspace(e)}
+      onMouseDown={(e: React.MouseEvent) => startPressWorkspace(e)}
+      onMouseUp={(e: React.MouseEvent) => stopPressWorkspace(e)}
+      onMouseMove={(e: React.MouseEvent) => movedMouse(e)}
       onClick={(e: React.MouseEvent) => clickedWorkspace(e)}>
       {objects.map((object) =>
-          <Aircraft object={object} key={object.id}></Aircraft>
+          <Aircraft object={object} isInactive={false} key={object.id}></Aircraft>
         )
       }
       {objectBeingPlaced && (
-        <Aircraft object={objectBeingPlaced}></Aircraft>
+        <Aircraft object={objectBeingPlaced} isInactive={true}></Aircraft>
       )}
     </div>
   );

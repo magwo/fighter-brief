@@ -3,7 +3,8 @@ import { BattlefieldObject } from '../battlefield-object';
 import './Aircraft.css';
 
 interface AircraftProps {
-  object: BattlefieldObject
+  object: BattlefieldObject,
+  isInactive: boolean
 }
 
 const Aircraft: FC<AircraftProps> = (props) => {
@@ -15,7 +16,7 @@ const Aircraft: FC<AircraftProps> = (props) => {
   }
   return (
     <div style={styles} className="Aircraft" data-testid="Aircraft">
-      <div style={graphicsStyles} className="graphics-container">
+      <div style={graphicsStyles} className={`graphics-container${props.isInactive ? " inactive" : ""}`}>
         <img src={`/aviation/${props.object.type}@2x.png`} className="aircraft-image" alt="" />
       </div>
       {/* <p>{props.object.type} {props.object.id}</p> */}

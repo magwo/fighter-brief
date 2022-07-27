@@ -14,11 +14,16 @@
     /* transform-origin: -50% -50%; */
 }
 
+
 .Aircraft .aircraft-image {
     height: 100%;
     width: 100%;
     transform: rotate(45deg);
     user-select: none;
+}
+
+.Aircraft .inactive .aircraft-image {
+    opacity: 0.5;
 }
 
 .Aircraft p {

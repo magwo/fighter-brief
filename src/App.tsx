@@ -14,7 +14,7 @@ function App() {
       </header>
       <Workspace activeTool={selectedButton} shouldPlay={shouldPlay} />
       <Toolbar onToolSelected={(button: string) => { setSelectedButton(button); }} />
-      <Controlbar onPlayPause={(shouldPlay: boolean) => { console.log("Onplaypayse", shouldPlay); setShouldPlay(shouldPlay); }} />
+      <Controlbar onPlayPause={(shouldPlay: boolean) => { setShouldPlay(shouldPlay); }} />
     </div>
   );
 }
