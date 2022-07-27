@@ -8,7 +8,7 @@ interface AircraftProps {
 
 const Aircraft: FC<AircraftProps> = (props) => {
   const styles = {
-    transform: `translate(${props.object.position.x - 32}px, ${props.object.position.y - 32}px)`
+    transform: `translate(${props.object.position.x - 16}px, ${props.object.position.y - 16}px)`
   };
   const graphicsStyles = {
     transform: `rotate(${props.object.heading.heading}deg)`
@@ -18,7 +18,7 @@ const Aircraft: FC<AircraftProps> = (props) => {
       <div style={graphicsStyles} className="graphics-container">
         <img src={`/aviation/${props.object.type}@2x.png`} className="aircraft-image" alt="" />
       </div>
-      <p>{props.object.type} {props.object.id}</p>
+      {/* <p>{props.object.type} {props.object.id}</p> */}
     </div>
   );
 }

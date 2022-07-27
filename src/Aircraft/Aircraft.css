@@ -1,7 +1,7 @@
 .Aircraft {
     position: absolute;
-    width: 64px;
-    height: 64px;
+    width: 32px;
+    height: 32px;
     user-select: none;
     /* transform-origin: -50% -50%; */
 }

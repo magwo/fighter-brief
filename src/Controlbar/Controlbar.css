@@ -1,0 +1,39 @@
+.Controlbar {
+    position: absolute;
+    left: 30px;
+    bottom: 30px;
+    height: 40px;
+    border: 1px solid #333;
+}
+
+.Controlbar .buttons {
+    display: flex;
+    align-content: flex-start;
+    background-color: #666;
+    width: 100%;
+}
+
+.Controlbar .buttons button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    appearance: none;
+    color: white;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    background-color: #666;
+    border: .5px solid #444;
+    user-select: none;
+    font-size: 24px;
+}
+.Controlbar .buttons button.selected {
+    background-color: #444;
+    border: 1px solid #484848;
+    cursor: default;
+}
+
+.Controlbar .buttons button > img {
+    display: block;
+    height: 80%;
+}

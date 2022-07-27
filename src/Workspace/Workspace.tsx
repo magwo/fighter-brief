@@ -7,10 +7,12 @@ import './Workspace.css';
 
 interface WorkspaceProps {
   activeTool: string;
+  shouldPlay: boolean;
 }
 
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [objects, setObjects] = useState<BattlefieldObject[]>([]);
+  const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
 
   const [pressed, setPresed] = useState<{x: number, y: number}>({x: 0, y: 0});
 
@@ -18,11 +20,13 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     setPresed({x: e.clientX, y: e.clientY});
   }
 
+  // TODO: Move handler
+
   const clickedWorkspace = (e: React.MouseEvent) => {
     // TODO: Differentiate between unit creation tools and other tools
     const dx = e.clientX - pressed.x;
     const dy = e.clientY - pressed.y;
-    const heading = (dx !== 0 && dy !== 0) ? Math.atan2(dy, dx) * (360/(Math.PI*2)) + 90 : 0;
+    const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360/(Math.PI*2)) + 90 : 0;
     const speed = 0.6 * Math.sqrt(dx * dx + dy * dy);
     if (props.activeTool !== '') {
       const newObj = new BattlefieldObject("", props.activeTool as AircraftType, new Position(pressed.x, pressed.y), new Heading(heading), new Speed(speed));
@@ -35,15 +39,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useAnimationFrame((time: { time: number; delta: number }) => {
-    // console.log("Updating objects");
-    // console.log("Old objects", objects);
     objects.forEach((obj) => {
-      obj.update(time.delta);
+      if (props.shouldPlay) {
+        obj.update(time.delta);
+      }
     });
-    // // This creates insane object churn, maybe fix?
-    // const newObjects = [...objects];
-    // // console.log("New objects are", newObjects);
-    // setObjects(newObjects);
     forceUpdate();
   });
 
@@ -53,7 +53,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       onClick={(e: React.MouseEvent) => clickedWorkspace(e)}>
       {objects.map((object) =>
           <Aircraft object={object} key={object.id}></Aircraft>
-        )}
+        )
+      }
+      {objectBeingPlaced && (
+        <Aircraft object={objectBeingPlaced}></Aircraft>
+      )}
     </div>
   );
 }
