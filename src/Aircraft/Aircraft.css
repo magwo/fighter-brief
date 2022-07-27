@@ -1,9 +1,10 @@
 .Aircraft {
-    color: blue;
+    position: absolute;
     height: 64px;
+    user-select: none;
 }
 
 .Aircraft .aircraft-image {
     height: 100%;
-    transform: rotate(45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
 }

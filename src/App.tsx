@@ -1,26 +1,18 @@
-import React from 'react';
-import Aircraft from './Aircraft/Aircraft';
+import React, { useState } from 'react';
 import Toolbar from './Toolbar/Toolbar';
 import './App.css';
+import Workspace from './Workspace/Workspace';
 
 function App() {
+
+  const [selectedButton, setSelectedButton] = useState('viper');
+
   return (
     <div className="App">
       <header className="App-header">
-        <Toolbar></Toolbar>
-        <Aircraft type="albatros"></Aircraft>
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+      <Workspace activeTool={selectedButton} />
+      <Toolbar onToolSelected={(button: string) => { setSelectedButton(button); }} />
     </div>
   );
 }

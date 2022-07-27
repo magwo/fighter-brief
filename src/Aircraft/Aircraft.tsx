@@ -1,16 +1,22 @@
 import React, { FC } from 'react';
+import { BattlefieldObject } from '../battlefield-object';
 import './Aircraft.css';
 
 interface AircraftProps {
-  name?: string,
-  type: 'albatros' | 'apache' | 'awacs' | 'blackjack' | 'carrier' | 'fishbed' | 'flanker' | 'gripen' | 'harrier' | 'hercules' | 'hind' | 'hornet' | 'huey' | 'lancer' | 'stratofortress' | 'tanker' | 'thunder' | 'tiger' | 'tomcat' | 'viggen' | 'viper' | 'warthog';
+  object: BattlefieldObject
 }
 
-const Aircraft: FC<AircraftProps> = (props) => (
-  <div className="Aircraft" data-testid="Aircraft">
-    <img src={`/aviation/${props.type}@2x.png`} className="aircraft-image" alt="" />
-    <p>{props.name ?? props.type}</p>
-  </div>
-);
+const Aircraft: FC<AircraftProps> = (props) => {
+  const styles = {
+    transform: `translate(${props.object.position.x}px, ${props.object.position.y}px)`,
+    'transformOrigin': '-50% -50%'
+  };
+  return (
+    <div style={styles} className="Aircraft" data-testid="Aircraft">
+      <img src={`/aviation/${props.object.type}@2x.png`} className="aircraft-image" alt="" />
+      <p>{props.object.name ?? props.object.type}</p>
+    </div>
+  );
+}
 
 export default Aircraft;

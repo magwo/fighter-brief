@@ -1,9 +1,11 @@
 import React, { FC, useState } from 'react';
 import './Toolbar.css';
 
-interface ToolbarProps { }
+interface ToolbarProps {
+  onToolSelected: (selectedTool: string) => void;
+}
 
-const aircraftButtons = [
+export const aircraftButtons = [
   'viper',
   'hornet',
   'viggen',
@@ -28,16 +30,17 @@ const aircraftButtons = [
   'tiger',
 ]
 
-const Toolbar: FC<ToolbarProps> = () => {
+const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
   const [selectedButton, setSelectedButton] = useState('viper');
+  // props.onToolSelected(selectedButton);
 
-  // TODO: Add output callback
-  
   return (
     <div className="Toolbar" data-testid="Toolbar">
       <div className="buttons">
         {aircraftButtons.map((a) =>
-          <button onClick={() => setSelectedButton(a)} className={a === selectedButton ? 'selected' : ''}>
+          <button 
+            key={`aircraft-button-${a}`}
+            onClick={() => {setSelectedButton(a); props.onToolSelected(a)}} className={a === selectedButton ? 'selected' : ''}>
             <img src={`aviation/${a}@2x.png`} alt={`Place ${a}`} title={`Place ${a}`}/>
           </button>
         )}

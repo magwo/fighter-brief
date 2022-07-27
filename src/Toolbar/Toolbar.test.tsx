@@ -5,7 +5,7 @@ import Toolbar from './Toolbar';
 
 describe('<Toolbar />', () => {
   test('it should mount', () => {
-    render(<Toolbar />);
+    render(<Toolbar onToolSelected={() => {}} />);
     
     const toolbar = screen.getByTestId('Toolbar');
 

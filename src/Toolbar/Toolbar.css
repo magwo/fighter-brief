@@ -25,6 +25,7 @@
     height: 40px;
     background-color: #666;
     border: .5px solid #444;
+    user-select: none;
 }
 .Toolbar .buttons button.selected {
     background-color: #444;
