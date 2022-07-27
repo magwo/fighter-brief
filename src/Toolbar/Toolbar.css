@@ -8,8 +8,7 @@
 
 .Toolbar .buttons {
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-content: flex-start;
     flex-wrap: wrap;
     background-color: #666;
     width: 100%;
@@ -21,14 +20,16 @@
     justify-content: center;
     align-items: center;
     appearance: none;
+    cursor: pointer;
     width: 40px;
     height: 40px;
     background-color: #666;
     border: .5px solid #444;
 }
-.Toolbar .buttons button.toggled {
-    background-color: #333;
-    border: 1px solid #222;
+.Toolbar .buttons button.selected {
+    background-color: #444;
+    border: 1px solid #484848;
+    cursor: default;
 }
 
 .Toolbar .buttons button > img {
