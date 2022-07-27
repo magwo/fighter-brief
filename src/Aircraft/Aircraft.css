@@ -1,10 +1,26 @@
 .Aircraft {
     position: absolute;
+    width: 64px;
     height: 64px;
     user-select: none;
+    /* transform-origin: -50% -50%; */
+}
+
+
+.Aircraft .graphics-container {
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    /* transform-origin: -50% -50%; */
 }
 
 .Aircraft .aircraft-image {
     height: 100%;
-    transform: translate(-50%, -50%) rotate(45deg);
+    width: 100%;
+    transform: rotate(45deg);
+    user-select: none;
+}
+
+.Aircraft p {
+    font-size: 10px;
 }
