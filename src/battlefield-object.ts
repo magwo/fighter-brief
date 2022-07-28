@@ -1,4 +1,3 @@
-import path from "path";
 import { AircraftType, ShipType, StaticType, WeaponType } from "./battlefield-object-types";
 import { CurveInterpolator2D, simplify2d } from 'curve-interpolator';
 
@@ -34,18 +33,18 @@ export class Path {
     }
 
     addPoint(x: number, y: number) {
-        console.log("adding points", x, y);
+        // console.log("adding points", x, y);
         this.points.push(new Position(x, y));
         this.refreshCurve();
     }
 
     refreshCurve() {
         let curvePoints = this.points.map((p) => [p.x, p.y]);
-        console.log("Curve points", curvePoints);
+        // console.log("Curve points", curvePoints);
         curvePoints = simplify2d(curvePoints, 10, 20);
-        console.log("Curve after simplify", curvePoints)
+        // console.log("Curve after simplify", curvePoints)
         this.curve = new CurveInterpolator2D(curvePoints, 0.001, undefined, false);
-        console.log(this.curve.getPointAt(0));
+        // console.log(this.curve.getPointAt(0));
     }
 
     getPositionAlongCurve(time: number, speed: Speed): Position {
@@ -66,7 +65,6 @@ export class Path {
     }
 
     getHeadingAlongCurveNorm(fraction: number): number {
-        // TODO: Consider speed
         const tangent = this.curve.getTangentAt(fraction);
         const angle = Math.atan2(tangent[1], tangent[0]);
         return 90 + angle * 360 / (Math.PI * 2);

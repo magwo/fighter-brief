@@ -1,22 +1,28 @@
-import React, { FC, useReducer, useState } from 'react';
+import React, { FC, useEffect, useReducer, useState } from 'react';
 import Aircraft from '../Aircraft/Aircraft';
 import { BattlefieldObject, Heading, Position, Speed } from '../battlefield-object';
 import { AircraftType } from '../battlefield-object-types';
-import useAnimationFrame from '../useAnimationFrame';
 import './Workspace.css';
 
 interface WorkspaceProps {
   activeTool: string;
   shouldPlay: boolean;
+  timeDelta: number;
+  time: number;
 }
 
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
-  const [time, setTime] = useState<number>(0);
   const [objects, setObjects] = useState<BattlefieldObject[]>([]);
   const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
-
   const [pressed, setPressed] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
+
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  useEffect(() => {
+    objects.forEach((obj) => {
+      obj.update(props.timeDelta, props.time);
+    });
+  });
 
   const startPressWorkspace = (e: React.MouseEvent) => {
     setMousePressed(true);
@@ -52,25 +58,13 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
       objectBeingPlaced.heading.heading = heading;
       objectBeingPlaced.speed.metersPerSecond = speed;
+      forceUpdate();
     }
   }
 
   const clickedWorkspace = (e: React.MouseEvent) => {
     // TODO: Differentiate between unit creation tools and other tools
   }
-
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
-
-  // TODO: Put this in Controlbar emit time, and instead put useEffect here
-  useAnimationFrame((_time: { time: number; delta: number }) => {
-    const timeDelta = props.shouldPlay ? _time.delta : 0;
-    const newTime = time + timeDelta;
-    objects.forEach((obj) => {
-      obj.update(timeDelta, newTime);
-      setTime(newTime);
-    });
-    forceUpdate();
-  });
 
   return (
     <div className="Workspace" data-testid="Workspace"

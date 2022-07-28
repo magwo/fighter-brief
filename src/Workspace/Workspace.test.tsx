@@ -5,7 +5,7 @@ import Workspace from './Workspace';
 
 describe('<Workspace />', () => {
   test('it should mount', () => {
-    render(<Workspace activeTool='' shouldPlay={false} />);
+    render(<Workspace activeTool='' shouldPlay={false} time={0} timeDelta={0} />);
     
     const workspace = screen.getByTestId('Workspace');
 
