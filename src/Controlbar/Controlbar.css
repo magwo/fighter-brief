@@ -1,5 +1,8 @@
 .Controlbar {
     position: absolute;
+    display: flex;
+    align-content: flex-start;
+    align-items: center;
     left: 30px;
     bottom: 30px;
     height: 40px;
@@ -10,7 +13,7 @@
     display: flex;
     align-content: flex-start;
     background-color: #666;
-    width: 100%;
+    
 }
 
 .Controlbar .buttons button {
@@ -36,4 +39,24 @@
 .Controlbar .buttons button > img {
     display: block;
     height: 80%;
+}
+
+
+.Controlbar .timebar {
+    position: relative;
+    margin: 0 4px;
+    background: #bbb;
+    height: 30px;
+    width: 400px;
+}
+
+.Controlbar .timebar .handle {
+    position: absolute;
+    pointer-events: none;
+    top: -4px;
+    left: 0;
+    background: #aaa;
+    opacity: 0.9;
+    height: 38px;
+    width: 4px;
 }
