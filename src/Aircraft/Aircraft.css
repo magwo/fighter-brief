@@ -1,11 +1,26 @@
 .Aircraft {
     position: absolute;
-    width: 32px;
-    height: 32px;
     user-select: none;
     /* transform-origin: -50% -50%; */
 }
 
+.Aircraft .path {
+    position: absolute;
+}
+
+.Aircraft .path svg {
+    fill: none;
+    stroke: #999;
+    stroke-width: 5;
+    stroke-opacity: 0.12;
+}
+
+.Aircraft .primary-container {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    user-select: none;
+}
 
 .Aircraft .graphics-container {
     width: 100%;
@@ -24,6 +39,9 @@
 
 .Aircraft .inactive .aircraft-image {
     opacity: 0.5;
+}
+.Aircraft .ghost .aircraft-image {
+    opacity: 0.3;
 }
 
 .Aircraft p {

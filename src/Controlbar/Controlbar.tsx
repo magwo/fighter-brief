@@ -3,6 +3,7 @@ import './Controlbar.css';
 
 interface ControlbarProps {
   onPlayPause: (shouldPlay: boolean) => void
+  onRewind: () => void
 }
 
 const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
@@ -12,6 +13,7 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     <div className="Controlbar" data-testid="Controlbar">
       <div className="buttons">
         <button className='play-pause' onClick={() => { props.onPlayPause(!shouldPlay); setShouldPlay(!shouldPlay); }}>{shouldPlay ? "⏸" : "▶"}</button>
+        <button className='rewind' onClick={() => { props.onRewind(); }}>⏪</button>
       </div>
     </div>
   );
