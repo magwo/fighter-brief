@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import useAnimationFrame from '../useAnimationFrame';
 import './Controlbar.css';
 
@@ -54,7 +54,6 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
   const mouseMoveOnTimebar = (e: React.MouseEvent) => {
     if (e.buttons === 1 && e.target === e.currentTarget) {
       const relX = e.currentTarget.getBoundingClientRect().left;
-      // const relY = e.currentTarget.clientTop;
       const fraction = (e.clientX - relX) / TIME_BAR_WIDTH;
       setTime(fraction * props.stopTime);
     }

@@ -29,7 +29,6 @@
     /* transform-origin: -50% -50%; */
 }
 
-
 .Aircraft .aircraft-image {
     height: 100%;
     width: 100%;
@@ -42,6 +41,10 @@
 }
 .Aircraft .ghost .aircraft-image {
     opacity: 0.2;
+}
+
+.Aircraft .invisible {
+    opacity: 0;
 }
 
 .Aircraft p {

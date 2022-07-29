@@ -35,7 +35,7 @@ const Aircraft: FC<AircraftProps> = (props) => {
           </svg>
         </div>
       )}
-      <div style={styles} className="primary-container">
+      <div style={styles} className={`primary-container${props.object.isVisible || props.shouldShowPath ? '' : ' invisible'}`}>
         <div style={graphicsStyles} className={`graphics-container${props.isInactive ? " inactive" : ""}`}>
           <img src={`aviation/${props.object.type}@2x.png`} className="aircraft-image" alt="" />
         </div>

@@ -17,6 +17,10 @@ export class Speed {
     constructor(public metersPerSecond: number) {
     }
 
+    get pixelsPerSecond(): number {
+        return this.metersPerSecond * 0.4;
+    }
+
     static fromKnots(knots: number) {
         return new Speed(knots * 0.51444);
     }
@@ -60,7 +64,7 @@ export class Path {
     }
 
     getStopTime(startTime: number, speed: Speed): number {
-        const travelTime = this.curve.length / speed.metersPerSecond;
+        const travelTime = this.curve.length / speed.pixelsPerSecond;
         return startTime + travelTime;
 
     }
@@ -70,6 +74,9 @@ export class Path {
 const getRandomId = (size: number) => [...Array(size)].map(() => Math.floor(Math.random() * 36).toString(36)).join('');
 export class BattlefieldObject {
     public path: Path = new Path();
+    public isVisible = false;
+
+
 
     constructor(public id: string | null, public name: string, public type: AircraftType | ShipType | StaticType | WeaponType, public position: Position, public heading: Heading, public startTime: number, public speed: Speed) {
         if (this.id === null) {
@@ -78,6 +85,7 @@ export class BattlefieldObject {
     }
 
     update(dtSeconds: number, timeSeconds: number) {
+        this.isVisible = timeSeconds >= this.startTime;
         if (this.path.points.length > 0) {
             this.position = this.getPositionAlongCurve(timeSeconds);
             this.heading.heading = this.getHeadingAlongCurve(timeSeconds);
