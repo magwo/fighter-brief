@@ -17,8 +17,8 @@ export function loadObjects(data: string): BattlefieldObject[] {
             new Heading(Number(tokens[i++])),
             new Speed(Number(tokens[i++]))
         );
-        for (; i < tokens.length - 1; i += 2) {
-            obj.path.addPoint(Number(tokens[i]), Number(tokens[i + 1]));
+        for (; i < tokens.length - 2; i += 3) {
+            obj.path.addPoint(Number(tokens[i]), Number(tokens[i + 1]), Number(tokens[i + 2]));
         }
         return obj;
     });
@@ -37,7 +37,7 @@ export function serializeObjects(objects: BattlefieldObject[]): string {
             Math.round(o.heading.heading), 
             Math.round(o.speed.metersPerSecond)
         ].join(",");
-        const pathPointsStr = o.path.points.map((p) => [Math.round(p.x), Math.round(p.y)].join(",")).join(",");
+        const pathPointsStr = o.path.points.map((p) => [Math.round(p.time), Math.round(p.pos.x), Math.round(p.pos.y)].join(",")).join(",");
         return [propsStr, pathPointsStr].join(",");
     });
     return objectStrings.join(";");

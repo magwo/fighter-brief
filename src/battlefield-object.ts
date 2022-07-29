@@ -20,26 +20,27 @@ export class Speed {
 }
 
 export class Path {
-    points: Position[] = [];
+    // Consider switching to array coordinates for performance
+    points: {time: number, pos: Position}[] = [];
     curve: any;
 
-    considerAddingPoint(x: number, y: number) {
-        const dx = x - this.points[this.points.length - 1].x;
-        const dy = y - this.points[this.points.length - 1].y;
+    considerAddingPoint(time: number, x: number, y: number) {
+        const dx = x - this.points[this.points.length - 1].pos.x;
+        const dy = y - this.points[this.points.length - 1].pos.y;
         const lenSqrd = dx * dx + dy * dy;
         if (lenSqrd > 10 * 10) {
-            this.addPoint(x, y);
+            this.addPoint(time, x, y);
         }
     }
 
-    addPoint(x: number, y: number) {
-        // console.log("adding points", x, y);
-        this.points.push(new Position(x, y));
+    addPoint(time: number, x: number, y: number) {
+        // TODO: Could try angular snap and angular delta-max
+        this.points.push({time: time, pos: new Position(x, y)});
         this.refreshCurve();
     }
 
     refreshCurve() {
-        let curvePoints = this.points.map((p) => [p.x, p.y]);
+        let curvePoints = this.points.map((p) => [p.pos.x, p.pos.y]);
         // console.log("Curve points", curvePoints);
         curvePoints = simplify2d(curvePoints, 10, 20);
         // console.log("Curve after simplify", curvePoints)

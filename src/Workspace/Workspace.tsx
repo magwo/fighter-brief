@@ -17,24 +17,15 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
   const [pressed, setPressed] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
+  const [undoStack, setUndoStack] = useState<{ action: 'delete', data: any }[]>([]);
 
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-  useEffect(() => {
-    // Load initial objects
-    if (window.location.hash.length > 0) {
-      const objects = loadObjects(window.location.hash);
-      console.log("Initial objects", objects);
-      setObjects(objects);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Update objects
-    objects.forEach((obj) => {
-      obj.update(props.timeDelta, props.time);
-    });
-  });
+  const updateUrl = (newObjects: BattlefieldObject[]) => {
+    // TODO: Move this to App or something
+    const serialized = serializeObjects(newObjects);
+    window.location.hash = serialized;
+  }
 
   const startPressWorkspace = (e: React.MouseEvent) => {
     setMousePressed(true);
@@ -42,7 +33,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
     if (props.activeTool !== '') {
       const newObj = new BattlefieldObject(null, "", props.activeTool as AircraftType, new Position(e.clientX, e.clientY), new Heading(0), new Speed(0));
-      newObj.path.addPoint(e.clientX, e.clientY);
+      newObj.path.addPoint(props.time, e.clientX, e.clientY);
       setObjectBeingPlaced(newObj);
     }
   }
@@ -54,13 +45,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     if (objectBeingPlaced) {
       const newObjects = [...objects];
       newObjects.push(objectBeingPlaced);
-      const serialized = serializeObjects(newObjects);
-      // TODO: Move this to App or something
-      console.log("Serialized", serialized);
-      console.log("Deserialized", loadObjects(serialized));
-      window.location.hash = serialized;
-      setObjects(newObjects);
+      setObjects((prevObjects) => [...prevObjects, objectBeingPlaced]);
+      setUndoStack([...undoStack, { action: 'delete', data: { id: objectBeingPlaced.id } }]);
       setObjectBeingPlaced(null);
+      updateUrl(newObjects);
+      console.log("Ojbects are", objects);
     }
   }
 
@@ -71,7 +60,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
       const speed = 0.6 * Math.sqrt(dx * dx + dy * dy);
 
-      objectBeingPlaced.path.considerAddingPoint(e.clientX, e.clientY);
+      objectBeingPlaced.path.considerAddingPoint(props.time, e.clientX, e.clientY);
 
       objectBeingPlaced.heading.heading = heading;
       objectBeingPlaced.speed.metersPerSecond = speed;
@@ -82,6 +71,49 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const clickedWorkspace = (e: React.MouseEvent) => {
     // TODO: Differentiate between unit creation tools and other tools
   }
+
+  const undo = () => {
+    if (undoStack.length > 0) {
+      const action = undoStack[undoStack.length - 1];
+      if (action.action === 'delete') {
+        const newObjects = objects.filter((o) => o.id !== action.data.id);
+        setObjects(newObjects);
+        updateUrl(newObjects);
+      }
+      setUndoStack(undoStack.slice(0, undoStack.length - 1));
+    }
+  }
+
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (e.key === "z" && (e.getModifierState("Control") || e.getModifierState(("Meta")))) {
+      undo();
+    }
+  }
+
+  useEffect(() => {
+    // Load initial objects
+    if (window.location.hash.length > 0) {
+      const loadedObjects = loadObjects(window.location.hash);
+      console.log("Initial objects", loadedObjects);
+      setObjects(loadedObjects);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Setup global keypress handler
+    window.document.addEventListener("keydown", handleKeydown);
+    return () => {
+      window.document.removeEventListener('keydown', handleKeydown);
+      console.log('event listener removed.');
+    }
+  }, [handleKeydown]);
+
+  useEffect(() => {
+    // Update objects
+    objects.forEach((obj) => {
+      obj.update(props.timeDelta, props.time);
+    });
+  });
 
   return (
     <div className="Workspace" data-testid="Workspace"
