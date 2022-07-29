@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useReducer, useState } from 'react';
 import Aircraft from '../Aircraft/Aircraft';
 import { BattlefieldObject, Heading, Position, Speed } from '../battlefield-object';
+import { loadObjects, serializeObjects } from '../battlefield-object-persister';
 import { AircraftType } from '../battlefield-object-types';
 import './Workspace.css';
 
@@ -18,7 +19,18 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [pressed, setPressed] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
 
   const [, forceUpdate] = useReducer(x => x + 1, 0);
+
   useEffect(() => {
+    // Load initial objects
+    if (window.location.hash.length > 0) {
+      const objects = loadObjects(window.location.hash);
+      console.log("Initial objects", objects);
+      setObjects(objects);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Update objects
     objects.forEach((obj) => {
       obj.update(props.timeDelta, props.time);
     });
@@ -29,7 +41,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     setPressed({ x: e.clientX, y: e.clientY });
 
     if (props.activeTool !== '') {
-      const newObj = new BattlefieldObject("", props.activeTool as AircraftType, new Position(e.clientX, e.clientY), new Heading(0), new Speed(0));
+      const newObj = new BattlefieldObject(null, "", props.activeTool as AircraftType, new Position(e.clientX, e.clientY), new Heading(0), new Speed(0));
       newObj.path.addPoint(e.clientX, e.clientY);
       setObjectBeingPlaced(newObj);
     }
@@ -42,6 +54,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     if (objectBeingPlaced) {
       const newObjects = [...objects];
       newObjects.push(objectBeingPlaced);
+      const serialized = serializeObjects(newObjects);
+      // TODO: Move this to App or something
+      console.log("Serialized", serialized);
+      console.log("Deserialized", loadObjects(serialized));
+      window.location.hash = serialized;
       setObjects(newObjects);
       setObjectBeingPlaced(null);
     }

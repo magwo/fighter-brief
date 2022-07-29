@@ -72,14 +72,14 @@ export class Path {
 }
 
 
-let nextId = 0;
+const getRandomId = (size: number) => [...Array(size)].map(() => Math.floor(Math.random() * 36).toString(36)).join('');
 export class BattlefieldObject {
-    public id: string;
     public path: Path = new Path();
 
-    constructor(public name: string, public type: AircraftType | ShipType | StaticType | WeaponType, public position: Position, public heading: Heading, public speed: Speed) {
-        this.id = 'battlefield-object-' + nextId;
-        nextId++;
+    constructor(public id: string | null, public name: string, public type: AircraftType | ShipType | StaticType | WeaponType, public position: Position, public heading: Heading, public speed: Speed) {
+        if (this.id === null) {
+            this.id = getRandomId(8);
+        }
     }
 
     update(dtSeconds: number, timeSeconds: number) {

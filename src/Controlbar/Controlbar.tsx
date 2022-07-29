@@ -59,9 +59,9 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
   return (
     <div className="Controlbar" data-testid="Controlbar">
       <div className="buttons">
-        <button className='play-pause' onClick={() => { playPause() }}>{shouldPlay ? "⏸" : "▶"}</button>
-        <button className='rewind' onClick={() => rewind()}>⏪</button>
-        <button className='loop' onClick={() => toggleLoop()}>{shouldLoop ? "Loop" : "Noloop"}</button>
+        <button className='play-pause' onClick={() => { playPause() }}>{shouldPlay ? "⏸" : "⏯"}</button>
+        <button className='rewind' onClick={() => rewind()}>⏮</button>
+        <button className={`loop${shouldLoop ? " do-loop" : ""}`} onClick={() => toggleLoop()}>🔁</button>
       </div>
       <div className="timebar" onMouseMove={(e: React.MouseEvent) => mouseMoveOnTimebar(e) } onMouseDown={(e: React.MouseEvent) => mouseMoveOnTimebar(e) }>
         <div style={styleTimeHandle} className="handle"></div>
