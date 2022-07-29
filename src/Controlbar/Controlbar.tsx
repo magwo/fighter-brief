@@ -5,6 +5,7 @@ import './Controlbar.css';
 const TIME_BAR_WIDTH = 400;
 
 interface ControlbarProps {
+  stopTime: number;
   onTimeChange: (timeDelta: number, time: number) => void,
   onPlayPause: (shouldPlay: boolean) => void
 }
@@ -15,11 +16,18 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
   const [shouldLoop, setShouldLoop] = useState<boolean>(false);
 
   useAnimationFrame((_time: { time: number; delta: number }) => {
+    console.log("Stop time is", props.stopTime);
     const timeDelta = shouldPlay ? _time.delta : 0;
     let newTime = time + timeDelta;
     // TODO: Make maximum time adaptive based on units
-    if (newTime > 1.0 && shouldLoop) {
-      newTime = 0;
+    if (newTime > props.stopTime) {
+      if (shouldLoop) {
+        newTime = 0;
+      }
+      else {
+        playPause();
+        newTime = props.stopTime
+      }
     }
     setTime(newTime);
     props.onTimeChange(timeDelta, newTime);
@@ -33,6 +41,9 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
 
   const playPause = () => {
     const newPlayState = !shouldPlay;
+    if (time === props.stopTime) {
+      setTime(0);
+    }
     props.onPlayPause(newPlayState);
     setShouldPlay(newPlayState);
   }
@@ -47,13 +58,13 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
       const relX = e.currentTarget.getBoundingClientRect().left;
       // const relY = e.currentTarget.clientTop;
       const fraction = (e.clientX - relX) / TIME_BAR_WIDTH;
-      setTime(fraction);
+      setTime(fraction * props.stopTime);
       console.log("Moving on timebar", e.clientX);
     }
   }
 
   const styleTimeHandle = {
-    transform: `translate(${time * TIME_BAR_WIDTH}px, 0)`
+    transform: `translate(${(time / props.stopTime) * TIME_BAR_WIDTH}px, 0)`
   };
 
   return (

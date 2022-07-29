@@ -10,6 +10,7 @@ interface WorkspaceProps {
   shouldPlay: boolean;
   timeDelta: number;
   time: number;
+  onStopTimeChange: (stopTime: number) => void
 }
 
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
@@ -27,20 +28,31 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     window.location.hash = serialized;
   }
 
+  const checkStopTime = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null = null) => {
+    let max = 0;
+    newObjects.forEach((obj) => {
+      max = Math.max(max, obj.getStopTime());
+    });
+    if (extraObject !== null) {
+      max = Math.max(max, extraObject.getStopTime());
+    }
+    props.onStopTimeChange(max);
+  }
+
   const startPressWorkspace = (e: React.MouseEvent) => {
     setMousePressed(true);
     setPressed({ x: e.clientX, y: e.clientY });
 
     if (props.activeTool !== '') {
-      const newObj = new BattlefieldObject(null, "", props.activeTool as AircraftType, new Position(e.clientX, e.clientY), new Heading(0), new Speed(0));
-      newObj.path.addPoint(props.time, e.clientX, e.clientY);
+      const newObj = new BattlefieldObject(null, "", props.activeTool as AircraftType, new Position(e.clientX, e.clientY), new Heading(0), props.time, Speed.fromKnots(400));
+      newObj.path.addPoint(e.clientX, e.clientY);
       setObjectBeingPlaced(newObj);
+      checkStopTime(objects, newObj);
     }
   }
 
   const stopPressWorkspace = (e: React.MouseEvent) => {
     setMousePressed(false);
-    // TODO: Create from beingPlaced
 
     if (objectBeingPlaced) {
       const newObjects = [...objects];
@@ -49,21 +61,24 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setUndoStack([...undoStack, { action: 'delete', data: { id: objectBeingPlaced.id } }]);
       setObjectBeingPlaced(null);
       updateUrl(newObjects);
+      // TODO: Maybe objects are not ready yet?
+      checkStopTime(newObjects, objectBeingPlaced);
       console.log("Ojbects are", objects);
     }
   }
 
   const movedMouse = (e: React.MouseEvent) => {
     if (mousePressed && objectBeingPlaced) {
-      const dx = e.clientX - pressed.x;
-      const dy = e.clientY - pressed.y;
-      const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
-      const speed = 0.6 * Math.sqrt(dx * dx + dy * dy);
+      // const dx = e.clientX - pressed.x;
+      // const dy = e.clientY - pressed.y;
+      // const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
 
-      objectBeingPlaced.path.considerAddingPoint(props.time, e.clientX, e.clientY);
-
-      objectBeingPlaced.heading.heading = heading;
-      objectBeingPlaced.speed.metersPerSecond = speed;
+      objectBeingPlaced.path.considerAddingPoint(e.clientX, e.clientY);
+      if (objectBeingPlaced.path.points.length > 0) {
+        const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
+        objectBeingPlaced.heading.heading = startHdg;
+      }
+      checkStopTime(objects, objectBeingPlaced);
       forceUpdate();
     }
   }
@@ -79,6 +94,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         const newObjects = objects.filter((o) => o.id !== action.data.id);
         setObjects(newObjects);
         updateUrl(newObjects);
+        checkStopTime(newObjects, objectBeingPlaced);
       }
       setUndoStack(undoStack.slice(0, undoStack.length - 1));
     }
@@ -96,6 +112,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       const loadedObjects = loadObjects(window.location.hash);
       console.log("Initial objects", loadedObjects);
       setObjects(loadedObjects);
+      checkStopTime(loadedObjects);
     }
   }, []);
 

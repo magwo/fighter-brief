@@ -28,6 +28,9 @@ export const aircraftButtons = [
   'tanker',
   'thunder',
   'tiger',
+  'mk82',
+  'amraam',
+  'sidewinder'
 ]
 
 const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {

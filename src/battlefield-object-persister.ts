@@ -24,10 +24,11 @@ export function loadObjects(data: string): BattlefieldObject[] {
             tokens[i++] as AircraftType,
             new Position(Number(tokens[i++]), Number(tokens[i++])),
             new Heading(Number(tokens[i++])),
+            Number(tokens[i++]),
             new Speed(Number(tokens[i++]))
         );
-        for (; i < tokens.length - 2; i += 3) {
-            obj.path.addPoint(Number(tokens[i]), decodeInt(tokens[i + 1]), decodeInt(tokens[i + 2]));
+        for (; i < tokens.length - 1; i += 2) {
+            obj.path.addPoint(decodeInt(tokens[i]), decodeInt(tokens[i + 1]));
         }
         return obj;
     });
@@ -44,10 +45,10 @@ export function serializeObjects(objects: BattlefieldObject[]): string {
             Math.round(o.position.x), 
             Math.round(o.position.y), 
             Math.round(o.heading.heading), 
+            o.startTime, 
             Math.round(o.speed.metersPerSecond)
         ].join(",");
-        // TODO: Probably don't include time
-        const pathPointsStr = o.path.points.map((p) => [Math.round(p.time), encodeInt(p.pos.x), encodeInt(p.pos.y)].join(",")).join(",");
+        const pathPointsStr = o.path.points.map((p) => [encodeInt(p.x), encodeInt(p.y)].join(",")).join(",");
         return [propsStr, pathPointsStr].join(",");
     });
     return objectStrings.join(";");

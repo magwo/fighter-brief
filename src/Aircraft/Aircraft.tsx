@@ -1,4 +1,3 @@
-import { object } from 'prop-types';
 import React, { FC } from 'react';
 import { BattlefieldObject } from '../battlefield-object';
 import './Aircraft.css';
@@ -24,7 +23,7 @@ const Aircraft: FC<AircraftProps> = (props) => {
     endPosStyles = {
       transform: `translate(${posAtEnd.x - 16}px, ${posAtEnd.y - 16}px) rotate(${headingAtEnd}deg)`
     }
-    svgPoly = props.object.path.points.map((p) => `${p.pos.x},${p.pos.y}`).join(" ");
+    svgPoly = props.object.path.points.map((p) => `${p.x},${p.y}`).join(" ");
   }
 
   return (

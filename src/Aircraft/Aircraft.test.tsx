@@ -6,7 +6,7 @@ import { BattlefieldObject, Heading, Position, Speed } from '../battlefield-obje
 
 describe('<Aircraft />', () => {
   test('it should mount', () => {
-    const object = new BattlefieldObject(null, "", 'viper', new Position(0, 0), new Heading(0), new Speed(0));
+    const object = new BattlefieldObject(null, "", 'viper', new Position(0, 0), new Heading(0), 0, new Speed(0));
     render(<Aircraft object={object} isInactive={false} shouldShowPath={true} />);
     
     const aircraft = screen.getByTestId('Aircraft');
