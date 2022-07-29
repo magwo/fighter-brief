@@ -104,7 +104,6 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     window.document.addEventListener("keydown", handleKeydown);
     return () => {
       window.document.removeEventListener('keydown', handleKeydown);
-      console.log('event listener removed.');
     }
   }, [handleKeydown]);
 
