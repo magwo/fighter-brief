@@ -17,7 +17,6 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [objects, setObjects] = useState<BattlefieldObject[]>([]);
   const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
-  const [pressed, setPressed] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
   const [undoStack, setUndoStack] = useState<{ action: 'delete', data: any }[]>([]);
 
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -41,7 +40,6 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   const startPressWorkspace = (e: React.MouseEvent) => {
     setMousePressed(true);
-    setPressed({ x: e.clientX, y: e.clientY });
 
     if (props.activeTool !== '') {
       const newObj = new BattlefieldObject(null, "", props.activeTool as AircraftType, new Position(e.clientX, e.clientY), new Heading(0), props.time, Speed.fromKnots(400));
@@ -61,9 +59,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setUndoStack([...undoStack, { action: 'delete', data: { id: objectBeingPlaced.id } }]);
       setObjectBeingPlaced(null);
       updateUrl(newObjects);
-      // TODO: Maybe objects are not ready yet?
       checkStopTime(newObjects, objectBeingPlaced);
-      console.log("Ojbects are", objects);
     }
   }
 
@@ -107,16 +103,6 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   }
 
   useEffect(() => {
-    // Load initial objects
-    if (window.location.hash.length > 0) {
-      const loadedObjects = loadObjects(window.location.hash);
-      console.log("Initial objects", loadedObjects);
-      setObjects(loadedObjects);
-      checkStopTime(loadedObjects);
-    }
-  }, []);
-
-  useEffect(() => {
     // Setup global keypress handler
     window.document.addEventListener("keydown", handleKeydown);
     return () => {
@@ -130,6 +116,20 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       obj.update(props.timeDelta, props.time);
     });
   });
+
+
+  useEffect(() => {
+    // Load initial objects
+    if (window.location.hash.length > 0) {
+      const loadedObjects = loadObjects(window.location.hash);
+      console.log("Initial objects", loadedObjects);
+      loadedObjects.forEach((obj) => {
+        obj.update(0, 0);
+      });
+      setObjects(loadedObjects);
+      checkStopTime(loadedObjects);
+    }
+  }, []);
 
   return (
     <div className="Workspace" data-testid="Workspace"

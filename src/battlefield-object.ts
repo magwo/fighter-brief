@@ -44,34 +44,13 @@ export class Path {
 
     refreshCurve() {
         let curvePoints = this.points.map((p) => [p.x, p.y]);
-        // console.log("Curve points", curvePoints);
         curvePoints = simplify2d(curvePoints, 10, 20);
-        // console.log("Curve after simplify", curvePoints)
         this.curve = new CurveInterpolator2D(curvePoints, 0.001, undefined, false);
-        // console.log(this.curve.getPointAt(0));
     }
 
-    getPositionAlongCurve(time: number, startTime: number, speed: Speed): Position {
-        const stopTime = this.getStopTime(startTime, speed);
-        let normalizedTime = (time - startTime) / (stopTime - startTime);
-        normalizedTime = Math.max(0, Math.min(1, normalizedTime));
-
-        const point = this.curve.getPointAt(normalizedTime);
-        return new Position(point[0], point[1]);
-    }
-    getPositionAlongCurveNorm(fraction: number) {
+    getPositionAlongCurveNorm(fraction: number): Position {
         const point = this.curve.getPointAt(fraction);
         return new Position(point[0], point[1]);
-    }
-
-    getHeadingAlongCurve(time: number, startTime: number, speed: Speed): number {
-        const stopTime = this.getStopTime(startTime, speed);
-        let normalizedTime = (time - startTime) / (stopTime - startTime);
-        normalizedTime = Math.max(0, Math.min(1, normalizedTime));
-
-        const tangent = this.curve.getTangentAt(normalizedTime);
-        const angle = Math.atan2(tangent[1], tangent[0]);
-        return 90 + angle * 360 / (Math.PI * 2);
     }
 
     getHeadingAlongCurveNorm(fraction: number): number {
@@ -81,10 +60,7 @@ export class Path {
     }
 
     getStopTime(startTime: number, speed: Speed): number {
-        // TODO: Maybe some kind of factor?)
         const travelTime = this.curve.length / speed.metersPerSecond;
-        console.log("Curve length", this.curve.length);
-        console.log("Stop time", startTime + travelTime);
         return startTime + travelTime;
 
     }
@@ -103,8 +79,8 @@ export class BattlefieldObject {
 
     update(dtSeconds: number, timeSeconds: number) {
         if (this.path.points.length > 0) {
-            this.position = this.path.getPositionAlongCurve(timeSeconds, this.startTime, this.speed);
-            this.heading.heading = this.path.getHeadingAlongCurve(timeSeconds, this.startTime, this.speed);
+            this.position = this.getPositionAlongCurve(timeSeconds);
+            this.heading.heading = this.getHeadingAlongCurve(timeSeconds);
         } else {
             const vx = this.speed.metersPerSecond * Math.cos((this.heading.heading - 90) * (Math.PI*2/360));
             const vy = this.speed.metersPerSecond * Math.sin((this.heading.heading - 90) * (Math.PI*2/360));
@@ -113,7 +89,33 @@ export class BattlefieldObject {
         }
     }
 
+    getPositionAlongCurve(time: number): Position {
+        if (this.path.curve.length > 0) {
+            const stopTime = this.getStopTime();
+            let normalizedTime = (time - this.startTime) / (stopTime - this.startTime);
+            normalizedTime = Math.max(0, Math.min(1, normalizedTime));
+            return this.path.getPositionAlongCurveNorm(normalizedTime);
+        } else {
+            return this.position;
+        }
+    }
+
+    getHeadingAlongCurve(time: number): number {
+        if (this.path.curve.length > 0) {
+            const stopTime = this.getStopTime();
+            let normalizedTime = (time - this.startTime) / (stopTime - this.startTime);
+            normalizedTime = Math.max(0, Math.min(1, normalizedTime));
+            return this.path.getHeadingAlongCurveNorm(normalizedTime);
+        } else {
+            return this.heading.heading;
+        }
+    }
+
     getStopTime() {
-        return this.path.getStopTime(this.startTime, this.speed);
+        if (this.path.points.length > 0) {
+            return this.path.getStopTime(this.startTime, this.speed);
+        } else {
+            return this.startTime;
+        }
     }
 }

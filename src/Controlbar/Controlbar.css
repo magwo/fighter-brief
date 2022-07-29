@@ -59,7 +59,7 @@
 
 .Controlbar .timebar .handle {
     position: absolute;
-    pointer-events: none;
+    /* pointer-events: none; */
     top: -4px;
     left: 0;
     background: #aaa;

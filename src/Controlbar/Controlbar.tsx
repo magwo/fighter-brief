@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import useAnimationFrame from '../useAnimationFrame';
 import './Controlbar.css';
 
@@ -16,10 +16,8 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
   const [shouldLoop, setShouldLoop] = useState<boolean>(false);
 
   useAnimationFrame((_time: { time: number; delta: number }) => {
-    console.log("Stop time is", props.stopTime);
     const timeDelta = shouldPlay ? _time.delta : 0;
     let newTime = time + timeDelta;
-    // TODO: Make maximum time adaptive based on units
     if (newTime > props.stopTime) {
       if (shouldLoop) {
         newTime = 0;
@@ -59,7 +57,6 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
       // const relY = e.currentTarget.clientTop;
       const fraction = (e.clientX - relX) / TIME_BAR_WIDTH;
       setTime(fraction * props.stopTime);
-      console.log("Moving on timebar", e.clientX);
     }
   }
 
