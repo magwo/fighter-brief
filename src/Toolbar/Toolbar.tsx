@@ -22,7 +22,11 @@ export interface DeleteTool {
   toolType: 'delete';
 }
 
-export type Tool = PlaceMovableTool | PlaceStaticTool | DeleteTool;
+export interface ResetTool {
+  toolType: 'reset';
+}
+
+export type Tool = PlaceMovableTool | PlaceStaticTool | DeleteTool | ResetTool;
 
 export const toolButtons: Tool[] = [
   { toolType: 'placeMovable', objectType: 'viper', speedKnots: 400, endType: null },
@@ -42,7 +46,7 @@ export const toolButtons: Tool[] = [
   { toolType: 'placeMovable', objectType: 'hind', speedKnots: 150, endType: null },
   { toolType: 'placeMovable', objectType: 'huey', speedKnots: 100, endType: null },
   { toolType: 'placeMovable', objectType: 'lancer', speedKnots: 400, endType: null },
-  { toolType: 'placeMovable', objectType: 'stratofortress', speedKnots: 400, endType: null },
+  // { toolType: 'placeMovable', objectType: 'stratofortress', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'tanker', speedKnots: 400, endType: null },
   // { toolType: 'placeMovable', objectType: 'thunder', speedKnots: 400, endType: null },
   // { toolType: 'placeMovable', objectType: 'tiger', speedKnots: 400, endType: null },
@@ -52,6 +56,7 @@ export const toolButtons: Tool[] = [
   { toolType: 'placeMovable', objectType: 'carrier', speedKnots: 30, endType: null },
   { toolType: 'placeStatic', objectType: 'airfield', },
   { toolType: 'delete' },
+  { toolType: 'reset' },
 ]
 
 const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
@@ -71,6 +76,14 @@ const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
           onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
           {/* <img src={`aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/> */}
           <p>Delete</p>
+        </button>;
+    }
+    else if (a.toolType === 'reset') {
+      return <button 
+          key={`reset-button`}
+          onClick={() => { alert("Not implemented. To reset, clear the URL path and reload the page."); } }>
+          {/* <img src={`aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/> */}
+          <p>Reset</p>
         </button>;
     }
   });

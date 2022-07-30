@@ -57,7 +57,6 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     if (e.buttons === 1 && e.target === e.currentTarget) {
       const relX = e.currentTarget.getBoundingClientRect().left;
       const fraction = (e.clientX - relX) / TIME_BAR_WIDTH;
-      console.log("Fraction", fraction);
       const newTime = fraction * props.stopTime;
       setTime((prevTime) => newTime);
       props.onTimeChange(newTime);
