@@ -3,3 +3,4 @@ export type AircraftType = 'albatros' | 'apache' | 'awacs' | 'blackjack' | 'fish
 export type ShipType = 'carrier';
 export type StaticType = 'airfield';
 export type WeaponType = 'amraam' | 'sidewinder' | 'mk82';
+export type EndType = 'expl_m' | null;

@@ -37,7 +37,7 @@ const Aircraft: FC<AircraftProps> = (props) => {
       )}
       <div style={styles} className={`primary-container${props.object.isVisible ? '' : ' invisible'}`}>
         <div style={graphicsStyles} className={`graphics-container${props.isInactive ? " inactive" : ""}`}>
-          <img src={`aviation/${props.object.type}@2x.png`} className="aircraft-image" alt="" />
+          <img src={`aviation/${props.object.hasReachedEnd && !props.isInactive && props.object.endType !== null ? props.object.endType : props.object.type}@2x.png`} className="aircraft-image" alt="" />
         </div>
       </div>
       {endPosStyles && props.shouldShowPath && (

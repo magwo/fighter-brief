@@ -6,7 +6,7 @@ const TIME_BAR_WIDTH = 400;
 
 interface ControlbarProps {
   stopTime: number;
-  onTimeChange: (timeDelta: number, time: number) => void,
+  onTimeChange: (time: number) => void,
   onPlayPause: (shouldPlay: boolean) => void
 }
 
@@ -27,14 +27,16 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
         newTime = props.stopTime
       }
     }
-    setTime(newTime);
-    props.onTimeChange(timeDelta, newTime);
+
+    if (newTime !== time) {
+      setTime(newTime);
+      props.onTimeChange(newTime);
+    }
   });
 
   const rewind = () => {
-    const oldTime = time;
     setTime(0);
-    props.onTimeChange(0 - oldTime, 0);
+    props.onTimeChange(0);
   }
 
   const playPause = () => {
@@ -55,7 +57,10 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     if (e.buttons === 1 && e.target === e.currentTarget) {
       const relX = e.currentTarget.getBoundingClientRect().left;
       const fraction = (e.clientX - relX) / TIME_BAR_WIDTH;
-      setTime(fraction * props.stopTime);
+      console.log("Fraction", fraction);
+      const newTime = fraction * props.stopTime;
+      setTime((prevTime) => newTime);
+      props.onTimeChange(newTime);
     }
   }
 
@@ -70,7 +75,7 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
         <button className='rewind' onClick={() => rewind()}>⏮</button>
         <button className={`loop${shouldLoop ? " do-loop" : ""}`} onClick={() => toggleLoop()}>🔁</button>
       </div>
-      <div className="timebar" onMouseMove={(e: React.MouseEvent) => mouseMoveOnTimebar(e) } onMouseDown={(e: React.MouseEvent) => mouseMoveOnTimebar(e) }>
+      <div className="timebar" onMouseMove={(e: React.MouseEvent) => { mouseMoveOnTimebar(e); } } onMouseDown={(e: React.MouseEvent) => mouseMoveOnTimebar(e) }>
         <div style={styleTimeHandle} className="handle"></div>
       </div>
     </div >

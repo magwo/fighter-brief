@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
-import Toolbar from './Toolbar/Toolbar';
+import Toolbar, { Tool, toolButtons } from './Toolbar/Toolbar';
 import './App.css';
 import Workspace from './Workspace/Workspace';
 import Controlbar from './Controlbar/Controlbar';
 
 function App() {
-  const [selectedButton, setSelectedButton] = useState<string>('viper');
+  const [selectedTool, setSelectedTool] = useState<Tool>(toolButtons[0]);
   const [shouldPlay, setShouldPlay] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
-  const [timeDelta, setTimeDelta] = useState<number>(0);
   const [stopTime, setStopTime] = useState<number>(1);
 
   return (
     <div className="App">
       <header className="App-header">
       </header>
-      <Workspace activeTool={selectedButton} shouldPlay={shouldPlay} timeDelta={timeDelta} time={time} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} />
-      <Toolbar onToolSelected={(button: string) => setSelectedButton(button)} />
-      <Controlbar stopTime={stopTime} onPlayPause={(shouldPlay: boolean) => setShouldPlay(shouldPlay)} onTimeChange={(timeDelta, time) => { setTimeDelta(timeDelta); setTime(time) }} />
+      <Workspace tool={selectedTool} shouldPlay={shouldPlay} time={time} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} />
+      <Toolbar onToolSelected={(tool: Tool) => setSelectedTool(tool)} />
+      <Controlbar stopTime={stopTime} onPlayPause={(shouldPlay: boolean) => setShouldPlay(shouldPlay)} onTimeChange={(time) => { setTime(time) }} />
     </div>
   );
 }

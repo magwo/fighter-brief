@@ -1,4 +1,4 @@
-import { AircraftType, ShipType, StaticType, WeaponType } from "./battlefield-object-types";
+import { AircraftType, EndType, ShipType, StaticType, WeaponType } from "./battlefield-object-types";
 import { CurveInterpolator2D, simplify2d } from 'curve-interpolator';
 
 export class Position {
@@ -70,60 +70,77 @@ export class Path {
     }
 }
 
-
 const getRandomId = (size: number) => [...Array(size)].map(() => Math.floor(Math.random() * 36).toString(36)).join('');
-export class BattlefieldObject {
-    public path: Path = new Path();
-    public isVisible = false;
 
+export interface BattlefieldObject {
+    id: string | null;
+    name: string;
+    type: AircraftType | ShipType | StaticType | WeaponType;
+    endType: EndType;
+    position: Position;
+    heading: Heading;
+    startTime: number;
+    speed: Speed;
+    path: Path;
+    isVisible: boolean;
+    hasReachedEnd: boolean;
+}
 
-
-    constructor(public id: string | null, public name: string, public type: AircraftType | ShipType | StaticType | WeaponType, public position: Position, public heading: Heading, public startTime: number, public speed: Speed) {
-        if (this.id === null) {
-            this.id = getRandomId(8);
-        }
+export function createBattlefieldObject(id: string | null, name: string, type: AircraftType | ShipType | StaticType | WeaponType, endType: EndType, position: Position, heading: Heading, startTime: number, speed: Speed): BattlefieldObject {
+    if (id === null) {
+        id = getRandomId(8);
     }
-
-    update(dtSeconds: number, timeSeconds: number) {
-        this.isVisible = timeSeconds >= this.startTime;
-        if (this.path.points.length > 0) {
-            this.position = this.getPositionAlongCurve(timeSeconds);
-            this.heading.heading = this.getHeadingAlongCurve(timeSeconds);
-        } else {
-            const vx = this.speed.metersPerSecond * Math.cos((this.heading.heading - 90) * (Math.PI*2/360));
-            const vy = this.speed.metersPerSecond * Math.sin((this.heading.heading - 90) * (Math.PI*2/360));
-            this.position.x += vx * dtSeconds;
-            this.position.y += vy * dtSeconds;
-        }
+    return {
+        id,
+        name,
+        type,
+        endType,
+        position,
+        heading,
+        startTime,
+        speed,
+        path: new Path(),
+        isVisible: false,
+        hasReachedEnd: false,
     }
+}
 
-    getPositionAlongCurve(time: number): Position {
-        if (this.path.curve.length > 0) {
-            const stopTime = this.getStopTime();
-            let normalizedTime = (time - this.startTime) / (stopTime - this.startTime);
-            normalizedTime = Math.max(0, Math.min(1, normalizedTime));
-            return this.path.getPositionAlongCurveNorm(normalizedTime);
-        } else {
-            return this.position;
-        }
+
+export function update(obj: BattlefieldObject, timeSeconds: number) {
+    obj.isVisible = timeSeconds >= obj.startTime;
+    obj.hasReachedEnd = timeSeconds >= getStopTime(obj);
+    if (obj.path.points.length > 0) {
+        obj.position = getPositionAlongCurve(obj, timeSeconds);
+        obj.heading.heading = getHeadingAlongCurve(obj, timeSeconds);
     }
+}
 
-    getHeadingAlongCurve(time: number): number {
-        if (this.path.curve.length > 0) {
-            const stopTime = this.getStopTime();
-            let normalizedTime = (time - this.startTime) / (stopTime - this.startTime);
-            normalizedTime = Math.max(0, Math.min(1, normalizedTime));
-            return this.path.getHeadingAlongCurveNorm(normalizedTime);
-        } else {
-            return this.heading.heading;
-        }
+export function getPositionAlongCurve(obj: BattlefieldObject, time: number): Position {
+    if (obj.path.curve.length > 0) {
+        const stopTime = getStopTime(obj);
+        let normalizedTime = (time - obj.startTime) / (stopTime - obj.startTime);
+        normalizedTime = Math.max(0, Math.min(1, normalizedTime));
+        return obj.path.getPositionAlongCurveNorm(normalizedTime);
+    } else {
+        return obj.position;
     }
+}
 
-    getStopTime() {
-        if (this.path.points.length > 0) {
-            return this.path.getStopTime(this.startTime, this.speed);
-        } else {
-            return this.startTime;
-        }
+export function getHeadingAlongCurve(obj: BattlefieldObject, time: number): number {
+    if (obj.path.curve.length > 0) {
+        const stopTime = getStopTime(obj);
+        let normalizedTime = (time - obj.startTime) / (stopTime - obj.startTime);
+        normalizedTime = Math.max(0, Math.min(1, normalizedTime));
+        return obj.path.getHeadingAlongCurveNorm(normalizedTime);
+    } else {
+        return obj.heading.heading;
+    }
+}
+
+export function getStopTime(obj: BattlefieldObject) {
+    if (obj.path.points.length > 0) {
+        return obj.path.getStopTime(obj.startTime, obj.speed);
+    } else {
+        return obj.startTime;
     }
 }

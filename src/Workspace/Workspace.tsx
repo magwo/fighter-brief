@@ -1,14 +1,13 @@
 import React, { FC, useEffect, useReducer, useState } from 'react';
 import Aircraft from '../Aircraft/Aircraft';
-import { BattlefieldObject, Heading, Position, Speed } from '../battlefield-object';
+import { BattlefieldObject, createBattlefieldObject, getStopTime, Heading, Position, Speed, update } from '../battlefield-object';
 import { loadObjects, serializeObjects } from '../battlefield-object-persister';
-import { AircraftType } from '../battlefield-object-types';
+import { Tool } from '../Toolbar/Toolbar';
 import './Workspace.css';
 
 interface WorkspaceProps {
-  activeTool: string;
+  tool: Tool;
   shouldPlay: boolean;
-  timeDelta: number;
   time: number;
   onStopTimeChange: (stopTime: number) => void
 }
@@ -18,6 +17,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
   const [undoStack, setUndoStack] = useState<{ action: 'delete', data: any }[]>([]);
+  const [pressedPos, setPressedPos] = useState<{x: number, y: number}>({x: 0, y: 0});
 
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -30,20 +30,26 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const checkStopTime = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null = null) => {
     let max = 0;
     newObjects.forEach((obj) => {
-      max = Math.max(max, obj.getStopTime());
+      max = Math.max(max, getStopTime(obj));
     });
     if (extraObject !== null) {
-      max = Math.max(max, extraObject.getStopTime());
+      max = Math.max(max, getStopTime(extraObject));
     }
     props.onStopTimeChange(max);
   }
 
   const startPressWorkspace = (e: React.MouseEvent) => {
     setMousePressed(true);
+    setPressedPos({x: e.clientX, y: e.clientY});
 
-    if (props.activeTool !== '') {
-      const newObj = new BattlefieldObject(null, "", props.activeTool as AircraftType, new Position(e.clientX, e.clientY), new Heading(0), props.time, Speed.fromKnots(400));
+    if (props.tool.toolType === 'placeMovable') {
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType, new Position(e.clientX, e.clientY), new Heading(0), props.time, Speed.fromKnots(props.tool.speedKnots));
       newObj.path.addPoint(e.clientX, e.clientY);
+      setObjectBeingPlaced(newObj);
+      checkStopTime(objects, newObj);
+    }
+    if (props.tool.toolType === 'placeStatic') {
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, new Position(e.clientX, e.clientY), new Heading(0), props.time, Speed.fromKnots(0));
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
@@ -60,21 +66,29 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setObjectBeingPlaced(null);
       updateUrl(newObjects);
       checkStopTime(newObjects, objectBeingPlaced);
+      forceUpdate();
     }
   }
 
   const movedMouse = (e: React.MouseEvent) => {
     if (mousePressed && objectBeingPlaced) {
-      // const dx = e.clientX - pressed.x;
-      // const dy = e.clientY - pressed.y;
-      // const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
 
-      objectBeingPlaced.path.considerAddingPoint(e.clientX, e.clientY);
-      if (objectBeingPlaced.path.points.length > 0) {
-        const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
-        objectBeingPlaced.heading.heading = startHdg;
+      if (props.tool.toolType === 'placeMovable') {
+        objectBeingPlaced.path.considerAddingPoint(e.clientX, e.clientY);
+        if (objectBeingPlaced.path.points.length > 0) {
+          const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
+          objectBeingPlaced.heading.heading = startHdg;
+          update(objectBeingPlaced, props.time);
+        }
+        checkStopTime(objects, objectBeingPlaced);
+      } else if (props.tool.toolType === 'placeStatic') {
+        const dx = e.clientX - pressedPos.x;
+        const dy = e.clientY - pressedPos.y;
+        const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
+        objectBeingPlaced.heading = new Heading(heading);
+        update(objectBeingPlaced, props.time);
+        setObjectBeingPlaced({ ...objectBeingPlaced } );
       }
-      checkStopTime(objects, objectBeingPlaced);
       forceUpdate();
     }
   }
@@ -113,9 +127,9 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   useEffect(() => {
     // Update objects
     objects.forEach((obj) => {
-      obj.update(props.timeDelta, props.time);
+      update(obj, props.time);
     });
-  });
+  }, [objects, props.time]);
 
 
   useEffect(() => {
@@ -124,7 +138,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       const loadedObjects = loadObjects(window.location.hash);
       console.log("Initial objects", loadedObjects);
       loadedObjects.forEach((obj) => {
-        obj.update(0, 0);
+        update(obj, 0);
       });
       setObjects(loadedObjects);
       checkStopTime(loadedObjects);

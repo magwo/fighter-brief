@@ -1,5 +1,5 @@
-import { BattlefieldObject, Heading, Position, Speed } from "./battlefield-object";
-import { AircraftType } from "./battlefield-object-types";
+import { BattlefieldObject, createBattlefieldObject, Heading, Position, Speed } from "./battlefield-object";
+import { AircraftType, EndType } from "./battlefield-object-types";
 
 // Reserved characters: ,;
 
@@ -18,10 +18,11 @@ export function loadObjects(data: string): BattlefieldObject[] {
     const objects = objectStrings.map((str) => {
         const tokens = str.split(",");
         let i = 0;
-        const obj = new BattlefieldObject(
+        const obj = createBattlefieldObject(
             tokens[i++],
             tokens[i++],
             tokens[i++] as AircraftType,
+            tokens[i++] === '' ? null : tokens[i - 1] as EndType,
             new Position(Number(tokens[i++]), Number(tokens[i++])),
             new Heading(Number(tokens[i++])),
             Number(tokens[i++]),
@@ -42,6 +43,7 @@ export function serializeObjects(objects: BattlefieldObject[]): string {
             o.id, 
             o.name, 
             o.type, 
+            o.endType === null ? '' : o.endType,
             Math.round(o.position.x), 
             Math.round(o.position.y), 
             Math.round(o.heading.heading), 
