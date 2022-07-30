@@ -42,7 +42,7 @@ export const toolButtons: Tool[] = [
   { toolType: 'placeMovable', objectType: 'flanker', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'gripen', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'harrier', speedKnots: 400, endType: null },
-  { toolType: 'placeMovable', objectType: 'hercules', speedKnots: 400, endType: null },
+  { toolType: 'placeMovable', objectType: 'hercules', speedKnots: 200, endType: null },
   { toolType: 'placeMovable', objectType: 'hind', speedKnots: 150, endType: null },
   { toolType: 'placeMovable', objectType: 'huey', speedKnots: 100, endType: null },
   { toolType: 'placeMovable', objectType: 'lancer', speedKnots: 400, endType: null },
