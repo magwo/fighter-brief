@@ -45,6 +45,6 @@
     padding: 0;
     color: white;
     font-size: 8px;
-    text-shadow: black 2 2 0;
+    text-shadow: 0 0 2px black;
     text-transform: capitalize;
 }

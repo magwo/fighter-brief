@@ -73,7 +73,7 @@ export class Path {
 const getRandomId = (size: number) => [...Array(size)].map(() => Math.floor(Math.random() * 36).toString(36)).join('');
 
 export interface BattlefieldObject {
-    id: string | null;
+    id: string;
     name: string;
     type: AircraftType | ShipType | StaticType | WeaponType;
     endType: EndType;

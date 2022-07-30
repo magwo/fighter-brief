@@ -6,6 +6,7 @@ interface AircraftProps {
   object: BattlefieldObject,
   isInactive: boolean,
   shouldShowPath: boolean,
+  onClick?: (e: React.MouseEvent) => void,
 }
 
 const Aircraft: FC<AircraftProps> = (props) => {
@@ -27,7 +28,7 @@ const Aircraft: FC<AircraftProps> = (props) => {
   }
 
   return (
-    <div className="Aircraft" data-testid="Aircraft">
+    <div className="Aircraft" data-testid="Aircraft" onClick={props.onClick}>
       {endPosStyles && props.shouldShowPath && (
         <div className="path">
           <svg overflow="visible">

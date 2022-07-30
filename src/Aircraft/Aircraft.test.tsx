@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import Aircraft from './Aircraft';
-import { BattlefieldObject, createBattlefieldObject, Heading, Position, Speed } from '../battlefield-object';
+import { createBattlefieldObject, Heading, Position, Speed } from '../battlefield-object';
 
 describe('<Aircraft />', () => {
   test('it should mount', () => {

@@ -13,10 +13,11 @@ interface WorkspaceProps {
 }
 
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
+  const [time, setTime] = useState<number>(0);
   const [objects, setObjects] = useState<BattlefieldObject[]>([]);
   const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
-  const [undoStack, setUndoStack] = useState<{ action: 'delete', data: any }[]>([]);
+  const [undoStack, setUndoStack] = useState<{ action: 'delete' | 'recreate', data: any }[]>([]);
   const [pressedPos, setPressedPos] = useState<{x: number, y: number}>({x: 0, y: 0});
 
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -28,7 +29,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   }
 
   const checkStopTime = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null = null) => {
-    let max = 0;
+    let max = 1;
     newObjects.forEach((obj) => {
       max = Math.max(max, getStopTime(obj));
     });
@@ -43,13 +44,13 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     setPressedPos({x: e.clientX, y: e.clientY});
 
     if (props.tool.toolType === 'placeMovable') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType, new Position(e.clientX, e.clientY), new Heading(0), props.time, Speed.fromKnots(props.tool.speedKnots));
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(props.tool.speedKnots));
       newObj.path.addPoint(e.clientX, e.clientY);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     if (props.tool.toolType === 'placeStatic') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, new Position(e.clientX, e.clientY), new Heading(0), props.time, Speed.fromKnots(0));
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(0));
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
@@ -78,7 +79,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         if (objectBeingPlaced.path.points.length > 0) {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
           objectBeingPlaced.heading.heading = startHdg;
-          update(objectBeingPlaced, props.time);
+          update(objectBeingPlaced, time);
         }
         checkStopTime(objects, objectBeingPlaced);
       } else if (props.tool.toolType === 'placeStatic') {
@@ -86,7 +87,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         const dy = e.clientY - pressedPos.y;
         const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
         objectBeingPlaced.heading = new Heading(heading);
-        update(objectBeingPlaced, props.time);
+        update(objectBeingPlaced, time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
       }
       forceUpdate();
@@ -101,13 +102,27 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     if (undoStack.length > 0) {
       const action = undoStack[undoStack.length - 1];
       if (action.action === 'delete') {
-        const newObjects = objects.filter((o) => o.id !== action.data.id);
+        deleteObject(action.data.id, false);
+      }
+      else if (action.action === 'recreate') {
+        const newObjects = [...objects, action.data.object];
         setObjects(newObjects);
         updateUrl(newObjects);
         checkStopTime(newObjects, objectBeingPlaced);
       }
       setUndoStack(undoStack.slice(0, undoStack.length - 1));
     }
+  }
+
+  const deleteObject = (id: string, undoable=true) => {
+    const deletedObject = objects.filter((o) => o.id === id)[0];
+    const newObjects = objects.filter((o) => o.id !== id);
+    if (undoable) {
+      setUndoStack([...undoStack, { action: 'recreate', data: { object: deletedObject } }]);
+    }
+    setObjects(newObjects);
+    updateUrl(newObjects);
+    checkStopTime(newObjects, objectBeingPlaced);
   }
 
   const handleKeydown = (e: KeyboardEvent) => {
@@ -126,6 +141,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   useEffect(() => {
     // Update objects
+    setTime(props.time);
     objects.forEach((obj) => {
       update(obj, props.time);
     });
@@ -152,7 +168,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       onMouseMove={(e: React.MouseEvent) => movedMouse(e)}
       onClick={(e: React.MouseEvent) => clickedWorkspace(e)}>
       {objects.map((object) =>
-        <Aircraft object={object} isInactive={false} key={object.id} shouldShowPath={!props.shouldPlay}></Aircraft>
+        <Aircraft object={object} onClick={(e) => { if(props.tool.toolType === 'delete') deleteObject(object.id); } } isInactive={false} key={object.id} shouldShowPath={!props.shouldPlay}></Aircraft>
       )
       }
       {objectBeingPlaced && (

@@ -3,7 +3,7 @@ import { AircraftType, EndType, ShipType, StaticType, WeaponType } from '../batt
 import './Toolbar.css';
 
 interface ToolbarProps {
-  onToolSelected: (selectedTool: PlaceMovableTool | PlaceStaticTool) => void;
+  onToolSelected: (selectedTool: Tool) => void;
 }
 
 export interface PlaceMovableTool {
@@ -18,7 +18,11 @@ export interface PlaceStaticTool {
   objectType: StaticType;
 }
 
-export type Tool = PlaceMovableTool | PlaceStaticTool;
+export interface DeleteTool {
+  toolType: 'delete';
+}
+
+export type Tool = PlaceMovableTool | PlaceStaticTool | DeleteTool;
 
 export const toolButtons: Tool[] = [
   { toolType: 'placeMovable', objectType: 'viper', speedKnots: 400, endType: null },
@@ -26,11 +30,10 @@ export const toolButtons: Tool[] = [
   { toolType: 'placeMovable', objectType: 'viggen', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'tomcat', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'warthog', speedKnots: 200, endType: null },
-  { toolType: 'placeMovable', objectType: 'albatros', speedKnots: 200, endType: null },
+  // { toolType: 'placeMovable', objectType: 'albatros', speedKnots: 200, endType: null },
   { toolType: 'placeMovable', objectType: 'apache', speedKnots: 150, endType: null },
   { toolType: 'placeMovable', objectType: 'awacs', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'blackjack', speedKnots: 400, endType: null },
-  { toolType: 'placeMovable', objectType: 'carrier', speedKnots: 30, endType: null },
   { toolType: 'placeMovable', objectType: 'fishbed', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'flanker', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'gripen', speedKnots: 400, endType: null },
@@ -41,28 +44,41 @@ export const toolButtons: Tool[] = [
   { toolType: 'placeMovable', objectType: 'lancer', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'stratofortress', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'tanker', speedKnots: 400, endType: null },
-  { toolType: 'placeMovable', objectType: 'thunder', speedKnots: 400, endType: null },
-  { toolType: 'placeMovable', objectType: 'tiger', speedKnots: 400, endType: null },
+  // { toolType: 'placeMovable', objectType: 'thunder', speedKnots: 400, endType: null },
+  // { toolType: 'placeMovable', objectType: 'tiger', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'mk82', speedKnots: 300, endType: 'expl_m' },
   { toolType: 'placeMovable', objectType: 'amraam', speedKnots: 800, endType: 'expl_m' },
   { toolType: 'placeMovable', objectType: 'sidewinder', speedKnots: 800, endType: 'expl_m' },
+  { toolType: 'placeMovable', objectType: 'carrier', speedKnots: 30, endType: null },
   { toolType: 'placeStatic', objectType: 'airfield', },
+  { toolType: 'delete' },
 ]
 
 const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
   const [selectedTool, setSelectedTool] = useState(toolButtons[0]);
 
+  const tools = toolButtons.map((a) => {
+    if (a.toolType === 'placeMovable' || a.toolType === 'placeStatic') {
+      return <button 
+          key={`aircraft-button-${a.objectType}`}
+          onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
+          <img src={`aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/>
+          <p>{a.objectType}</p>
+        </button>;
+    } else if (a.toolType === 'delete') {
+      return <button 
+          key={`delete-button`}
+          onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
+          {/* <img src={`aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/> */}
+          <p>Delete</p>
+        </button>;
+    }
+  });
+
   return (
     <div className="Toolbar" data-testid="Toolbar">
       <div className="buttons">
-        {toolButtons.map((a) =>
-          <button 
-            key={`aircraft-button-${a.objectType}`}
-            onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
-            <img src={`aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/>
-            <p>{a.objectType}</p>
-          </button>
-        )}
+        {tools}
       </div>
     </div>
   );
