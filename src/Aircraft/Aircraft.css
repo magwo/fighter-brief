@@ -4,6 +4,26 @@
     /* transform-origin: -50% -50%; */
 }
 
+.Aircraft.is-static {
+    z-index: 1;
+}
+
+.Aircraft.is-ground-mover {
+    z-index: 2;
+}
+
+.Aircraft.is-weapon {
+    z-index: 3;
+}
+
+.Aircraft.is-helicopter {
+    z-index: 4;
+}
+
+.Aircraft.is-aircraft {
+    z-index: 5;
+}
+
 .Aircraft .path {
     position: absolute;
 }

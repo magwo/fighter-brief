@@ -67,7 +67,7 @@ const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
       return <button 
           key={`aircraft-button-${a.objectType}`}
           onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
-          <img src={`aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/>
+          <img src={`${process.env.PUBLIC_URL}/aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/>
           <p>{a.objectType}</p>
         </button>;
     } else if (a.toolType === 'delete') {
