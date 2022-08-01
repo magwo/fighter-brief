@@ -20,6 +20,7 @@ function updateAllObjects(objects: BattlefieldObject[], time: number) {
 
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [time, setTime] = useState<number>(0);
+  const [pseudoTime, setPseudoTime] = useState<number | null>(0);
   const [objects, setObjects] = useState<BattlefieldObject[]>([]);
   const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
@@ -92,12 +93,14 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       updateAllObjects(newObjects, time);
       updateUrl(newObjects);
       checkStopTime(newObjects, objectBeingPlaced);
+      setPseudoTime(null);
       forceUpdate();
     }
   }
 
   const movedMouse = (e: React.MouseEvent) => {
     if (mousePressed && objectBeingPlaced) {
+      let timeUsed = time;
 
       if (props.tool.toolType === 'placeMovable') {
         objectBeingPlaced.path.considerAddingPoint(e.clientX, e.clientY);
@@ -105,6 +108,9 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
           objectBeingPlaced.heading.heading = startHdg;
           update(objectBeingPlaced, time);
+          console.log("Setting pseudo time", getStopTime(objectBeingPlaced));
+          timeUsed = getStopTime(objectBeingPlaced);
+          setPseudoTime(timeUsed);
         }
         checkStopTime(objects, objectBeingPlaced);
       } else if (props.tool.toolType === 'placeStatic' || props.tool.toolType === 'placeLabel') {
@@ -120,7 +126,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         update(objectBeingPlaced, time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
       }
-      updateAllObjects(objects, time);
+      updateAllObjects(objects, timeUsed);
       forceUpdate();
     }
   }
@@ -169,9 +175,14 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   useEffect(() => {
     // Update objects
-    setTime(props.time);
-    updateAllObjects(objects, props.time);
-  }, [objects, props.time]);
+    if (pseudoTime !== null) {
+      updateAllObjects(objects, pseudoTime);
+    } else {
+      const newTime = pseudoTime ?? props.time
+      setTime(newTime);
+      updateAllObjects(objects, newTime);
+    }
+  }, [objects, pseudoTime, props.time]);
 
 
   useEffect(() => {
