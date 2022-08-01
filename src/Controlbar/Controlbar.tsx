@@ -56,7 +56,8 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
   const mouseMoveOnTimebar = (e: React.MouseEvent) => {
     if (e.buttons === 1 && e.target === e.currentTarget) {
       const relX = e.currentTarget.getBoundingClientRect().left;
-      const fraction = (e.clientX - relX) / TIME_BAR_WIDTH;
+      let fraction = (e.clientX - relX) / TIME_BAR_WIDTH;
+      fraction = Math.max(0, Math.min(1, fraction));
       const newTime = fraction * props.stopTime;
       setTime((prevTime) => newTime);
       props.onTimeChange(newTime);
