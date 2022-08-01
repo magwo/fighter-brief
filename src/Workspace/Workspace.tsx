@@ -108,7 +108,6 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
           objectBeingPlaced.heading.heading = startHdg;
           update(objectBeingPlaced, time);
-          console.log("Setting pseudo time", getStopTime(objectBeingPlaced));
           timeUsed = getStopTime(objectBeingPlaced);
           setPseudoTime(timeUsed);
         }
