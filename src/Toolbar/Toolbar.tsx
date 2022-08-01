@@ -26,7 +26,15 @@ export interface ResetTool {
   toolType: 'reset';
 }
 
-export type Tool = PlaceMovableTool | PlaceStaticTool | DeleteTool | ResetTool;
+export interface PlaceLabelTool {
+  toolType: 'placeLabel';
+}
+
+export interface PlaceMeasurementTool {
+  toolType: 'placeMeasurement';
+}
+
+export type Tool = PlaceMovableTool | PlaceStaticTool | DeleteTool | ResetTool | PlaceLabelTool | PlaceMeasurementTool;
 
 export const toolButtons: Tool[] = [
   { toolType: 'placeMovable', objectType: 'viper', speedKnots: 400, endType: null },
@@ -55,6 +63,8 @@ export const toolButtons: Tool[] = [
   { toolType: 'placeMovable', objectType: 'sidewinder', speedKnots: 800, endType: 'expl_m' },
   { toolType: 'placeMovable', objectType: 'carrier', speedKnots: 30, endType: null },
   { toolType: 'placeStatic', objectType: 'airfield', },
+  { toolType: 'placeLabel' },
+  { toolType: 'placeMeasurement' },
   { toolType: 'delete' },
   { toolType: 'reset' },
 ]
@@ -70,19 +80,28 @@ const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
           <img src={`${process.env.PUBLIC_URL}/aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/>
           <p>{a.objectType}</p>
         </button>;
-    } else if (a.toolType === 'delete') {
+  } else if (a.toolType === 'placeLabel') {
+      return <button 
+          key={`label-button`}
+          onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
+          <p>Text</p>
+        </button>;
+  } else if (a.toolType === 'placeMeasurement') {
+    return <button 
+        key={`measurement-button`}
+        onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
+        <p>Measure</p>
+      </button>;
+  } else if (a.toolType === 'delete') {
       return <button 
           key={`delete-button`}
           onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
-          {/* <img src={`aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/> */}
           <p>Delete</p>
         </button>;
-    }
-    else if (a.toolType === 'reset') {
+    } else if (a.toolType === 'reset') {
       return <button 
           key={`reset-button`}
           onClick={() => { alert("Not implemented. To reset, clear the URL path and reload the page."); } }>
-          {/* <img src={`aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/> */}
           <p>Reset</p>
         </button>;
     }

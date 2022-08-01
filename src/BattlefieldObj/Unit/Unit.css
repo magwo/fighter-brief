@@ -1,72 +1,67 @@
-.Aircraft {
-    position: absolute;
+.Unit {
     user-select: none;
     /* transform-origin: -50% -50%; */
 }
 
-.Aircraft.is-static {
+.Unit.is-static {
     z-index: 1;
 }
 
-.Aircraft.is-ground-mover {
+.Unit.is-ground-mover {
     z-index: 2;
 }
 
-.Aircraft.is-weapon {
+.Unit.is-weapon {
     z-index: 3;
 }
 
-.Aircraft.is-helicopter {
+.Unit.is-helicopter {
     z-index: 4;
 }
 
-.Aircraft.is-aircraft {
+.Unit.is-unit {
     z-index: 5;
 }
 
-.Aircraft .path {
+.Unit .path {
     position: absolute;
 }
 
-.Aircraft .path svg {
+.Unit .path svg {
     fill: none;
     stroke: #999;
     stroke-width: 5;
     stroke-opacity: 0.12;
 }
 
-.Aircraft .primary-container {
+.Unit .primary-container {
     position: absolute;
     width: 32px;
     height: 32px;
     user-select: none;
 }
 
-.Aircraft .graphics-container {
+.Unit .graphics-container {
     width: 100%;
     height: 100%;
     user-select: none;
     /* transform-origin: -50% -50%; */
 }
 
-.Aircraft .aircraft-image {
+.Unit .unit-image {
     height: 100%;
     width: 100%;
     transform: rotate(45deg);
     user-select: none;
 }
 
-.Aircraft .inactive .aircraft-image {
+.Unit .inactive .unit-image {
     opacity: 0.5;
 }
-.Aircraft .ghost .aircraft-image {
+.Unit .ghost .unit-image {
     opacity: 0.2;
 }
 
-.Aircraft .invisible {
-    opacity: 0;
-}
-
-.Aircraft p {
+.Unit p {
     font-size: 10px;
 }

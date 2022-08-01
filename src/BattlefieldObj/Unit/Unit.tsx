@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
-import { BattlefieldObject } from '../battlefield-object';
-import { aircraftList, AircraftType, BattleFieldObjectType, helicopterList, shipList, ShipType, staticList, StaticType, weaponList, WeaponType } from '../battlefield-object-types';
-import './Aircraft.css';
+import { BattlefieldObject } from '../../battlefield-object';
+import { aircraftList, AircraftType, BattleFieldObjectType, helicopterList, shipList, ShipType, staticList, StaticType, weaponList, WeaponType } from '../../battlefield-object-types';
+import './Unit.css';
 
 
 function getTypeClass(type: BattleFieldObjectType) {
   if (aircraftList.includes(type as AircraftType)) {
-    return 'is-aircraft';
+    return 'is-unit';
   } else if (helicopterList.includes(type as AircraftType)) {
     return 'is-helicopter';
   } else if (staticList.includes(type as StaticType)) {
@@ -18,15 +18,14 @@ function getTypeClass(type: BattleFieldObjectType) {
   }
 }
 
-
-interface AircraftProps {
+interface UnitProps {
   object: BattlefieldObject,
   isInactive: boolean,
   shouldShowPath: boolean,
   onClick?: (e: React.MouseEvent) => void,
 }
 
-const Aircraft: FC<AircraftProps> = (props) => {
+const Unit: FC<UnitProps> = (props) => {
   const styles = {
     transform: `translate(${props.object.position.x - 16}px, ${props.object.position.y - 16}px)`
   };
@@ -44,8 +43,10 @@ const Aircraft: FC<AircraftProps> = (props) => {
     svgPoly = props.object.path.points.map((p) => `${p.x},${p.y}`).join(" ");
   }
 
+  // TODO: Import images instead
+
   return (
-    <div className={`Aircraft ${getTypeClass(props.object.type)}`} data-testid="Aircraft" onClick={props.onClick}>
+    <div className={`Unit ${getTypeClass(props.object.type)}`} data-testid="Unit" onClick={props.onClick}>
       {endPosStyles && props.shouldShowPath && (
         <div className="path">
           <svg overflow="visible">
@@ -53,15 +54,15 @@ const Aircraft: FC<AircraftProps> = (props) => {
           </svg>
         </div>
       )}
-      <div style={styles} className={`primary-container${props.object.isVisible ? '' : ' invisible'}`}>
+      <div style={styles} className={`primary-container`}>
         <div style={graphicsStyles} className={`graphics-container${props.isInactive ? " inactive" : ""}`}>
-          <img src={`${process.env.PUBLIC_URL}/aviation/${props.object.hasReachedEnd && !props.isInactive && props.object.endType !== null ? props.object.endType : props.object.type}@2x.png`} className="aircraft-image" draggable="false" alt="" />
+          <img src={`${process.env.PUBLIC_URL}/aviation/${props.object.hasReachedEnd && !props.isInactive && props.object.endType !== null ? props.object.endType : props.object.type}@2x.png`} className="unit-image" draggable="false" alt="" />
         </div>
       </div>
       {endPosStyles && props.shouldShowPath && (
       <div style={endPosStyles} className="primary-container">
         <div className={`graphics-container ghost`}>
-          <img src={`${process.env.PUBLIC_URL}/aviation/${props.object.type}@2x.png`} className="aircraft-image" draggable="false" alt="" />
+          <img src={`${process.env.PUBLIC_URL}/aviation/${props.object.type}@2x.png`} className="unit-image" draggable="false" alt="" />
         </div>
       </div>
       )}
@@ -70,4 +71,4 @@ const Aircraft: FC<AircraftProps> = (props) => {
   );
 }
 
-export default Aircraft;
+export default Unit;

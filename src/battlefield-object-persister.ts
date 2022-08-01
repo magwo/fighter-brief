@@ -20,7 +20,7 @@ export function loadObjects(data: string): BattlefieldObject[] {
         let i = 0;
         const obj = createBattlefieldObject(
             tokens[i++],
-            tokens[i++],
+            decodeURI(tokens[i++]),
             tokens[i++] as AircraftType,
             tokens[i++] === '' ? null : tokens[i - 1] as EndType,
             new Position(Number(tokens[i++]), Number(tokens[i++])),
@@ -41,7 +41,7 @@ export function serializeObjects(objects: BattlefieldObject[]): string {
     const objectStrings: string[] = objects.map((o) => {
         const propsStr = [
             o.id, 
-            o.name, 
+            encodeURI(o.name), 
             o.type, 
             o.endType === null ? '' : o.endType,
             Math.round(o.position.x), 

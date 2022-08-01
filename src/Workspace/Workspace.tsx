@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useReducer, useState } from 'react';
-import Aircraft from '../Aircraft/Aircraft';
+import BattlefieldObj from '../BattlefieldObj/BattlefieldObj';
 import { BattlefieldObject, createBattlefieldObject, getStopTime, Heading, Position, Speed, update } from '../battlefield-object';
 import { loadObjects, serializeObjects } from '../battlefield-object-persister';
 import { Tool } from '../Toolbar/Toolbar';
@@ -49,8 +49,13 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
-    if (props.tool.toolType === 'placeStatic') {
+    else if (props.tool.toolType === 'placeStatic') {
       const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(0));
+      setObjectBeingPlaced(newObj);
+      checkStopTime(objects, newObj);
+    }
+    else if (props.tool.toolType === 'placeLabel') {
+      const newObj = createBattlefieldObject(null, "New Text", 'label', null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(0));
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
@@ -60,6 +65,12 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     setMousePressed(false);
 
     if (objectBeingPlaced) {
+      if (props.tool.toolType === 'placeLabel') {
+        const name = prompt("Enter text");
+        if (name) {
+          objectBeingPlaced.name = name;
+        }
+      }
       const newObjects = [...objects];
       newObjects.push(objectBeingPlaced);
       setObjects((prevObjects) => [...prevObjects, objectBeingPlaced]);
@@ -82,7 +93,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
           update(objectBeingPlaced, time);
         }
         checkStopTime(objects, objectBeingPlaced);
-      } else if (props.tool.toolType === 'placeStatic') {
+      } else if (props.tool.toolType === 'placeStatic' || props.tool.toolType === 'placeLabel') {
         const dx = e.clientX - pressedPos.x;
         const dy = e.clientY - pressedPos.y;
         const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
@@ -168,11 +179,12 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       onMouseMove={(e: React.MouseEvent) => movedMouse(e)}
       onClick={(e: React.MouseEvent) => clickedWorkspace(e)}>
       {objects.map((object) =>
-        <Aircraft object={object} onClick={(e) => { if(props.tool.toolType === 'delete') deleteObject(object.id); } } isInactive={false} key={object.id} shouldShowPath={!props.shouldPlay}></Aircraft>
+
+        <BattlefieldObj object={object} onClick={(e) => { if(props.tool.toolType === 'delete') deleteObject(object.id); } } isInactive={false} key={object.id} shouldShowPath={!props.shouldPlay}></BattlefieldObj>
       )
       }
       {objectBeingPlaced && (
-        <Aircraft object={objectBeingPlaced} isInactive={true} shouldShowPath={true}></Aircraft>
+        <BattlefieldObj object={objectBeingPlaced} isInactive={true} shouldShowPath={true}></BattlefieldObj>
       )}
     </div>
   );

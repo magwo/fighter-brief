@@ -1,0 +1,8 @@
+.BattlefieldObj {
+    position: absolute;
+    /* transform-origin: -50% -50%; */
+}
+
+.BattlefieldObj.invisible {
+    opacity: 0;
+}
