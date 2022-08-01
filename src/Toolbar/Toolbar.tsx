@@ -69,6 +69,7 @@ export const toolButtons: Tool[] = [
   { toolType: 'reset' },
 ]
 
+// TODO: Expandable categories
 const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
   const [selectedTool, setSelectedTool] = useState(toolButtons[0]);
 

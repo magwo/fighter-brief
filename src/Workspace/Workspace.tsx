@@ -12,6 +12,12 @@ interface WorkspaceProps {
   onStopTimeChange: (stopTime: number) => void
 }
 
+function updateAllObjects(objects: BattlefieldObject[], time: number) {
+  objects.forEach((obj) => {
+    update(obj, time);
+  });
+}
+
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [time, setTime] = useState<number>(0);
   const [objects, setObjects] = useState<BattlefieldObject[]>([]);
@@ -76,6 +82,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setObjects((prevObjects) => [...prevObjects, objectBeingPlaced]);
       setUndoStack([...undoStack, { action: 'delete', data: { id: objectBeingPlaced.id } }]);
       setObjectBeingPlaced(null);
+      updateAllObjects(newObjects, time);
       updateUrl(newObjects);
       checkStopTime(newObjects, objectBeingPlaced);
       forceUpdate();
@@ -101,6 +108,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         update(objectBeingPlaced, time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
       }
+      updateAllObjects(objects, time);
       forceUpdate();
     }
   }
@@ -132,6 +140,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setUndoStack([...undoStack, { action: 'recreate', data: { object: deletedObject } }]);
     }
     setObjects(newObjects);
+    updateAllObjects(newObjects, time);
     updateUrl(newObjects);
     checkStopTime(newObjects, objectBeingPlaced);
   }
@@ -153,9 +162,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   useEffect(() => {
     // Update objects
     setTime(props.time);
-    objects.forEach((obj) => {
-      update(obj, props.time);
-    });
+    updateAllObjects(objects, props.time);
   }, [objects, props.time]);
 
 
@@ -164,9 +171,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     if (window.location.hash.length > 0) {
       const loadedObjects = loadObjects(window.location.hash);
       console.log("Initial objects", loadedObjects);
-      loadedObjects.forEach((obj) => {
-        update(obj, 0);
-      });
+      updateAllObjects(loadedObjects, 0);
       setObjects(loadedObjects);
       checkStopTime(loadedObjects);
     }

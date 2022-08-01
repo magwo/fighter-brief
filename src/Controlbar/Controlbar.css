@@ -1,5 +1,6 @@
 .Controlbar {
     position: absolute;
+    z-index: 101;
     display: flex;
     align-content: flex-start;
     align-items: center;

@@ -3,7 +3,9 @@ import { AircraftType, EndType } from "./battlefield-object-types";
 
 // Reserved characters: ,;
 
+// TODO: Write tests for this before optimizing
 // TODO: Could use even better compression for shorter urls
+
 function decodeInt(s: string): number {
     return Number.parseInt(s, 36);
 }
