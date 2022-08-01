@@ -1,5 +1,6 @@
 .Label {
     transform-origin: 0 0%;
+    /* TODO: Is flex needed here? */
     display: flex;
 }
 

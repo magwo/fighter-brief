@@ -3,6 +3,7 @@ import { BattlefieldObject } from '../battlefield-object';
 import { infoList, InfoType, unitList } from '../battlefield-object-types';
 import './BattlefieldObj.css';
 import Label from './Label/Label';
+import Measurement from './Measurement/Measurement';
 import Unit from './Unit/Unit';
 
 
@@ -19,8 +20,11 @@ const BattlefieldObj: FC<BattlefieldObjProps> = (props) => {
         {unitList.includes(props.object.type as string) &&
           <Unit object={props.object} isInactive={props.isInactive} shouldShowPath={props.shouldShowPath} />
         }
-        {infoList.includes(props.object.type as InfoType) &&
+        {props.object.type === 'label' &&
           <Label object={props.object} isInactive={props.isInactive} />
+        }
+        {props.object.type === 'measurement' &&
+          <Measurement object={props.object} isInactive={props.isInactive} />
         }
     </div>
   );

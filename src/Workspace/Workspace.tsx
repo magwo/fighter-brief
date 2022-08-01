@@ -61,8 +61,15 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeLabel') {
-      const newObj = createBattlefieldObject(null, "New Text", 'label', null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(0));
+      const newObj = createBattlefieldObject(null, "New", 'label', null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(0));
       setObjectBeingPlaced(newObj);
+      checkStopTime(objects, newObj);
+    }
+    else if (props.tool.toolType === 'placeMeasurement') {
+      const newObj = createBattlefieldObject(null, "New", 'measurement', null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(0));
+      setObjectBeingPlaced(newObj);
+      newObj.path.addPoint(e.clientX, e.clientY);
+      newObj.path.addPoint(e.clientX, e.clientY);
       checkStopTime(objects, newObj);
     }
   }
@@ -71,8 +78,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     setMousePressed(false);
 
     if (objectBeingPlaced) {
-      if (props.tool.toolType === 'placeLabel') {
-        const name = prompt("Enter text");
+      if (props.tool.toolType === 'placeLabel' || props.tool.toolType === 'placeMeasurement') {
+        const name = prompt("Enter text", objectBeingPlaced.name);
         if (name) {
           objectBeingPlaced.name = name;
         }
@@ -107,14 +114,15 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         objectBeingPlaced.heading = new Heading(heading);
         update(objectBeingPlaced, time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
+      } else if (props.tool.toolType === 'placeMeasurement') {
+        // TODO: Avoid recreating objects
+        objectBeingPlaced.path.points = [new Position(pressedPos.x, pressedPos.y), new Position(e.clientX, e.clientY)];
+        update(objectBeingPlaced, time);
+        setObjectBeingPlaced({ ...objectBeingPlaced } );
       }
       updateAllObjects(objects, time);
       forceUpdate();
     }
-  }
-
-  const clickedWorkspace = (e: React.MouseEvent) => {
-    // TODO: Differentiate between unit creation tools and other tools
   }
 
   const undo = () => {
@@ -181,8 +189,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     <div className="Workspace" data-testid="Workspace"
       onMouseDown={(e: React.MouseEvent) => startPressWorkspace(e)}
       onMouseUp={(e: React.MouseEvent) => stopPressWorkspace(e)}
-      onMouseMove={(e: React.MouseEvent) => movedMouse(e)}
-      onClick={(e: React.MouseEvent) => clickedWorkspace(e)}>
+      onMouseMove={(e: React.MouseEvent) => movedMouse(e)}>
       {objects.map((object) =>
 
         <BattlefieldObj object={object} onClick={(e) => { if(props.tool.toolType === 'delete') deleteObject(object.id); } } isInactive={false} key={object.id} shouldShowPath={!props.shouldPlay}></BattlefieldObj>

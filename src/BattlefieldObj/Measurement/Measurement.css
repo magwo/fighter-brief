@@ -1,0 +1,41 @@
+.Measurement {
+    transform-origin: 0 50%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Measurement p {
+    /* flex-wrap: nowrap; */
+    text-align: center;
+    white-space: nowrap;
+    font-size: 14px;
+    margin: 0 6px;
+    padding: 0;
+}
+
+.Measurement .left-arrow, .Measurement .right-arrow {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: #bbb;
+}
+
+.Measurement .left-arrow {
+    text-align: left;
+    margin-right: -2px;
+}
+
+.Measurement .right-arrow {
+    text-align: right;
+    margin-left: -2px;
+}
+
+.Measurement .line {
+    flex-basis: 50%;
+    flex-shrink: 1;
+    border: 1px solid #bbb;
+    border-left: none;
+    border-right: none;
+    /* background-color: #ccf; */
+    height: 0px;
+}
