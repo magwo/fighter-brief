@@ -36,6 +36,21 @@ export class Path {
         const dy = y - this.points[this.points.length - 1].y;
         const lenSqrd = dx * dx + dy * dy;
         if (lenSqrd > 10 * 10) {
+
+            if (this.points.length >= 2) {
+                // Angular snapping
+                const pLast = this.points[this.points.length - 1];
+                const pPrev = this.points[this.points.length - 2];
+                const prevAngle = Math.atan2(pLast.y - pPrev.y, pLast.x - pPrev.x);
+                let newAngle = Math.atan2(dy, dx);
+                if (Math.abs(newAngle - prevAngle) < 0.1) {
+                    newAngle = prevAngle;
+                }
+                const len = Math.sqrt(lenSqrd);
+                x = pLast.x + len * Math.cos(newAngle);
+                y = pLast.y + len * Math.sin(newAngle);
+            }
+
             this.addPoint(x, y);
         }
     }
