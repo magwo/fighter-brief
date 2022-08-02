@@ -8,6 +8,7 @@
     bottom: 30px;
     height: 40px;
     border: 1px solid #333;
+    border-radius: 0 0 0 6px;
 }
 
 .Controlbar .buttons {

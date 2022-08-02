@@ -26,6 +26,7 @@
 
 .Unit .path {
     position: absolute;
+    pointer-events: none;
 }
 
 .Unit .path svg {
@@ -33,6 +34,7 @@
     stroke: #999;
     stroke-width: 5;
     stroke-opacity: 0.12;
+    pointer-events: none;
 }
 
 .Unit .primary-container {
