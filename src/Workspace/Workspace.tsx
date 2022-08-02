@@ -20,7 +20,7 @@ function updateAllObjects(objects: BattlefieldObject[], time: number) {
 
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [time, setTime] = useState<number>(0);
-  const [pseudoTime, setPseudoTime] = useState<number | null>(0);
+  const [pseudoTime, setPseudoTime] = useState<number | null>(null);
   const [objects, setObjects] = useState<BattlefieldObject[]>([]);
   const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
@@ -121,7 +121,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         setObjectBeingPlaced({ ...objectBeingPlaced } );
       } else if (props.tool.toolType === 'placeMeasurement') {
         // TODO: Avoid recreating objects
-        objectBeingPlaced.path.points = [new Position(pressedPos.x, pressedPos.y), new Position(e.clientX, e.clientY)];
+        objectBeingPlaced.path.setPoints([new Position(pressedPos.x, pressedPos.y), new Position(e.clientX, e.clientY)]);
         update(objectBeingPlaced, time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
       }
@@ -177,7 +177,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     if (pseudoTime !== null) {
       updateAllObjects(objects, pseudoTime);
     } else {
-      const newTime = pseudoTime ?? props.time
+      const newTime = props.time;
       setTime(newTime);
       updateAllObjects(objects, newTime);
     }

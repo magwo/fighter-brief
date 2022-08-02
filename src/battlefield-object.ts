@@ -35,9 +35,13 @@ export class Path {
         const dx = x - this.points[this.points.length - 1].x;
         const dy = y - this.points[this.points.length - 1].y;
         const lenSqrd = dx * dx + dy * dy;
-        if (lenSqrd > 10 * 10) {
+        if (lenSqrd > 20 * 20) {
             this.addPoint(x, y);
         }
+    }
+    setPoints(points: Position[]) {
+        this.points = [...points];
+        this.refreshCurve();
     }
 
     addPoint(x: number, y: number) {
@@ -58,6 +62,7 @@ export class Path {
     }
 
     getHeadingAlongCurveNorm(fraction: number): number {
+        // TODO: Experiment with getting smoothed tangent - before and after current point
         const tangent = this.curve.getTangentAt(fraction);
         const angle = Math.atan2(tangent[1], tangent[0]);
         return 90 + angle * 360 / (Math.PI * 2);
@@ -109,14 +114,15 @@ export function createBattlefieldObject(id: string | null, name: string, type: A
 export function update(obj: BattlefieldObject, timeSeconds: number) {
     obj.isVisible = timeSeconds >= obj.startTime;
     obj.hasReachedEnd = timeSeconds >= getStopTime(obj);
-    if (obj.path.points.length > 0) {
+    // For some reason curve will throw exception if using less than 3 points
+    if (obj.path.points.length > 2) {
         obj.position = getPositionAlongCurve(obj, timeSeconds);
         obj.heading.heading = getHeadingAlongCurve(obj, timeSeconds);
     }
 }
 
 export function getPositionAlongCurve(obj: BattlefieldObject, time: number): Position {
-    if (obj.path.curve.length > 0) {
+    if (obj.path.points.length > 2) {
         const stopTime = getStopTime(obj);
         let normalizedTime = (time - obj.startTime) / (stopTime - obj.startTime);
         normalizedTime = Math.max(0, Math.min(1, normalizedTime));
@@ -127,7 +133,7 @@ export function getPositionAlongCurve(obj: BattlefieldObject, time: number): Pos
 }
 
 export function getHeadingAlongCurve(obj: BattlefieldObject, time: number): number {
-    if (obj.path.curve.length > 0) {
+    if (obj.path.points.length > 2) {
         const stopTime = getStopTime(obj);
         let normalizedTime = (time - obj.startTime) / (stopTime - obj.startTime);
         normalizedTime = Math.max(0, Math.min(1, normalizedTime));
@@ -138,7 +144,7 @@ export function getHeadingAlongCurve(obj: BattlefieldObject, time: number): numb
 }
 
 export function getStopTime(obj: BattlefieldObject) {
-    if (obj.path.points.length > 0) {
+    if (obj.path.points.length > 2) {
         return obj.path.getStopTime(obj.startTime, obj.speed);
     } else {
         return obj.startTime;
