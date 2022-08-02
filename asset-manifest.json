@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/fighter-brief/static/css/main.04ae4c8a.css",
-    "main.js": "/fighter-brief/static/js/main.c480821d.js",
+    "main.css": "/fighter-brief/static/css/main.d4aba1ec.css",
+    "main.js": "/fighter-brief/static/js/main.280c5849.js",
     "static/js/787.636b2fc4.chunk.js": "/fighter-brief/static/js/787.636b2fc4.chunk.js",
     "index.html": "/fighter-brief/index.html",
-    "main.04ae4c8a.css.map": "/fighter-brief/static/css/main.04ae4c8a.css.map",
-    "main.c480821d.js.map": "/fighter-brief/static/js/main.c480821d.js.map",
+    "main.d4aba1ec.css.map": "/fighter-brief/static/css/main.d4aba1ec.css.map",
+    "main.280c5849.js.map": "/fighter-brief/static/js/main.280c5849.js.map",
     "787.636b2fc4.chunk.js.map": "/fighter-brief/static/js/787.636b2fc4.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.04ae4c8a.css",
-    "static/js/main.c480821d.js"
+    "static/css/main.d4aba1ec.css",
+    "static/js/main.280c5849.js"
   ]
 }
