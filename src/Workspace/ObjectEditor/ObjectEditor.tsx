@@ -33,7 +33,7 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
     props.onObjectModified(props.object);
   }
 
-  // TODO: Use effect and save object copy from props?
+  // TODO: Use effect and save object copy from props? Not sure if needed :S
 
   useEffect(() => {
     setValues({name: props.object.name, speed: props.object.speed.metersPerSecond});
@@ -41,7 +41,7 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
 
 
   return (
-    <div className="ObjectEditor" data-testid="ObjectEditor" onMouseDown={(e) => e.stopPropagation()}>
+    <div className="ObjectEditor" data-testid="ObjectEditor" onMouseDown={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
       <h2>Editing {props.object.type}</h2>
 
       <form onSubmit={handleSubmit}>

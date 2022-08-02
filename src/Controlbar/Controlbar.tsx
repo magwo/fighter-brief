@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import useAnimationFrame from '../useAnimationFrame';
 import './Controlbar.css';
 
@@ -63,6 +63,20 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
       props.onTimeChange(newTime);
     }
   }
+
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (e.key === ' ') {
+      playPause();
+    }
+  }
+  useEffect(() => {
+    // Setup global keypress handler
+    window.document.addEventListener("keydown", handleKeydown);
+    return () => {
+      window.document.removeEventListener('keydown', handleKeydown);
+    }
+  }, [handleKeydown]);
+
 
   const styleTimeHandle = {
     transform: `translate(${(time / props.stopTime) * TIME_BAR_WIDTH}px, 0)`
