@@ -33,10 +33,15 @@ export interface PlaceLabelTool {
 export interface PlaceMeasurementTool {
   toolType: 'placeMeasurement';
 }
+export interface SelectTool {
+  toolType: 'select';
+}
 
-export type Tool = PlaceMovableTool | PlaceStaticTool | DeleteTool | ResetTool | PlaceLabelTool | PlaceMeasurementTool;
+export type Tool = PlaceMovableTool | PlaceStaticTool | DeleteTool | ResetTool | PlaceLabelTool | PlaceMeasurementTool | SelectTool;
 
 export const toolButtons: Tool[] = [
+  { toolType: 'select' },
+  { toolType: 'delete' },
   { toolType: 'placeMovable', objectType: 'viper', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'hornet', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'viggen', speedKnots: 400, endType: null },
@@ -59,13 +64,12 @@ export const toolButtons: Tool[] = [
   // { toolType: 'placeMovable', objectType: 'thunder', speedKnots: 400, endType: null },
   // { toolType: 'placeMovable', objectType: 'tiger', speedKnots: 400, endType: null },
   { toolType: 'placeMovable', objectType: 'mk82', speedKnots: 300, endType: 'expl_m' },
-  { toolType: 'placeMovable', objectType: 'amraam', speedKnots: 800, endType: 'expl_m' },
-  { toolType: 'placeMovable', objectType: 'sidewinder', speedKnots: 800, endType: 'expl_m' },
+  { toolType: 'placeMovable', objectType: 'amraam', speedKnots: 1000, endType: 'expl_m' },
+  { toolType: 'placeMovable', objectType: 'sidewinder', speedKnots: 1000, endType: 'expl_m' },
   { toolType: 'placeMovable', objectType: 'carrier', speedKnots: 30, endType: null },
   { toolType: 'placeStatic', objectType: 'airfield', },
   { toolType: 'placeLabel' },
   { toolType: 'placeMeasurement' },
-  { toolType: 'delete' },
   { toolType: 'reset' },
 ]
 
@@ -75,36 +79,42 @@ const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
 
   const tools = toolButtons.map((a) => {
     if (a.toolType === 'placeMovable' || a.toolType === 'placeStatic') {
-      return <button 
-          key={`aircraft-button-${a.objectType}`}
-          onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
-          <img src={`${process.env.PUBLIC_URL}/aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`}/>
-          <p>{a.objectType}</p>
-        </button>;
-  } else if (a.toolType === 'placeLabel') {
-      return <button 
-          key={`label-button`}
-          onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
-          <p>Text</p>
-        </button>;
-  } else if (a.toolType === 'placeMeasurement') {
-    return <button 
+      return <button
+        key={`aircraft-button-${a.objectType}`}
+        onClick={() => { setSelectedTool(a); props.onToolSelected(a) }} className={a === selectedTool ? 'selected' : ''}>
+        <img src={`${process.env.PUBLIC_URL}/aviation/${a.objectType}@2x.png`} alt={`Place ${a}`} title={`Place ${a.objectType}`} />
+        <p>{a.objectType}</p>
+      </button>;
+    } else if (a.toolType === 'placeLabel') {
+      return <button
+        key={`label-button`}
+        onClick={() => { setSelectedTool(a); props.onToolSelected(a) }} className={a === selectedTool ? 'selected' : ''}>
+        <p>Text</p>
+      </button>;
+    } else if (a.toolType === 'placeMeasurement') {
+      return <button
         key={`measurement-button`}
-        onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
+        onClick={() => { setSelectedTool(a); props.onToolSelected(a) }} className={a === selectedTool ? 'selected' : ''}>
         <p>Measure</p>
       </button>;
-  } else if (a.toolType === 'delete') {
-      return <button 
-          key={`delete-button`}
-          onClick={() => {setSelectedTool(a); props.onToolSelected(a)}} className={a === selectedTool ? 'selected' : ''}>
-          <p>Delete</p>
-        </button>;
+    } else if (a.toolType === 'select') {
+      return <button
+        key={`select-button`}
+        onClick={() => { setSelectedTool(a); props.onToolSelected(a) }} className={a === selectedTool ? 'selected' : ''}>
+        <p>Select</p>
+      </button>;
+    } else if (a.toolType === 'delete') {
+      return <button
+        key={`delete-button`}
+        onClick={() => { setSelectedTool(a); props.onToolSelected(a) }} className={a === selectedTool ? 'selected' : ''}>
+        <p>Delete</p>
+      </button>;
     } else if (a.toolType === 'reset') {
-      return <button 
-          key={`reset-button`}
-          onClick={() => { alert("Not implemented. To reset, clear the URL path and reload the page."); } }>
-          <p>Reset</p>
-        </button>;
+      return <button
+        key={`reset-button`}
+        onClick={() => { alert("Not implemented. To reset, clear the URL path and reload the page."); }}>
+        <p>Reset</p>
+      </button>;
     }
   });
 

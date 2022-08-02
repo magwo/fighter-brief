@@ -15,7 +15,7 @@ function encodeInt(n: number) {
 }
 
 export function loadObjects(data: string): BattlefieldObject[] {
-    const objectStrings: string[] = data.split(";");
+    const objectStrings: string[] = data.replace(/^#/, "").split(";");
 
     const objects = objectStrings.map((str) => {
         const tokens = str.split(",");

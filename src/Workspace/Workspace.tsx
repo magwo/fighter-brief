@@ -4,6 +4,7 @@ import { BattlefieldObject, createBattlefieldObject, getStopTime, Heading, Posit
 import { loadObjects, serializeObjects } from '../battlefield-object-persister';
 import { Tool } from '../Toolbar/Toolbar';
 import './Workspace.css';
+import ObjectEditor from './ObjectEditor/ObjectEditor';
 
 interface WorkspaceProps {
   tool: Tool;
@@ -24,6 +25,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [objects, setObjects] = useState<BattlefieldObject[]>([]);
   const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
+  const [selectedObject, setSelectedObject] = useState<BattlefieldObject | null>(null);
   const [undoStack, setUndoStack] = useState<{ action: 'delete' | 'recreate', data: any }[]>([]);
   const [pressedPos, setPressedPos] = useState<{x: number, y: number}>({x: 0, y: 0});
 
@@ -49,6 +51,10 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const startPressWorkspace = (e: React.MouseEvent) => {
     setMousePressed(true);
     setPressedPos({x: e.clientX, y: e.clientY});
+
+    if (selectedObject) {
+      setSelectedObject(null);
+    }
 
     if (props.tool.toolType === 'placeMovable') {
       const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(props.tool.speedKnots));
@@ -158,6 +164,20 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     checkStopTime(newObjects, objectBeingPlaced);
   }
 
+  const clickedObject = (obj: BattlefieldObject) => {
+    if(props.tool.toolType === 'delete') {
+      deleteObject(obj.id);
+    } else if(props.tool.toolType === 'select') {
+      setSelectedObject(obj);
+    }
+  }
+
+  const objectModified = (obj: BattlefieldObject) => {
+    updateAllObjects(objects, time);
+    forceUpdate();
+    updateUrl(objects);
+  }
+
   const handleKeydown = (e: KeyboardEvent) => {
     if (e.key === "z" && (e.getModifierState("Control") || e.getModifierState(("Meta")))) {
       undo();
@@ -183,6 +203,12 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }, [objects, pseudoTime, props.time]);
 
+  useEffect(() => {
+      if (props.tool.toolType !== 'select') {
+        setSelectedObject(null);
+      }
+  }, [props.tool]);
+
 
   useEffect(() => {
     // Load initial objects
@@ -201,12 +227,15 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       onMouseUp={(e: React.MouseEvent) => stopPressWorkspace(e)}
       onMouseMove={(e: React.MouseEvent) => movedMouse(e)}>
       {objects.map((object) =>
-
-        <BattlefieldObj object={object} onClick={(e) => { if(props.tool.toolType === 'delete') deleteObject(object.id); } } isInactive={false} key={object.id} shouldShowPath={!props.shouldPlay}></BattlefieldObj>
+        <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={!props.shouldPlay}></BattlefieldObj>
       )
       }
       {objectBeingPlaced && (
-        <BattlefieldObj object={objectBeingPlaced} isInactive={true} shouldShowPath={true}></BattlefieldObj>
+        <BattlefieldObj object={objectBeingPlaced} isInactive={true} shouldShowPath={true} />
+      )}
+
+      {selectedObject && (
+        <ObjectEditor object={selectedObject} onObjectModified={(obj) => { objectModified(obj); }} />
       )}
     </div>
   );
