@@ -159,9 +159,9 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setUndoStack([...undoStack, { action: 'recreate', data: { object: deletedObject } }]);
     }
     setObjects(newObjects);
-    checkStopTime(newObjects);
     updateAllObjects(newObjects, time);
     updateUrl(newObjects);
+    checkStopTime(newObjects, objectBeingPlaced);
   }
 
   const clickedObject = (obj: BattlefieldObject) => {
