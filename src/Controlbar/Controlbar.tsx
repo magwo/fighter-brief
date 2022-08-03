@@ -1,5 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
 import useAnimationFrame from '../useAnimationFrame';
+import { ReactComponent as Play } from './images/play.svg';
+import { ReactComponent as Pause } from './images/pause.svg';
+import { ReactComponent as BackwardFast } from './images/backward-fast.svg';
+import { ReactComponent as Repeat } from './images/repeat.svg';
 import './Controlbar.css';
 
 const TIME_BAR_WIDTH = 400;
@@ -85,9 +89,15 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
   return (
     <div className="Controlbar" data-testid="Controlbar">
       <div className="buttons">
-        <button className='play-pause' onClick={() => { playPause() }}>{shouldPlay ? "⏸" : "⏯"}</button>
-        <button className='rewind' onClick={() => rewind()}>⏮</button>
-        <button className={`loop${shouldLoop ? " do-loop" : ""}`} onClick={() => toggleLoop()}>🔁</button>
+        <button className={`play-pause${shouldPlay ? " selected" : ""}`} onClick={() => { playPause() }}>
+          {shouldPlay ? <Pause className="svg-icon" /> : <Play className="svg-icon" />}
+        </button>
+        <button className='rewind' onClick={() => rewind()}>
+          <BackwardFast className="svg-icon" />
+      </button>
+        <button className={`loop${shouldLoop ? " selected" : ""}`} onClick={() => toggleLoop()}>
+        <Repeat className="svg-icon" />
+        </button>
       </div>
       <div className="timebar" onMouseMove={(e: React.MouseEvent) => { mouseMoveOnTimebar(e); } } onMouseDown={(e: React.MouseEvent) => mouseMoveOnTimebar(e) }>
         <div style={styleTimeHandle} className="handle"></div>
