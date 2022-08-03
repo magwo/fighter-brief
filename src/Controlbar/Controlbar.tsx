@@ -10,8 +10,6 @@ const TIME_BAR_WIDTH = 400;
 
 const PLAYBACK_SPEEDS = [0.4, 1, 3, 9];
 
-const NONE_TAB_INDEX = -1;
-
 interface ControlbarProps {
   stopTime: number;
   onTimeChange: (time: number) => void,
@@ -115,26 +113,27 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
 
 
   const styleTimeHandle = {
-    transform: `translate(${(time / props.stopTime) * TIME_BAR_WIDTH}px, 0)`
+    transform: `translate(${((time / props.stopTime) * TIME_BAR_WIDTH) - 2}px, 0)`
   };
 
   return (
+    // Use clickable divs instead of buttons - focus messes with global hotkeys
     <div className="Controlbar" data-testid="Controlbar">
       <div className="buttons">
-        <button className={`play-pause${shouldPlay ? " selected" : ""}`} onClick={() => { playPause() }} tabIndex={NONE_TAB_INDEX}>
+        <div className={`clickable play-pause${shouldPlay ? " selected" : ""}`} onClick={() => { playPause() }}>
           {shouldPlay ? <Pause className="svg-icon" /> : <Play className="svg-icon" />}
-        </button>
-        <button className='rewind' onClick={() => rewind()} tabIndex={NONE_TAB_INDEX}>
+        </div>
+        <div className='clickable rewind' onClick={() => rewind()}>
           <BackwardFast className="svg-icon" />
-      </button>
-        <button className={`loop${shouldLoop ? " selected" : ""}`} onClick={() => toggleLoop()} tabIndex={NONE_TAB_INDEX}>
+        </div>
+        <div className={`clickable loop${shouldLoop ? " selected" : ""}`} onClick={() => toggleLoop()}>
         <Repeat className="svg-icon" />
-        </button>
-        <button className="playback-speed" onClick={() => togglePlaybackSpeed()} tabIndex={NONE_TAB_INDEX}>
+        </div>
+        <div className="clickable playback-speed" onClick={() => togglePlaybackSpeed()}>
           {(PLAYBACK_SPEEDS[playbackSpeedIndex] + 'x').replace('0.', '.')}
-        </button>
+        </div>
       </div>
-      <div className="timebar" onMouseMove={(e: React.MouseEvent) => { mouseMoveOnTimebar(e); } } onMouseDown={(e: React.MouseEvent) => mouseMoveOnTimebar(e) } tabIndex={NONE_TAB_INDEX}>
+      <div className="timebar" onMouseMove={(e: React.MouseEvent) => { mouseMoveOnTimebar(e); } } onMouseDown={(e: React.MouseEvent) => mouseMoveOnTimebar(e) }>
         <div style={styleTimeHandle} className="handle"></div>
       </div>
     </div >
