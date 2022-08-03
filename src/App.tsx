@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import Toolbar, { Tool, toolButtons } from './Toolbar/Toolbar';
+import Toolbar, { Tool, toolCategories } from './Toolbar/Toolbar';
 import './App.css';
 import Workspace from './Workspace/Workspace';
 import Controlbar from './Controlbar/Controlbar';
 
 function App() {
-  const [selectedTool, setSelectedTool] = useState<Tool>(toolButtons[0]);
+  const [selectedTool, setSelectedTool] = useState<Tool>(toolCategories[0].tools[0]);
   const [shouldPlay, setShouldPlay] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
   const [stopTime, setStopTime] = useState<number>(1);

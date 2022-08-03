@@ -4,12 +4,13 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    right: 30px;
-    top: 30px;
+    right: 20px;
+    top: 20px;
     width: 200px;
     padding: 8px;
     border: 1px solid #333;
     border-radius: 6px;
+    overflow: hidden;
 }
 
 .ObjectEditor h2 {

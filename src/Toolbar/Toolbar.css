@@ -1,25 +1,75 @@
 .Toolbar {
     position: absolute;
     z-index: 100;
-    top: 30px;
-    left: 30px;
-    width: 100px;
+    top: 20px;
+    left: 20px;
+    width: 101px;
     border: 1px solid #333;
-    border-radius: 6px 0 0 0;
-    overflow: hidden;
+    background-color: #444;
+    border-radius: 6px;
+    max-height: 90vh;
+    overflow: scroll;
+}
+
+.Toolbar .category {
+    position: relative;
+    display: flex;
+    margin-top: 1px;
+    flex-direction: column;
+    row-gap: 1px;
+    align-content: flex-start;
+    /* background-color: #666; */
+    width: 100%;
+}
+
+.Toolbar .category:first-child {
+    margin-top: 0;
+}
+
+.Toolbar .category .shadow {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    height: 12px;
+    background: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.3));
+    pointer-events: none;
+    transition: opacity 200ms linear;
+    opacity: 0.01;
+}
+
+.Toolbar .category .shadow.visible {
+    opacity: 1.0;
+}
+
+.Toolbar .category > button {
+    appearance: none;
+    cursor: pointer;
+    border: none;
+    font-size: 11px;
+    height: 20px;
+    font-weight: bold;
+    /* margin: 4px 0; */
+    color: white;
+    background-color: #666;
+    text-shadow: 0 0 2px black;
 }
 
 .Toolbar .buttons {
     display: flex;
+    gap: 1px;
     align-content: flex-start;
     flex-wrap: wrap;
-    background-color: #666;
+    /* background-color: #666; */
     width: 100%;
-    min-height: 600px;
+    will-change: max-height;
+    transition: max-height 200ms linear;
+    max-height: 400px;
+    overflow: auto;
 }
 
-.Toolbar .buttons button {
+.Toolbar .buttons > button {
     display: flex;
+    border: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -28,22 +78,21 @@
     width: 50px;
     height: 50px;
     background-color: #666;
-    border: .5px solid #444;
     user-select: none;
 }
-.Toolbar .buttons button.selected {
-    background-color: #444;
-    border: 1px solid #484848;
+.Toolbar .buttons > button.selected {
+    background-color: #555;
+    box-shadow: inset 0 0 4px #333;
     cursor: default;
 }
 
-.Toolbar .buttons button > img {
+.Toolbar .buttons > button > img {
     display: block;
     height: 70%;
     flex-shrink: 0;
 }
 
-.Toolbar .buttons button > p {
+.Toolbar .buttons > button > p {
     margin: 0;
     padding: 0;
     color: white;
