@@ -57,7 +57,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
 
     if (props.tool.toolType === 'placeMovable') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(props.tool.speedKnots));
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(props.tool.speedKnots));
       newObj.path.addPoint(e.clientX, e.clientY);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);

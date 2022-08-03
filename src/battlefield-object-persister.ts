@@ -45,7 +45,7 @@ export function serializeObjects(objects: BattlefieldObject[]): string {
             o.id, 
             encodeURI(o.name), 
             o.type, 
-            o.endType === null ? '' : o.endType,
+            o.endType ? o.endType : '',
             Math.round(o.position.x), 
             Math.round(o.position.y), 
             Math.round(o.heading.heading), 
