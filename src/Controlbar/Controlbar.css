@@ -47,6 +47,10 @@
     filter: drop-shadow( 0px 0px 1px black);
 }
 
+.Controlbar .buttons button.playback-speed {
+    font-size: 12px;
+}
+
 .Controlbar .timebar {
     position: relative;
     margin: 0 4px;
