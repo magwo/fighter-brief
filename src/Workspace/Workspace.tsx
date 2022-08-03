@@ -2,7 +2,7 @@ import React, { FC, useEffect, useReducer, useState } from 'react';
 import BattlefieldObj from '../BattlefieldObj/BattlefieldObj';
 import { BattlefieldObject, createBattlefieldObject, getStopTime, Heading, Position, Speed, update } from '../battlefield-object';
 import { loadObjects, serializeObjects } from '../battlefield-object-persister';
-import { Tool } from '../Toolbar/Toolbar';
+import { Tool } from '../Toolbar/tools';
 import './Workspace.css';
 import ObjectEditor from './ObjectEditor/ObjectEditor';
 
@@ -159,9 +159,9 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setUndoStack([...undoStack, { action: 'recreate', data: { object: deletedObject } }]);
     }
     setObjects(newObjects);
+    checkStopTime(newObjects);
     updateAllObjects(newObjects, time);
     updateUrl(newObjects);
-    checkStopTime(newObjects, objectBeingPlaced);
   }
 
   const clickedObject = (obj: BattlefieldObject) => {
