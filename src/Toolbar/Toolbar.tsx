@@ -1,5 +1,8 @@
 import React, { FC, ReactNode, useState } from 'react';
 import { AircraftType, EndType, ShipType, StaticType, WeaponType } from '../battlefield-object-types';
+import { ReactComponent as ArrowPointer } from './images/arrow-pointer.svg';
+import { ReactComponent as ArrowsLeftRight } from './images/arrows-left-right-to-line.svg';
+import { ReactComponent as TrashCan } from './images/trash-can.svg';
 import './Toolbar.css';
 
 interface ToolbarProps {
@@ -133,24 +136,28 @@ function renderTool(tool: Tool, selectedTool: Tool, setSelectedTool: (tool: Tool
     return <button
       key={`label-button`}
       onClick={() => { setSelectedTool(tool); onToolSelectedCb(tool) }} className={tool === selectedTool ? 'selected' : ''}>
+      <div className="big-text">Abc</div>
       <p>Text</p>
     </button>;
   } else if (tool.toolType === 'placeMeasurement') {
     return <button
       key={`measurement-button`}
       onClick={() => { setSelectedTool(tool); onToolSelectedCb(tool) }} className={tool === selectedTool ? 'selected' : ''}>
+      <ArrowsLeftRight className="svg-icon" />
       <p>Measure</p>
     </button>;
   } else if (tool.toolType === 'select') {
     return <button
       key={`select-button`}
       onClick={() => { setSelectedTool(tool); onToolSelectedCb(tool) }} className={tool === selectedTool ? 'selected' : ''}>
+      <ArrowPointer className="svg-icon"/>
       <p>Select</p>
     </button>;
   } else if (tool.toolType === 'delete') {
     return <button
       key={`delete-button`}
       onClick={() => { setSelectedTool(tool); onToolSelectedCb(tool) }} className={tool === selectedTool ? 'selected' : ''}>
+      <TrashCan className="svg-icon" />
       <p>Delete</p>
     </button>;
   } else if (tool.toolType === 'reset') {

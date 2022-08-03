@@ -88,8 +88,33 @@
 
 .Toolbar .buttons > button > img {
     display: block;
-    height: 70%;
+    width: 28px;
+    height: 28px;
+    padding: 2px 0;
     flex-shrink: 0;
+}
+
+.Toolbar .buttons > button > .big-text {
+    font-size: 12px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 24px;
+    width: 24px;
+    padding: 4px 0;
+    flex-shrink: 0;
+    text-shadow: 0 0 2px black;
+}
+
+.Toolbar .buttons > button > .svg-icon {
+    display: block;
+    height: 18px;
+    width: 18px;
+    padding: 7px 0;
+    fill: white;
+    flex-shrink: 0;
+    filter: drop-shadow( 0px 0px 1px black);
 }
 
 .Toolbar .buttons > button > p {

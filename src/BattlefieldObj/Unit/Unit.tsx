@@ -6,7 +6,7 @@ import './Unit.css';
 
 function getTypeClass(type: BattleFieldObjectType) {
   if (aircraftList.includes(type as AircraftType)) {
-    return 'is-unit';
+    return 'is-airplane';
   } else if (helicopterList.includes(type as AircraftType)) {
     return 'is-helicopter';
   } else if (staticList.includes(type as StaticType)) {
@@ -16,6 +16,7 @@ function getTypeClass(type: BattleFieldObjectType) {
   } else if (weaponList.includes(type as WeaponType)) {
     return 'is-weapon';
   }
+  return 'is-airplane';
 }
 
 interface UnitProps {

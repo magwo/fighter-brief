@@ -2,6 +2,8 @@
     transform-origin: 0 0%;
     /* TODO: Is flex needed here? */
     display: flex;
+    z-index: 10;
+    position: absolute;
 }
 
 .Label p {
