@@ -1,4 +1,4 @@
-import { AircraftType, BattleFieldObjectType, EndType, InfoType, ShipType, StaticType, WeaponType } from "./battlefield-object-types";
+import { AirplaneType, BattleFieldObjectType, EndType, InfoType, ShipType, StaticType, WeaponType } from "./battlefield-object-types";
 import { CurveInterpolator2D, simplify2d } from 'curve-interpolator';
 
 export class Position {
@@ -91,7 +91,7 @@ export interface BattlefieldObject {
     hasReachedEnd: boolean;
 }
 
-export function createBattlefieldObject(id: string | null, name: string, type: AircraftType | ShipType | StaticType | WeaponType | InfoType, endType: EndType, position: Position, heading: Heading, startTime: number, speed: Speed): BattlefieldObject {
+export function createBattlefieldObject(id: string | null, name: string, type: BattleFieldObjectType, endType: EndType, position: Position, heading: Heading, startTime: number, speed: Speed): BattlefieldObject {
     if (id === null) {
         id = getRandomId(8);
     }

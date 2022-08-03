@@ -1,5 +1,5 @@
 import { BattlefieldObject, createBattlefieldObject, Heading, Position, Speed } from "./battlefield-object";
-import { AircraftType, EndType } from "./battlefield-object-types";
+import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
 
 // Reserved characters: ,;
 
@@ -23,7 +23,7 @@ export function loadObjects(data: string): BattlefieldObject[] {
         const obj = createBattlefieldObject(
             tokens[i++],
             decodeURI(tokens[i++]),
-            tokens[i++] as AircraftType,
+            tokens[i++] as BattleFieldObjectType,
             tokens[i++] === '' ? null : tokens[i - 1] as EndType,
             new Position(Number(tokens[i++]), Number(tokens[i++])),
             new Heading(Number(tokens[i++])),

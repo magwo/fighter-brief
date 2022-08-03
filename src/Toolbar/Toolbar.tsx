@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, useState } from 'react';
-import { AircraftType, EndType, ShipType, StaticType, WeaponType } from '../battlefield-object-types';
+import { AirplaneType, EndType, GroundType, HelicopterType, ShipType, StaticType, WeaponType } from '../battlefield-object-types';
 import { ReactComponent as ArrowPointer } from './images/arrow-pointer.svg';
 import { ReactComponent as ArrowsLeftRight } from './images/arrows-left-right-to-line.svg';
 import { ReactComponent as TrashCan } from './images/trash-can.svg';
@@ -11,7 +11,7 @@ interface ToolbarProps {
 
 export interface PlaceMovableTool {
   toolType: 'placeMovable';
-  objectType: AircraftType | ShipType | WeaponType;
+  objectType: AirplaneType | HelicopterType | ShipType | GroundType | WeaponType;
   speedKnots: number;
   endType: EndType | null;
 }
@@ -109,12 +109,13 @@ export const toolCategories: { categoryName: string, showAlways: boolean, tools:
       { toolType: 'placeMovable', objectType: 'carrier', speedKnots: 30, endType: null },
     ]
   },
-  // {
-  //   categoryName: 'Ground',
-  //   showAlways: false,
-  //   tools: [
-  //   ]
-  // },
+  {
+    categoryName: 'Ground',
+    showAlways: false,
+    tools: [
+      // { toolType: 'placeMovable', objectType: 'infantry', speedKnots: 10, endType: null },
+    ]
+  },
   {
     categoryName: 'Installations',
     showAlways: false,
