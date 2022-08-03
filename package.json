@@ -1,8 +1,8 @@
 {
-  "name": "fighter-brief",
+  "name": "fighterbrief",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://magwo.github.io/fighter-brief/",
+  "homepage": "https://fighterbrief.com/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -24,7 +24,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "echo 'fighterbrief.com' > ./build/CNAME && gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
