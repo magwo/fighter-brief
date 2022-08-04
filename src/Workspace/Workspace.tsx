@@ -9,6 +9,7 @@ import ObjectEditor from './ObjectEditor/ObjectEditor';
 interface WorkspaceProps {
   tool: Tool;
   shouldPlay: boolean;
+  shouldShowPaths: boolean;
   time: number;
   onStopTimeChange: (stopTime: number) => void
 }
@@ -227,7 +228,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       onMouseUp={(e: React.MouseEvent) => stopPressWorkspace(e)}
       onMouseMove={(e: React.MouseEvent) => movedMouse(e)}>
       {objects.map((object) =>
-        <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={!props.shouldPlay}></BattlefieldObj>
+        <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={props.shouldShowPaths}></BattlefieldObj>
       )
       }
       {objectBeingPlaced && (

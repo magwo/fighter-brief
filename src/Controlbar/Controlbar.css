@@ -72,3 +72,16 @@
     /* border: 1px solid #888; */
     border-radius: 3px;
 }
+
+
+.Controlbar .toggle-paths > .when_paused {
+    opacity: 0.7;
+}
+
+.Controlbar .toggle-paths > .always {
+    opacity: 1.0;
+}
+
+.Controlbar .toggle-paths > .never {
+    opacity: 0.2;
+}

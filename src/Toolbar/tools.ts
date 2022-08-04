@@ -100,18 +100,18 @@ export const toolCategories: { categoryName: string, showAlways: boolean, tools:
             { toolType: 'placeMovable', objectType: 'carrier', speedKnots: 30 },
         ]
     },
-    {
-        categoryName: 'Ground',
-        showAlways: false,
-        tools: [
-            { toolType: 'placeMovable', objectType: 'infantry', speedKnots: 10 },
-            { toolType: 'placeMovable', objectType: 'manpad', speedKnots: 10 },
-            { toolType: 'placeMovable', objectType: 'truck', speedKnots: 50 },
-            { toolType: 'placeMovable', objectType: 'apc', speedKnots: 50 },
-            { toolType: 'placeMovable', objectType: 'tank', speedKnots: 50 },
-            { toolType: 'placeMovable', objectType: 'mobile-SAM', speedKnots: 50 },
-        ]
-    },
+    // {
+    //     categoryName: 'Ground',
+    //     showAlways: false,
+    //     tools: [
+    //         { toolType: 'placeMovable', objectType: 'infantry', speedKnots: 10 },
+    //         { toolType: 'placeMovable', objectType: 'manpad', speedKnots: 10 },
+    //         { toolType: 'placeMovable', objectType: 'truck', speedKnots: 50 },
+    //         { toolType: 'placeMovable', objectType: 'apc', speedKnots: 50 },
+    //         { toolType: 'placeMovable', objectType: 'tank', speedKnots: 50 },
+    //         { toolType: 'placeMovable', objectType: 'mobile-SAM', speedKnots: 50 },
+    //     ]
+    // },
     {
         categoryName: 'Installations',
         showAlways: false,
