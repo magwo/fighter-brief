@@ -1,4 +1,4 @@
-import { BattlefieldObject, createBattlefieldObject, Position } from "./battlefield-object";
+import { BattlefieldObject, createBattlefieldObject, HeadingDegrees, Position, SpeedKnots } from "./battlefield-object";
 import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
 
 // Reserved characters: ,;
@@ -26,9 +26,9 @@ export function loadObjects(data: string): BattlefieldObject[] {
             tokens[i++] as BattleFieldObjectType,
             tokens[i++] === '' ? null : tokens[i - 1] as EndType,
             new Position(Number(tokens[i++]), Number(tokens[i++])),
+            Number(tokens[i++]) as HeadingDegrees,
             Number(tokens[i++]),
-            Number(tokens[i++]),
-            Number(tokens[i++])
+            Number(tokens[i++]) as SpeedKnots
         );
         for (; i < tokens.length - 1; i += 2) {
             obj.path.addPoint(decodeInt(tokens[i]), decodeInt(tokens[i + 1]));
@@ -49,7 +49,7 @@ export function serializeObjects(objects: BattlefieldObject[]): string {
             Math.round(o.position.x), 
             Math.round(o.position.y), 
             Math.round(o.heading), 
-            o.startTime, 
+            o.startTime.toFixed(3), 
             Math.round(o.speed)
         ].join(",");
         const pathPointsStr = o.path.points.map((p) => [encodeInt(p.x), encodeInt(p.y)].join(",")).join(",");
