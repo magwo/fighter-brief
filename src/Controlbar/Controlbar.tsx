@@ -44,13 +44,13 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
 
     if (newTime !== time) {
       setTime(newTime);
-      props.onTimeChange(newTime);
+      // props.onTimeChange(newTime);
     }
   });
 
   const rewind = () => {
     setTime(0);
-    props.onTimeChange(0);
+    // props.onTimeChange(0);
   }
 
   const playPause = () => {
@@ -78,7 +78,7 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
       fraction = Math.max(0, Math.min(1, fraction));
       const newTime = fraction * props.stopTime;
       setTime((prevTime) => newTime);
-      props.onTimeChange(newTime);
+      // props.onTimeChange(newTime);
     }
   }
 
@@ -110,6 +110,12 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
       window.document.removeEventListener("keyup", handleKeyup);
     }
   }, [handleKeydown, handleKeyup]);
+
+  useEffect(() => {
+    // Is this really needed?
+    // Was added due to time bug in workspace caused when deleting objects
+    props.onTimeChange(time);
+  }, [time, props]);
 
 
   const styleTimeHandle = {

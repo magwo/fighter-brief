@@ -96,10 +96,10 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setObjects((prevObjects) => [...prevObjects, objectBeingPlaced]);
       setUndoStack([...undoStack, { action: 'delete', data: { id: objectBeingPlaced.id } }]);
       setObjectBeingPlaced(null);
+      setPseudoTime(null);
       updateAllObjects(newObjects, time);
       updateUrl(newObjects);
       checkStopTime(newObjects, objectBeingPlaced);
-      setPseudoTime(null);
       forceUpdate();
     }
   }
