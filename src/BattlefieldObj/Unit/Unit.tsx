@@ -28,7 +28,7 @@ interface UnitProps {
 
 const Unit: FC<UnitProps> = (props) => {
   const styles = {
-    transform: `translate(${props.object.position.x - 16}px, ${props.object.position.y - 16}px)`
+    transform: `translate(${props.object.position[0] - 16}px, ${props.object.position[1] - 16}px)`
   };
   let graphicsStyles = {
     transform: `rotate(${props.object.heading}deg)`
@@ -39,9 +39,9 @@ const Unit: FC<UnitProps> = (props) => {
     const posAtEnd = props.object.path.getPositionAlongCurveNorm(1);
     const headingAtEnd = props.object.path.getHeadingAlongCurveNorm(1);
     endPosStyles = {
-      transform: `translate(${posAtEnd.x - 16}px, ${posAtEnd.y - 16}px) rotate(${headingAtEnd}deg)`
+      transform: `translate(${posAtEnd[0] - 16}px, ${posAtEnd[1] - 16}px) rotate(${headingAtEnd}deg)`
     }
-    svgPoly = props.object.path.points.map((p) => `${p.x},${p.y}`).join(" ");
+    svgPoly = props.object.path.points.map((p) => `${p[0]},${p[1]}`).join(" ");
   }
 
   // TODO: Import images instead

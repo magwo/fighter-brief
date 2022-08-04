@@ -11,7 +11,7 @@ interface LabelProps {
 const Label: FC<LabelProps> = (props) => {
 
   const styles = {
-    transform: `translate(${props.object.position.x}px, ${props.object.position.y}px) rotate(${props.object.heading}deg)`
+    transform: `translate(${props.object.position[0]}px, ${props.object.position[1]}px) rotate(${props.object.heading}deg)`
   };
   
   return (

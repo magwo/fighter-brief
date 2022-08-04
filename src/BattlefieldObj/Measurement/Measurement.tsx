@@ -12,18 +12,18 @@ const Measurement: FC<MeasurementProps> = (props) => {
 
   const p1 = props.object.path.points[0];
   const p2 = props.object.path.points[1];
-  const dx = p2.x - p1.x;
-  const dy = p2.y - p1.y;
+  const dx = p2[0] - p1[0];
+  const dy = p2[1] - p1[1];
   const heading = Math.atan2(dy, dx) * (360 / (Math.PI * 2));
   const length = Math.sqrt(dx * dx + dy * dy);
 
   const styles = {
-    transform: `translate(${props.object.position.x}px, calc(${props.object.position.y}px - 7px)) rotate(${heading}deg)`,
+    transform: `translate(${props.object.position[0]}px, calc(${props.object.position[1]}px - 7px)) rotate(${heading}deg)`,
     width: `${length}px`
   };
 
   let textStyles = {};
-  if (heading < -90 ||  heading > 90) {
+  if (heading < -90 || heading > 90) {
     textStyles = { transform: 'rotate(180deg)' };
   }
   

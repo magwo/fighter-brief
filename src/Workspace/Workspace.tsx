@@ -28,7 +28,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
   const [selectedObject, setSelectedObject] = useState<BattlefieldObject | null>(null);
   const [undoStack, setUndoStack] = useState<{ action: 'delete' | 'recreate', data: any }[]>([]);
-  const [pressedPos, setPressedPos] = useState<{x: number, y: number}>({x: 0, y: 0});
+  const [pressedPos, setPressedPos] = useState<Position>([0, 0]);
 
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -51,30 +51,30 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   const startPressWorkspace = (e: React.MouseEvent) => {
     setMousePressed(true);
-    setPressedPos({x: e.clientX, y: e.clientY});
+    setPressedPos([e.clientX, e.clientY]);
 
     if (selectedObject) {
       setSelectedObject(null);
     }
 
     if (props.tool.toolType === 'placeMovable') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, new Position(e.clientX, e.clientY), 0, time, props.tool.speedKnots);
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, [e.clientX, e.clientY], 0, time, props.tool.speedKnots);
       newObj.path.addPoint(e.clientX, e.clientY);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeStatic') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, new Position(e.clientX, e.clientY), 0 as HeadingDegrees, time, 0 as SpeedKnots);
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, [e.clientX, e.clientY], 0 as HeadingDegrees, time, 0 as SpeedKnots);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeLabel') {
-      const newObj = createBattlefieldObject(null, "New", 'label', null, new Position(e.clientX, e.clientY), 0 as HeadingDegrees, time, 0 as SpeedKnots);
+      const newObj = createBattlefieldObject(null, "New", 'label', null, [e.clientX, e.clientY], 0 as HeadingDegrees, time, 0 as SpeedKnots);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeMeasurement') {
-      const newObj = createBattlefieldObject(null, "New", 'measurement', null, new Position(e.clientX, e.clientY), 0 as HeadingDegrees, time, 0 as SpeedKnots);
+      const newObj = createBattlefieldObject(null, "New", 'measurement', null, [e.clientX, e.clientY], 0 as HeadingDegrees, time, 0 as SpeedKnots);
       setObjectBeingPlaced(newObj);
       newObj.path.addPoint(e.clientX, e.clientY);
       newObj.path.addPoint(e.clientX, e.clientY);
@@ -124,15 +124,15 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         }
         checkStopTime(objects, objectBeingPlaced);
       } else if (props.tool.toolType === 'placeStatic' || props.tool.toolType === 'placeLabel') {
-        const dx = e.clientX - pressedPos.x;
-        const dy = e.clientY - pressedPos.y;
+        const dx = e.clientX - pressedPos[0];
+        const dy = e.clientY - pressedPos[1];
         const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
         objectBeingPlaced.heading = heading;
         update(objectBeingPlaced, time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
       } else if (props.tool.toolType === 'placeMeasurement') {
         // TODO: Avoid recreating objects
-        objectBeingPlaced.path.setPoints([new Position(pressedPos.x, pressedPos.y), new Position(e.clientX, e.clientY)]);
+        objectBeingPlaced.path.setPoints([[pressedPos[0], pressedPos[1]], [e.clientX, e.clientY]]);
         update(objectBeingPlaced, time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
       }

@@ -1,4 +1,4 @@
-import { BattlefieldObject, createBattlefieldObject, HeadingDegrees, Position, SpeedKnots } from "./battlefield-object";
+import { BattlefieldObject, createBattlefieldObject, HeadingDegrees, SpeedKnots } from "./battlefield-object";
 import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
 
 // Reserved characters: ,;
@@ -25,7 +25,7 @@ export function loadObjects(data: string): BattlefieldObject[] {
             decodeURI(tokens[i++]),
             tokens[i++] as BattleFieldObjectType,
             tokens[i++] === '' ? null : tokens[i - 1] as EndType,
-            new Position(Number(tokens[i++]), Number(tokens[i++])),
+            [Number(tokens[i++]), Number(tokens[i++])],
             Number(tokens[i++]) as HeadingDegrees,
             Number(tokens[i++]),
             Number(tokens[i++]) as SpeedKnots
@@ -46,13 +46,13 @@ export function serializeObjects(objects: BattlefieldObject[]): string {
             encodeURI(o.name), 
             o.type, 
             o.endType ? o.endType : '',
-            Math.round(o.position.x), 
-            Math.round(o.position.y), 
+            Math.round(o.position[0]), 
+            Math.round(o.position[1]), 
             Math.round(o.heading), 
             o.startTime.toFixed(3), 
             Math.round(o.speed)
         ].join(",");
-        const pathPointsStr = o.path.points.map((p) => [encodeInt(p.x), encodeInt(p.y)].join(",")).join(",");
+        const pathPointsStr = o.path.points.map((p) => [encodeInt(p[0]), encodeInt(p[1])].join(",")).join(",");
         return [propsStr, pathPointsStr].join(",");
     });
     return objectStrings.join(";");

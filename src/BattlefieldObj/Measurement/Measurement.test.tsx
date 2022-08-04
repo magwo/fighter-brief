@@ -6,7 +6,7 @@ import Measurement from './Measurement';
 
 describe('<Measurement />', () => {
   test('it should mount', () => {
-    const object = createBattlefieldObject(null, "measurement text", 'measurement', null, new Position(0, 0), 0, 0, 0);
+    const object = createBattlefieldObject(null, "measurement text", 'measurement', null, [0, 0], 0, 0, 0);
     render(<Measurement object={object} isInactive={false} />);
     
     const aircraft = screen.getByTestId('Aircraft');

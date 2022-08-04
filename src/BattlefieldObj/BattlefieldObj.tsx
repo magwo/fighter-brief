@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { BattlefieldObject } from '../battlefield-object';
-import { infoList, InfoType, unitList } from '../battlefield-object-types';
+import { unitList } from '../battlefield-object-types';
 import './BattlefieldObj.css';
 import Label from './Label/Label';
 import Measurement from './Measurement/Measurement';
