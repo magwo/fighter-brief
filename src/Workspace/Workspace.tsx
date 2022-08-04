@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useReducer, useState } from 'react';
 import BattlefieldObj from '../BattlefieldObj/BattlefieldObj';
-import { BattlefieldObject, createBattlefieldObject, getStopTime, Heading, Position, Speed, update } from '../battlefield-object';
+import { BattlefieldObject, createBattlefieldObject, getStopTime, HeadingDegrees, PathCreationMode, Position, SpeedKnots, update } from '../battlefield-object';
 import { loadObjects, serializeObjects } from '../battlefield-object-persister';
 import { Tool } from '../Toolbar/tools';
 import './Workspace.css';
@@ -58,23 +58,23 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
 
     if (props.tool.toolType === 'placeMovable') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(props.tool.speedKnots));
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, new Position(e.clientX, e.clientY), 0, time, props.tool.speedKnots);
       newObj.path.addPoint(e.clientX, e.clientY);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeStatic') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(0));
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, new Position(e.clientX, e.clientY), 0 as HeadingDegrees, time, 0 as SpeedKnots);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeLabel') {
-      const newObj = createBattlefieldObject(null, "New", 'label', null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(0));
+      const newObj = createBattlefieldObject(null, "New", 'label', null, new Position(e.clientX, e.clientY), 0 as HeadingDegrees, time, 0 as SpeedKnots);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeMeasurement') {
-      const newObj = createBattlefieldObject(null, "New", 'measurement', null, new Position(e.clientX, e.clientY), new Heading(0), time, Speed.fromKnots(0));
+      const newObj = createBattlefieldObject(null, "New", 'measurement', null, new Position(e.clientX, e.clientY), 0 as HeadingDegrees, time, 0 as SpeedKnots);
       setObjectBeingPlaced(newObj);
       newObj.path.addPoint(e.clientX, e.clientY);
       newObj.path.addPoint(e.clientX, e.clientY);
@@ -110,10 +110,14 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       let timeUsed = time;
 
       if (props.tool.toolType === 'placeMovable') {
-        objectBeingPlaced.path.considerAddingPoint(e.clientX, e.clientY);
+        let creationMode: PathCreationMode = 'normal';
+        if (e.altKey) { creationMode = 'fly_smooth'; }
+        if (e.shiftKey) { creationMode = 'fly_straight'; }
+        if (e.ctrlKey) { creationMode = 'fly_cardinals'; }
+        objectBeingPlaced.path.considerAddingPoint(e.clientX, e.clientY, creationMode);
         if (objectBeingPlaced.path.points.length > 0) {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
-          objectBeingPlaced.heading.heading = startHdg;
+          objectBeingPlaced.heading = startHdg;
           update(objectBeingPlaced, time);
           timeUsed = getStopTime(objectBeingPlaced);
           setPseudoTime(timeUsed);
@@ -123,7 +127,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         const dx = e.clientX - pressedPos.x;
         const dy = e.clientY - pressedPos.y;
         const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
-        objectBeingPlaced.heading = new Heading(heading);
+        objectBeingPlaced.heading = heading;
         update(objectBeingPlaced, time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
       } else if (props.tool.toolType === 'placeMeasurement') {

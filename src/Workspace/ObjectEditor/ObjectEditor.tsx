@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { BattlefieldObject, Speed } from '../../battlefield-object';
+import { BattlefieldObject, SpeedKnots } from '../../battlefield-object';
 import './ObjectEditor.css';
 
 interface ObjectEditorProps {
@@ -29,14 +29,14 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
 
   const handleSpeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({...values, speed: Number(e.target.value)});
-    props.object.speed = new Speed(Number(e.target.value));
+    props.object.speed = Number(e.target.value) as SpeedKnots;
     props.onObjectModified(props.object);
   }
 
   // TODO: Use effect and save object copy from props? Not sure if needed :S
 
   useEffect(() => {
-    setValues({name: props.object.name, speed: props.object.speed.metersPerSecond});
+    setValues({name: props.object.name, speed: props.object.speed});
   }, [props.object]);
 
 
@@ -50,7 +50,7 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
           <input type="text" value={values.name} onChange={handleNameChange} />
         </label>
         <label>
-          Speed
+          Speed (knots)
           <input type="number" value={values.speed} onChange={handleSpeedChange} />
         </label>
       </form>

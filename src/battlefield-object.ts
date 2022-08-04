@@ -1,4 +1,4 @@
-import { AirplaneType, BattleFieldObjectType, EndType, InfoType, ShipType, StaticType, WeaponType } from "./battlefield-object-types";
+import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
 import { CurveInterpolator2D, simplify2d } from 'curve-interpolator';
 
 export class Position {
@@ -7,35 +7,64 @@ export class Position {
     }
 }
 
-export class Heading {
-    constructor(public heading: number) {
+export type HeadingDegrees = number;
+export type SpeedKnots = number;
+const SPEED_PIXEL_FACTOR = 0.22;
 
-    }
-}
-
-export class Speed {
-    constructor(public metersPerSecond: number) {
-    }
-
-    get pixelsPerSecond(): number {
-        return this.metersPerSecond * 0.4;
-    }
-
-    static fromKnots(knots: number) {
-        return new Speed(knots * 0.51444);
-    }
-}
+export type PathCreationMode = 'normal' | 'fly_cardinals' | 'fly_straight' | 'fly_smooth';
 
 export class Path {
     // Consider switching to array coordinates for performance
     points: Position[] = [];
     curve: any;
 
-    considerAddingPoint(x: number, y: number) {
+    considerAddingPoint(x: number, y: number, pathMode: PathCreationMode) {
         const dx = x - this.points[this.points.length - 1].x;
         const dy = y - this.points[this.points.length - 1].y;
+        // TODO: Need to first project on stuff with special modes
         const lenSqrd = dx * dx + dy * dy;
         if (lenSqrd > 20 * 20) {
+            if (pathMode === 'fly_cardinals' && this.points.length > 0) {
+                console.log("Cardinals");
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    y = this.points[this.points.length - 1].y;
+                } else {
+                    x = this.points[this.points.length - 1].x;
+                }
+            } else if(pathMode === 'fly_straight' && this.points.length > 1) {
+                console.log("Straight");
+                const numP = this.points.length;
+                const len = Math.sqrt(lenSqrd);
+                const prevDx = this.points[numP - 1].x - this.points[numP - 2].x
+                const prevDy = this.points[numP - 1].y - this.points[numP - 2].y
+                const prevAngle = Math.atan2(prevDy, prevDx);
+
+                // TODO: Fix up
+                x = this.points[numP - 1].x + len * Math.cos(prevAngle);
+                y = this.points[numP - 1].y + len * Math.sin(prevAngle);
+            } else if(pathMode === 'fly_smooth' && this.points.length > 1) {
+                console.log("Smooth");
+                const numP = this.points.length;
+                const len = Math.sqrt(lenSqrd);
+                const prevDx = this.points[numP - 1].x - this.points[numP - 2].x
+                const prevDy = this.points[numP - 1].y - this.points[numP - 2].y
+                const prevAngle = Math.PI*2 + Math.atan2(prevDy, prevDx);
+                let newAngle = Math.PI*2 + Math.atan2(dy, dx);
+                
+                const maxAngleChange = len * 0.001; // Magic number. TODO: Base upon speed and/or turn radius
+                console.log("New angle", newAngle);
+                console.log("Prev angle", prevAngle);
+                if (newAngle - prevAngle > maxAngleChange) {
+                    newAngle = prevAngle + maxAngleChange;
+                } else if(newAngle - prevAngle < -maxAngleChange) {
+                    newAngle = prevAngle - maxAngleChange;
+                }
+
+                // TODO: Fix up
+
+                x = this.points[numP - 1].x + len * Math.cos(newAngle);
+                y = this.points[numP - 1].y + len * Math.sin(newAngle);
+            }
             this.addPoint(x, y);
         }
     }
@@ -68,8 +97,8 @@ export class Path {
         return 90 + angle * 360 / (Math.PI * 2);
     }
 
-    getStopTime(startTime: number, speed: Speed): number {
-        const travelTime = this.curve.length / speed.pixelsPerSecond;
+    getStopTime(startTime: number, speed: SpeedKnots): number {
+        const travelTime = this.curve.length / (speed * SPEED_PIXEL_FACTOR);
         return startTime + travelTime;
 
     }
@@ -83,15 +112,15 @@ export interface BattlefieldObject {
     type: BattleFieldObjectType;
     endType: EndType;
     position: Position;
-    heading: Heading;
+    heading: HeadingDegrees;
     startTime: number;
-    speed: Speed;
+    speed: SpeedKnots;
     path: Path;
     isVisible: boolean;
     hasReachedEnd: boolean;
 }
 
-export function createBattlefieldObject(id: string | null, name: string, type: BattleFieldObjectType, endType: EndType, position: Position, heading: Heading, startTime: number, speed: Speed): BattlefieldObject {
+export function createBattlefieldObject(id: string | null, name: string, type: BattleFieldObjectType, endType: EndType, position: Position, heading: HeadingDegrees, startTime: number, speed: SpeedKnots): BattlefieldObject {
     if (id === null) {
         id = getRandomId(8);
     }
@@ -117,7 +146,7 @@ export function update(obj: BattlefieldObject, timeSeconds: number) {
     // For some reason curve will throw exception if using less than 3 points
     if (obj.path.points.length > 2) {
         obj.position = getPositionAlongCurve(obj, timeSeconds);
-        obj.heading.heading = getHeadingAlongCurve(obj, timeSeconds);
+        obj.heading = getHeadingAlongCurve(obj, timeSeconds);
     }
 }
 
@@ -132,14 +161,14 @@ export function getPositionAlongCurve(obj: BattlefieldObject, time: number): Pos
     }
 }
 
-export function getHeadingAlongCurve(obj: BattlefieldObject, time: number): number {
+export function getHeadingAlongCurve(obj: BattlefieldObject, time: number): HeadingDegrees {
     if (obj.path.points.length > 2) {
         const stopTime = getStopTime(obj);
         let normalizedTime = (time - obj.startTime) / (stopTime - obj.startTime);
         normalizedTime = Math.max(0, Math.min(1, normalizedTime));
         return obj.path.getHeadingAlongCurveNorm(normalizedTime);
     } else {
-        return obj.heading.heading;
+        return obj.heading;
     }
 }
 

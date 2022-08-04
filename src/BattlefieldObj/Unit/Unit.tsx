@@ -31,7 +31,7 @@ const Unit: FC<UnitProps> = (props) => {
     transform: `translate(${props.object.position.x - 16}px, ${props.object.position.y - 16}px)`
   };
   let graphicsStyles = {
-    transform: `rotate(${props.object.heading.heading}deg)`
+    transform: `rotate(${props.object.heading}deg)`
   }
   let endPosStyles;
   let svgPoly;
