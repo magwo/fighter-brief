@@ -5,6 +5,7 @@ import { ReactComponent as Pause } from './images/pause.svg';
 import { ReactComponent as BackwardFast } from './images/backward-fast.svg';
 import { ReactComponent as Repeat } from './images/repeat.svg';
 import { ReactComponent as Route } from './images/route.svg';
+import { ReactComponent as Question } from './images/question.svg';
 import './Controlbar.css';
 
 const TIME_BAR_WIDTH = 400;
@@ -171,6 +172,10 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
         <div className={`clickable toggle-paths`} onClick={() => { togglePathsMode() }} title={`Path display mode: ${ROUTE_DISPLAY_MODES[pathDisplayModeIndex]}`}>
           <Route className={`svg-icon ${ROUTE_DISPLAY_MODES[pathDisplayModeIndex]}`} />
         </div>
+
+        <a href="https://github.com/magwo/fighter-brief#readme" target="_blank" className={`clickable`} onClick={() => { togglePathsMode() }} title="Help">
+          <Question className="svg-icon" />
+        </a>
       </div>
     </div >
   );
