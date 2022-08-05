@@ -9,6 +9,9 @@ export class PositionMath {
     static length2D(p: Position) {
         return Math.sqrt(p[0] * p[0] + p[1] * p[1]);
     }
+    static add(p1: Position, p2: Position): Position {
+        return [p1[0] + p2[0], p1[1] + p2[1]];
+    }
     static delta(p1: Position, p0: Position): Position {
         return [p1[0] - p0[0], p1[1] - p0[1]];
     }

@@ -65,7 +65,6 @@ const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
     const buttonsStyle = isExpanded ? {} : {
       maxHeight: '30px',
       filter: 'drop-shadow(0px 10px 5px rgba(0,0,0,0.1))',
-      overflow: 'hidden'
     };
     return (
       <div className="category" key={'category-' + c.categoryName}>

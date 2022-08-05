@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useReducer, useState } from 'react';
 import BattlefieldObj from '../BattlefieldObj/BattlefieldObj';
-import { BattlefieldObject, createBattlefieldObject, getStopTime, HeadingDegrees, PathCreationMode, Position, SpeedKnots, update } from '../battlefield-object';
+import { BattlefieldObject, createBattlefieldObject, getStopTime, HeadingDegrees, PathCreationMode, Position, PositionMath, SpeedKnots, update } from '../battlefield-object';
 import { loadObjects, serializeObjects } from '../battlefield-object-persister';
 import { Tool } from '../Toolbar/tools';
 import './Workspace.css';
@@ -20,6 +20,10 @@ function updateAllObjects(objects: BattlefieldObject[], time: number) {
   });
 }
 
+function getClientPosWithPan(e: React.MouseEvent | MouseEvent, pan: Position): Position {
+  return [e.clientX - pan[0], e.clientY - pan[1]];
+}
+
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [time, setTime] = useState<number>(0);
   const [pseudoTime, setPseudoTime] = useState<number | null>(null);
@@ -29,6 +33,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [selectedObject, setSelectedObject] = useState<BattlefieldObject | null>(null);
   const [undoStack, setUndoStack] = useState<{ action: 'delete' | 'recreate', data: any }[]>([]);
   const [pressedPos, setPressedPos] = useState<Position>([0, 0]);
+  const [pan, setPan] = useState<Position>([0, 0]);
+  const [panOrigin, setPanOrigin] = useState<Position>([0, 0]);
 
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -57,27 +63,33 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setSelectedObject(null);
     }
 
+    if (e.buttons === 2) {
+      setPanOrigin(pan);
+      return;
+    }
+
+    const clientPosWithPan = getClientPosWithPan(e, pan);
     if (props.tool.toolType === 'placeMovable') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, [e.clientX, e.clientY], 0, time, props.tool.speedKnots);
-      newObj.path.addPoint(e.clientX, e.clientY);
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, time, props.tool.speedKnots);
+      newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeStatic') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, [e.clientX, e.clientY], 0 as HeadingDegrees, time, 0 as SpeedKnots);
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, clientPosWithPan, 0 as HeadingDegrees, time, 0 as SpeedKnots);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeLabel') {
-      const newObj = createBattlefieldObject(null, "New", 'label', null, [e.clientX, e.clientY], 0 as HeadingDegrees, time, 0 as SpeedKnots);
+      const newObj = createBattlefieldObject(null, "New", 'label', null, clientPosWithPan, 0 as HeadingDegrees, time, 0 as SpeedKnots);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeMeasurement') {
-      const newObj = createBattlefieldObject(null, "New", 'measurement', null, [e.clientX, e.clientY], 0 as HeadingDegrees, time, 0 as SpeedKnots);
+      const newObj = createBattlefieldObject(null, "New", 'measurement', null, clientPosWithPan, 0 as HeadingDegrees, time, 0 as SpeedKnots);
       setObjectBeingPlaced(newObj);
-      newObj.path.addPoint(e.clientX, e.clientY);
-      newObj.path.addPoint(e.clientX, e.clientY);
+      newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
+      newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       checkStopTime(objects, newObj);
     }
   }
@@ -106,6 +118,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   }
 
   const movedMouse = (e: React.MouseEvent) => {
+    if (e.buttons === 2) {
+      const delta = PositionMath.delta([e.clientX, e.clientY], pressedPos);
+      setPan(PositionMath.add(panOrigin, delta));
+      e.preventDefault();
+    }
     if (mousePressed && objectBeingPlaced) {
       let timeUsed = time;
 
@@ -114,7 +131,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         if (e.altKey) { creationMode = 'fly_smooth'; }
         if (e.shiftKey) { creationMode = 'fly_straight'; }
         if (e.ctrlKey || e.metaKey) { creationMode = 'fly_cardinals'; }
-        objectBeingPlaced.path.considerAddingPoint(e.clientX, e.clientY, creationMode);
+        objectBeingPlaced.path.considerAddingPoint(e.clientX - pan[0], e.clientY - pan[1], creationMode);
         if (objectBeingPlaced.path.points.length > 0) {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
           objectBeingPlaced.heading = startHdg;
@@ -132,7 +149,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         setObjectBeingPlaced({ ...objectBeingPlaced } );
       } else if (props.tool.toolType === 'placeMeasurement') {
         // TODO: Avoid recreating objects
-        objectBeingPlaced.path.setPoints([[pressedPos[0], pressedPos[1]], [e.clientX, e.clientY]]);
+        objectBeingPlaced.path.setPoints([[pressedPos[0] - pan[0], pressedPos[1] - pan[1]], getClientPosWithPan(e, pan)]);
         update(objectBeingPlaced, time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
       }
@@ -226,22 +243,28 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }, []);
 
+  const panStyle = {
+    transform: `translate(${pan[0]}px, ${pan[1]}px)`,
+  }
+
   return (
-    <div className="Workspace" data-testid="Workspace"
+    <div className="Workspace"  data-testid="Workspace"
       onMouseDown={(e: React.MouseEvent) => startPressWorkspace(e)}
       onMouseUp={(e: React.MouseEvent) => stopPressWorkspace(e)}
       onMouseMove={(e: React.MouseEvent) => movedMouse(e)}>
-      {objects.map((object) =>
-        <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={props.shouldShowPaths}></BattlefieldObj>
-      )
-      }
-      {objectBeingPlaced && (
-        <BattlefieldObj object={objectBeingPlaced} isInactive={true} shouldShowPath={true} />
-      )}
+      <div className="panner" style={panStyle}>
+        {objects.map((object) =>
+          <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={props.shouldShowPaths}></BattlefieldObj>
+        )
+        }
+        {objectBeingPlaced && (
+          <BattlefieldObj object={objectBeingPlaced} isInactive={true} shouldShowPath={true} />
+        )}
 
-      {selectedObject && (
-        <ObjectEditor object={selectedObject} onObjectModified={(obj) => { objectModified(obj); }} />
-      )}
+        {selectedObject && (
+          <ObjectEditor object={selectedObject} onObjectModified={(obj) => { objectModified(obj); }} />
+        )}
+        </div>
     </div>
   );
 }
