@@ -13,6 +13,17 @@ Select the object type you would like to place from the toolbar on the left. If 
 
 <img src="https://raw.githubusercontent.com/magwo/fighter-brief/main/fighterbrief-example.gif" style="width: 400px"></img>
 
+### Hotkeys
+
+| Key      | Action |
+| ----------- | ----------- |
+| Right mouse button (hold      | Pan       |
+| Spacebar   | Play/Pause        |
+| Right arrow (hold)   | Forward        |
+| Left arrow (hold)   | Rewind        |
+| Up arrow   | Increase playback speed        |
+| Down arrow   | Decrease playback speed        |
+
 ### How to share a scenario
 
 Once you have made a change to the current scenario, the URL will be updated. To share a scenario with someone else, simply send them the full URL. They will be able to see the animation, and continue editing it if they wish.
