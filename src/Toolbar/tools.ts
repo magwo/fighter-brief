@@ -4,6 +4,7 @@ export interface PlaceMovableTool {
     toolType: 'placeMovable';
     objectType: AirplaneType | HelicopterType | ShipType | GroundType | WeaponType;
     speedKnots: number;
+    pathSmoothness?: number | undefined,
     endType?: EndType | null;
 }
 
@@ -79,27 +80,27 @@ export const toolCategories: { categoryName: string, showAlways: boolean, tools:
         categoryName: 'Helicopters',
         showAlways: false,
         tools: [
-            { toolType: 'placeMovable', objectType: 'apache', speedKnots: 150 },
-            { toolType: 'placeMovable', objectType: 'hind', speedKnots: 150 },
-            { toolType: 'placeMovable', objectType: 'huey', speedKnots: 100 },
+            { toolType: 'placeMovable', objectType: 'apache', speedKnots: 150, pathSmoothness: 0.2 },
+            { toolType: 'placeMovable', objectType: 'hind', speedKnots: 150, pathSmoothness: 0.2 },
+            { toolType: 'placeMovable', objectType: 'huey', speedKnots: 100, pathSmoothness: 0.2 },
         ]
     },
     {
         categoryName: 'Weapons',
         showAlways: false,
         tools: [
-            { toolType: 'placeMovable', objectType: 'mk82', speedKnots: 300, endType: 'expl_m' },
-            { toolType: 'placeMovable', objectType: 'amraam', speedKnots: 1000, endType: 'expl_m' },
-            { toolType: 'placeMovable', objectType: 'sidewinder', speedKnots: 1000, endType: 'expl_m' },
-            { toolType: 'placeMovable', objectType: 'harm', speedKnots: 1000, endType: 'expl_m' },
+            { toolType: 'placeMovable', objectType: 'mk82', speedKnots: 300, endType: 'expl_m', pathSmoothness: 0.8 },
+            { toolType: 'placeMovable', objectType: 'amraam', speedKnots: 1000, endType: 'expl_m', pathSmoothness: 0.5 },
+            { toolType: 'placeMovable', objectType: 'sidewinder', speedKnots: 1000, endType: 'expl_m', pathSmoothness: 0.3 },
+            { toolType: 'placeMovable', objectType: 'harm', speedKnots: 1000, endType: 'expl_m', pathSmoothness: 0.7 },
         ]
     },
     {
         categoryName: 'Ships',
         showAlways: false,
         tools: [
-            { toolType: 'placeMovable', objectType: 'carrier', speedKnots: 30 },
-            { toolType: 'placeMovable', objectType: 'cruiser', speedKnots: 30 },
+            { toolType: 'placeMovable', objectType: 'carrier', speedKnots: 30, pathSmoothness: 0.5 },
+            { toolType: 'placeMovable', objectType: 'cruiser', speedKnots: 30, pathSmoothness: 0.5 },
         ]
     },
     {
@@ -107,11 +108,11 @@ export const toolCategories: { categoryName: string, showAlways: boolean, tools:
         showAlways: false,
         tools: [
             // { toolType: 'placeMovable', objectType: 'infantry', speedKnots: 10 },
-            { toolType: 'placeMovable', objectType: 'manpad', speedKnots: 10 },
-            { toolType: 'placeMovable', objectType: 'truck', speedKnots: 50 },
-            { toolType: 'placeMovable', objectType: 'apc', speedKnots: 50 },
-            { toolType: 'placeMovable', objectType: 'tank', speedKnots: 50 },
-            { toolType: 'placeMovable', objectType: 'mobilesam', speedKnots: 50 },
+            { toolType: 'placeMovable', objectType: 'apc', speedKnots: 50, pathSmoothness: 0.15 },
+            { toolType: 'placeMovable', objectType: 'tank', speedKnots: 50, pathSmoothness: 0.15 },
+            { toolType: 'placeMovable', objectType: 'truck', speedKnots: 50, pathSmoothness: 0.15 },
+            { toolType: 'placeMovable', objectType: 'manpad', speedKnots: 10, pathSmoothness: 0.05 },
+            { toolType: 'placeMovable', objectType: 'mobilesam', speedKnots: 50, pathSmoothness: 0.15 },
         ]
     },
     {

@@ -56,7 +56,7 @@ export class Path {
     points: Position[] = [];
     curve: any;
 
-    considerAddingPoint(x: number, y: number, pathMode: PathCreationMode) {
+    considerAddingPoint(x: number, y: number, pathMode: PathCreationMode, smoothness: number | undefined) {
         const prevPoint = this.points[this.points.length - 1];
         const delta = PositionMath.delta([x, y], prevPoint);
         // TODO: Need to first project on stuff with special modes
@@ -101,7 +101,8 @@ export class Path {
             if (prevAngle > newAngle + Math.PI) {
                 prevAngle -= Math.PI * 2;
             }
-            newAngle = prevAngle * 0.7 + newAngle * 0.3;
+            smoothness = smoothness ?? 0.7;
+            newAngle = prevAngle * smoothness + newAngle * (1.0 - smoothness);
 
             const newVector: Position = [len * Math.cos(newAngle), len * Math.sin(newAngle)];
             let projected = PositionMath.projectOn(delta, newVector);
