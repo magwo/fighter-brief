@@ -118,6 +118,7 @@ export const toolCategories: { categoryName: string, showAlways: boolean, tools:
         categoryName: 'Installations',
         showAlways: false,
         tools: [
+            { toolType: 'placeStatic', objectType: 'bullseye', },
             { toolType: 'placeStatic', objectType: 'airfield', },
             { toolType: 'placeStatic', objectType: 'bridge', },
             { toolType: 'placeStatic', objectType: 'aaa', },
