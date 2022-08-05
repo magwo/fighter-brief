@@ -2,9 +2,9 @@
 export const airplaneList = ['albatros', 'awacs', 'blackjack', 'fishbed', 'flanker', 'gripen', 'harrier', 'hercules', 'hornet', 'lancer', 'stratofortress', 'tanker', 'thunder', 'tiger', 'tomcat', 'viggen', 'viper', 'warthog'] as const;
 export const helicopterList = ['apache', 'hind', 'huey'] as const;
 export const shipList = ['carrier', 'cruiser', 'frigate', 'gunboat', 'cargoship', 'tanker-ship'] as const;
-export const staticList = ['airfield', 'SAM-site', 'factory', 'bridge', 'base', 'farp'] as const;
+export const staticList = ['airfield', 'samsite', 'factory', 'bridge', 'base', 'farp', 'aaa'] as const;
 export const weaponList = ['amraam', 'sidewinder', 'mk82', 'harm', 'hellfire', 'rockets', 'cruise-missile'] as const;
-export const groundList = ['infantry', 'manpad', 'truck', 'apc', 'tank', 'mobile-SAM'] as const;
+export const groundList = ['infantry', 'manpad', 'truck', 'apc', 'tank', 'mobilesam'] as const;
 export const endList = ['expl_m'] as const;
 export const infoList = ['label', 'measurement'] as const;
 export const unitList: string[] = [...airplaneList, ...helicopterList, ...shipList, ...groundList, ...staticList, ...weaponList];
