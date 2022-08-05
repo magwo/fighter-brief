@@ -10,6 +10,7 @@ Examples of usage scenarios include lectures, training, briefings, debriefings a
 
 Select the object type you would like to place from the toolbar on the left. If the object is a moving unit type, such as an airplane, place it by pressing the left mouse button and drag it along the workspace surface. This will result in the unit moving along the path drawn. To see the animation, press the _Play_ button.
 
+Note that mobile phones are currently __not__ supported.
 
 <img src="https://raw.githubusercontent.com/magwo/fighter-brief/main/fighterbrief-example.gif" style="width: 400px"></img>
 
