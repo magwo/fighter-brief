@@ -1,7 +1,47 @@
 import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
 import { CurveInterpolator2D, simplify2d } from 'curve-interpolator';
 
+const TWO_PI = Math.PI * 2;
 export type Position = [number, number];
+export class PositionMath {
+    
+    private constructor() {}
+    static length2D(p: Position) {
+        return Math.sqrt(p[0] * p[0] + p[1] * p[1]);
+    }
+    static delta(p1: Position, p0: Position): Position {
+        return [p1[0] - p0[0], p1[1] - p0[1]];
+    }
+    static angle(vector: Position): number {
+        return Math.atan2(vector[1], vector[0]);
+    }
+    static heading(vector: Position): number {
+        const angle = Math.atan2(vector[1], vector[0]);
+        return 90 + angle * 360 / TWO_PI;
+    }
+    static normalize(vector: Position): Position {
+        const len = PositionMath.length2D(vector);
+        return [vector[0] / len, vector[1] / len];
+    }
+    static toLength(vector: Position, length: number): Position {
+        const currentLen = PositionMath.length2D(vector);
+        return [length * vector[0] / currentLen, length * vector[1] / currentLen];
+    }
+    static dotProduct(vector1: Position, vector2: Position): number {
+        return vector1[0] * vector2[0] + vector1[1] * vector2[1];
+    }
+    static projectOn(vector: Position, targetVector: Position): Position {
+        const dotProduct = PositionMath.dotProduct(vector, targetVector);
+        const targetLenSqrd = PositionMath.dotProduct(targetVector, targetVector);
+        const factor = dotProduct / targetLenSqrd;
+        return [targetVector[0] * factor, targetVector[1] * factor];
+    }
+
+    static makeAngleWorkable(angle: number) {
+        return ((angle + TWO_PI) % TWO_PI) + TWO_PI;
+    }
+}
+(window as any).PositionMath = PositionMath;
 
 export type HeadingDegrees = number;
 export type SpeedKnots = number;
@@ -10,58 +50,68 @@ const SPEED_PIXEL_FACTOR = 0.22;
 export type PathCreationMode = 'normal' | 'fly_cardinals' | 'fly_straight' | 'fly_smooth';
 
 export class Path {
-    // Consider switching to array coordinates for performance
     points: Position[] = [];
     curve: any;
 
     considerAddingPoint(x: number, y: number, pathMode: PathCreationMode) {
-        const dx = x - this.points[this.points.length - 1][0];
-        const dy = y - this.points[this.points.length - 1][1];
+        const prevPoint = this.points[this.points.length - 1];
+        const delta = PositionMath.delta([x, y], prevPoint);
         // TODO: Need to first project on stuff with special modes
-        const lenSqrd = dx * dx + dy * dy;
-        if (lenSqrd > 20 * 20) {
-            if (pathMode === 'fly_cardinals' && this.points.length > 0) {
-                console.log("Cardinals");
-                if (Math.abs(dx) > Math.abs(dy)) {
-                    y = this.points[this.points.length - 1][1];
-                } else {
-                    x = this.points[this.points.length - 1][0];
-                }
-            } else if(pathMode === 'fly_straight' && this.points.length > 1) {
-                console.log("Straight");
-                const numP = this.points.length;
-                const len = Math.sqrt(lenSqrd);
-                const prevDx = this.points[numP - 1][0] - this.points[numP - 2][0]
-                const prevDy = this.points[numP - 1][1] - this.points[numP - 2][1]
-                const prevAngle = Math.atan2(prevDy, prevDx);
-
-                // TODO: Fix up
-                x = this.points[numP - 1][0] + len * Math.cos(prevAngle);
-                y = this.points[numP - 1][1] + len * Math.sin(prevAngle);
-            } else if(pathMode === 'fly_smooth' && this.points.length > 1) {
-                console.log("Smooth");
-                const numP = this.points.length;
-                const len = Math.sqrt(lenSqrd);
-                const prevDx = this.points[numP - 1][0] - this.points[numP - 2][0]
-                const prevDy = this.points[numP - 1][1] - this.points[numP - 2][1]
-                const prevAngle = Math.PI*2 + Math.atan2(prevDy, prevDx);
-                let newAngle = Math.PI*2 + Math.atan2(dy, dx);
-                
-                const maxAngleChange = len * 0.001; // Magic number. TODO: Base upon speed and/or turn radius
-                console.log("New angle", newAngle);
-                console.log("Prev angle", prevAngle);
-                if (newAngle - prevAngle > maxAngleChange) {
-                    newAngle = prevAngle + maxAngleChange;
-                } else if(newAngle - prevAngle < -maxAngleChange) {
-                    newAngle = prevAngle - maxAngleChange;
-                }
-
-                // TODO: Fix up
-
-                x = this.points[numP - 1][0] + len * Math.cos(newAngle);
-                y = this.points[numP - 1][1] + len * Math.sin(newAngle);
-            }
+        const len = PositionMath.length2D(delta);
+        const MIN_DISTANCE = 20;
+        
+        if ((pathMode === 'normal' || this.points.length < 2) && len > MIN_DISTANCE) {
+            // TODO: Consider when we have to add initial points for special modes
             this.addPoint(x, y);
+        }
+        else if (pathMode === 'fly_cardinals' && this.points.length > 0) {
+            console.log("Cardinals");
+            if (Math.abs(delta[0]) > Math.abs(delta[1])) {
+                y = this.points[this.points.length - 1][1];
+            } else {
+                x = this.points[this.points.length - 1][0];
+            }
+        } else if(pathMode === 'fly_straight' && this.points.length > 1) {
+            const prevPrevPoint = this.points[this.points.length - 2];
+            const prevDelta = PositionMath.delta(prevPoint, prevPrevPoint);
+
+            const projected = PositionMath.projectOn(delta, prevDelta);
+            const projectedLen = PositionMath.length2D(projected);
+
+            const isCorrectDirection = PositionMath.dotProduct(delta, prevDelta) > 0;
+
+            if (projectedLen > MIN_DISTANCE && isCorrectDirection) {
+                this.addPoint(prevPoint[0] + projected[0], prevPoint[1] + projected[1]);
+            }
+        } else if(pathMode === 'fly_smooth' && this.points.length > 1) {
+            const prevPrevPoint = this.points[this.points.length - 2];
+            const prevDelta = PositionMath.delta(prevPoint, prevPrevPoint);
+            // TODO: Are these workable calls needed?
+            let prevAngle = PositionMath.makeAngleWorkable(PositionMath.angle(prevDelta));
+            let newAngle = PositionMath.makeAngleWorkable(PositionMath.angle(delta));
+            
+            // const maxAngleChange = len * 0.01; // Magic number. TODO: Base upon speed and/or turn radius
+
+            if (prevAngle < newAngle - Math.PI) {
+                prevAngle += Math.PI * 2;
+            }
+            if (prevAngle > newAngle + Math.PI) {
+                prevAngle -= Math.PI * 2;
+            }
+            newAngle = prevAngle * 0.7 + newAngle * 0.3;
+
+            const newVector: Position = [len * Math.cos(newAngle), len * Math.sin(newAngle)];
+            let projected = PositionMath.projectOn(delta, newVector);
+            const projectedLen = PositionMath.length2D(projected);
+            const isCorrectDirection = PositionMath.dotProduct(delta, prevDelta) > 0;
+
+            if (projectedLen > MIN_DISTANCE && isCorrectDirection) {
+                if (projectedLen > 2 * MIN_DISTANCE) {
+                    projected = PositionMath.toLength(projected, MIN_DISTANCE * 2);
+                }
+                this.addPoint(prevPoint[0] + projected[0], prevPoint[1] + projected[1]);
+            }
+    
         }
     }
     setPoints(points: Position[]) {

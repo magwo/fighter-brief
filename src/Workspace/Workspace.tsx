@@ -110,10 +110,10 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       let timeUsed = time;
 
       if (props.tool.toolType === 'placeMovable') {
-        let creationMode: PathCreationMode = 'normal';
+        let creationMode: PathCreationMode = 'fly_smooth';
         if (e.altKey) { creationMode = 'fly_smooth'; }
         if (e.shiftKey) { creationMode = 'fly_straight'; }
-        if (e.ctrlKey) { creationMode = 'fly_cardinals'; }
+        if (e.ctrlKey || e.metaKey) { creationMode = 'fly_cardinals'; }
         objectBeingPlaced.path.considerAddingPoint(e.clientX, e.clientY, creationMode);
         if (objectBeingPlaced.path.points.length > 0) {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
