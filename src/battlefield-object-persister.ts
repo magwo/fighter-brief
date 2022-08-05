@@ -17,7 +17,12 @@ function encodeInt(n: number) {
 export function loadObjects(data: string): BattlefieldObject[] {
     const objectStrings: string[] = data.replace(/^#/, "").split(";");
 
-    const objects = objectStrings.map((str) => {
+    const version = objectStrings[0];
+    console.log("Data version is", version);
+    const name = decodeURI(objectStrings[1]);
+    console.log("Scenario name is", name);
+
+    const objects = objectStrings.slice(2).map((str) => {
         const tokens = str.split(",");
         let i = 0;
         const obj = createBattlefieldObject(
@@ -40,6 +45,9 @@ export function loadObjects(data: string): BattlefieldObject[] {
 }
 
 export function serializeObjects(objects: BattlefieldObject[]): string {
+    const version = "v1";
+    const name = encodeURI(''); // Scenario name, currently not used
+    const prefixStrings = [version, name];
     const objectStrings: string[] = objects.map((o) => {
         const propsStr = [
             o.id, 
@@ -55,5 +63,5 @@ export function serializeObjects(objects: BattlefieldObject[]): string {
         const pathPointsStr = o.path.points.map((p) => [encodeInt(p[0]), encodeInt(p[1])].join(",")).join(",");
         return [propsStr, pathPointsStr].join(",");
     });
-    return objectStrings.join(";");
+    return [...prefixStrings, ...objectStrings].join(";");
 }
