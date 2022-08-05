@@ -17,7 +17,7 @@ Select the object type you would like to place from the toolbar on the left. If 
 
 | Key      | Action |
 | ----------- | ----------- |
-| Right mouse button (hold      | Pan       |
+| Right mouse button (hold)      | Pan       |
 | Spacebar   | Play/Pause        |
 | Right arrow (hold)   | Forward        |
 | Left arrow (hold)   | Rewind        |
