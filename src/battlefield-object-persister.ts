@@ -6,6 +6,8 @@ import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
 // TODO: Write tests for this before optimizing
 // TODO: Could use even better compression for shorter urls
 
+const CURRENT_VERSION = "v1";
+
 function decodeInt(s: string): number {
     return Number.parseInt(s, 36);
 }
@@ -14,14 +16,21 @@ function encodeInt(n: number) {
     return Math.round(n).toString(36);
 }
 
-export function loadObjects(data: string): BattlefieldObject[] {
+export function loadData(data: string): { scenarioName: string, loadedObjects: BattlefieldObject[] } {
     const objectStrings: string[] = data.replace(/^#/, "").split(";");
 
     const version = objectStrings[0];
-    console.log("Data version is", version);
-    const name = decodeURI(objectStrings[1]);
-    console.log("Scenario name is", name);
+    console.log("Data version is", version, "Loading...");
+    if (version === "v1") {
+        return decodeVersion1(data);
+    } else {
+        throw new Error(`Unknown data version "${version}", unable to load`);
+    }
+}
 
+function decodeVersion1(data: string): { scenarioName: string, loadedObjects: BattlefieldObject[] } {
+    const objectStrings: string[] = data.split(";");
+    const name = decodeURI(objectStrings[1]);
     const objects = objectStrings.slice(2).map((str) => {
         const tokens = str.split(",");
         let i = 0;
@@ -41,11 +50,11 @@ export function loadObjects(data: string): BattlefieldObject[] {
         return obj;
     });
 
-    return objects;
+    return { scenarioName: name, loadedObjects: objects };
 }
 
-export function serializeObjects(objects: BattlefieldObject[]): string {
-    const version = "v1";
+export function serializeData(objects: BattlefieldObject[]): string {
+    const version = CURRENT_VERSION;
     const name = encodeURI(''); // Scenario name, currently not used
     const prefixStrings = [version, name];
     const objectStrings: string[] = objects.map((o) => {

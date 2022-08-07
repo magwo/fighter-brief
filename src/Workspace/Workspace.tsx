@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useReducer, useState } from 'react';
 import BattlefieldObj from '../BattlefieldObj/BattlefieldObj';
 import { BattlefieldObject, createBattlefieldObject, getStopTime, HeadingDegrees, PathCreationMode, Position, PositionMath, SpeedKnots, update } from '../battlefield-object';
-import { loadObjects, serializeObjects } from '../battlefield-object-persister';
+import { loadData, serializeData } from '../battlefield-object-persister';
 import { Tool } from '../Toolbar/tools';
 import './Workspace.css';
 import ObjectEditor from './ObjectEditor/ObjectEditor';
@@ -40,7 +40,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   const updateUrl = (newObjects: BattlefieldObject[]) => {
     // TODO: Move this to App or something
-    const serialized = serializeObjects(newObjects);
+    const serialized = serializeData(newObjects);
     window.location.hash = serialized;
   }
 
@@ -235,7 +235,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   useEffect(() => {
     // Load initial objects
     if (window.location.hash.length > 0) {
-      const loadedObjects = loadObjects(window.location.hash);
+      const { scenarioName, loadedObjects } = loadData(window.location.hash);
+      console.log("Scenario name is", scenarioName);
       console.log("Initial objects", loadedObjects);
       updateAllObjects(loadedObjects, 0);
       setObjects(loadedObjects);

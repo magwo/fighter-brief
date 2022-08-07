@@ -13,7 +13,7 @@ function App() {
   const [shouldShowPaths, setShouldShowPaths] = useState<boolean>(true);
 
   return (
-    <div className="App">
+    <div className="App" data-testid="App">
       <header className="App-header">
       </header>
       <Workspace tool={selectedTool} shouldPlay={shouldPlay} shouldShowPaths={shouldShowPaths} time={time} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} />
