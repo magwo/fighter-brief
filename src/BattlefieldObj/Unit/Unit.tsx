@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { BattlefieldObject } from '../../battlefield-object';
-import { airplaneList, AirplaneType, BattleFieldObjectType, helicopterList, HelicopterType, shipList, ShipType, staticList, StaticType, weaponList, WeaponType } from '../../battlefield-object-types';
+import { airplaneList, AirplaneType, BattleFieldObjectType, groundList, GroundType, helicopterList, HelicopterType, shipList, ShipType, staticList, StaticType, weaponList, WeaponType } from '../../battlefield-object-types';
 import './Unit.css';
 
 
@@ -11,7 +11,7 @@ function getTypeClass(type: BattleFieldObjectType) {
     return 'is-helicopter';
   } else if (staticList.includes(type as StaticType)) {
     return 'is-static';
-  } else if (shipList.includes(type as ShipType)) {
+  } else if (shipList.includes(type as ShipType) || groundList.includes(type as GroundType)) {
     return 'is-ground-mover';
   } else if (weaponList.includes(type as WeaponType)) {
     return 'is-weapon';
