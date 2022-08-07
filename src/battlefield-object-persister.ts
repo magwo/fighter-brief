@@ -1,23 +1,17 @@
 import { BattlefieldObject, createBattlefieldObject, HeadingDegrees, SpeedKnots } from "./battlefield-object";
+import { decodeInt, encodeInt, encodeStringSafely, OBJECT_DELIMITER } from "./battlefield-object-encoding";
 import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
 
 // Reserved characters: ,;
+// TODO: Stop using comma, or handle comma better
 
-// TODO: Write tests for this before optimizing
 // TODO: Could use even better compression for shorter urls
 
 const CURRENT_VERSION = "v1";
 
-function decodeInt(s: string): number {
-    return Number.parseInt(s, 36);
-}
-
-function encodeInt(n: number) {
-    return Math.round(n).toString(36);
-}
 
 export function loadData(data: string): { scenarioName: string, loadedObjects: BattlefieldObject[] } {
-    const objectStrings: string[] = data.replace(/^#/, "").split(";");
+    const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
 
     const version = objectStrings[0];
     console.log("Data version is", version, "Loading...");
@@ -55,12 +49,12 @@ function decodeVersion1(data: string): { scenarioName: string, loadedObjects: Ba
 
 export function serializeData(objects: BattlefieldObject[]): string {
     const version = CURRENT_VERSION;
-    const name = encodeURI(''); // Scenario name, currently not used
+    const name = encodeStringSafely(''); // Scenario name, currently not used
     const prefixStrings = [version, name];
     const objectStrings: string[] = objects.map((o) => {
         const propsStr = [
             o.id, 
-            encodeURI(o.name), 
+            encodeStringSafely(o.name), 
             o.type, 
             o.endType ? o.endType : '',
             Math.round(o.position[0]), 
