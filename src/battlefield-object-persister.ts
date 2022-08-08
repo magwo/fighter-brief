@@ -1,5 +1,5 @@
 import { BattlefieldObject, createBattlefieldObject, HeadingDegrees, SpeedKnots } from "./battlefield-object";
-import { decodeInt, encodeInt, encodeStringSafely, OBJECT_DELIMITER } from "./battlefield-object-encoding";
+import { decodeInt, decodePositions, encodeInt, encodePositions, encodeStringSafely, OBJECT_DELIMITER, PROPERTY_DELIMITER } from "./battlefield-object-encoding";
 import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
 
 // Reserved characters: ,;
@@ -7,23 +7,51 @@ import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
 
 // TODO: Could use even better compression for shorter urls
 
-const CURRENT_VERSION = "v1";
+const CURRENT_VERSION = "v2";
 
 
-export function loadData(data: string): { scenarioName: string, loadedObjects: BattlefieldObject[] } {
+export function loadData(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
     const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
 
     const version = objectStrings[0];
     console.log("Data version is", version, "Loading...");
     if (version === "v1") {
-        return decodeVersion1(data);
+        return { ...decodeVersion1(data), mapBackground: '' };
+    } else if (version === "v2") {
+        return decodeVersion2(data);
     } else {
         throw new Error(`Unknown data version "${version}", unable to load`);
     }
 }
 
+function decodeVersion2(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
+    const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
+    const name = decodeURI(objectStrings[1]);
+    const mapBackground = decodeURI(objectStrings[2]);
+    const objects = objectStrings.slice(3).map((str) => {
+        const tokens = str.split(PROPERTY_DELIMITER);
+        let i = 0;
+        const obj = createBattlefieldObject(
+            tokens[i++],
+            decodeURI(tokens[i++]),
+            tokens[i++] as BattleFieldObjectType,
+            tokens[i++] === '' ? null : tokens[i - 1] as EndType,
+            [Number(tokens[i++]), Number(tokens[i++])],
+            Number(tokens[i++]) as HeadingDegrees,
+            Number(tokens[i++]),
+            Number(tokens[i++]) as SpeedKnots
+        );
+        obj.path.points = decodePositions(tokens[i++]);
+        obj.path.refreshCurve();
+        return obj;
+    });
+
+    return { scenarioName: name, mapBackground, loadedObjects: objects };
+}
+
 function decodeVersion1(data: string): { scenarioName: string, loadedObjects: BattlefieldObject[] } {
-    const objectStrings: string[] = data.split(";");
+    // DO NOT CHANGE
+    const objectStrings: string[] = data.replace(/^#/, "").split(";");
     const name = decodeURI(objectStrings[1]);
     const objects = objectStrings.slice(2).map((str) => {
         const tokens = str.split(",");
@@ -45,12 +73,14 @@ function decodeVersion1(data: string): { scenarioName: string, loadedObjects: Ba
     });
 
     return { scenarioName: name, loadedObjects: objects };
+    // DO NOT CHANGE
 }
 
 export function serializeData(objects: BattlefieldObject[]): string {
     const version = CURRENT_VERSION;
     const name = encodeStringSafely(''); // Scenario name, currently not used
-    const prefixStrings = [version, name];
+    const mapBackground = encodeStringSafely(''); // Map background, currently not used
+    const prefixStrings = [version, name, mapBackground];
     const objectStrings: string[] = objects.map((o) => {
         const propsStr = [
             o.id, 
@@ -62,9 +92,9 @@ export function serializeData(objects: BattlefieldObject[]): string {
             Math.round(o.heading), 
             o.startTime.toFixed(3), 
             Math.round(o.speed)
-        ].join(",");
-        const pathPointsStr = o.path.points.map((p) => [encodeInt(p[0]), encodeInt(p[1])].join(",")).join(",");
-        return [propsStr, pathPointsStr].join(",");
+        ].join(PROPERTY_DELIMITER);
+        const pathPointsStr = encodePositions(o.path.points);
+        return [propsStr, pathPointsStr].join(PROPERTY_DELIMITER);
     });
-    return [...prefixStrings, ...objectStrings].join(";");
+    return [...prefixStrings, ...objectStrings].join(OBJECT_DELIMITER);
 }

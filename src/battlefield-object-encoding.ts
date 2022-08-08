@@ -37,18 +37,14 @@ export function encodePositions(positions: Position[]) {
         for(let i=1; i<positions.length; i++) {
             const dx = Math.round(positions[i][0] - prevX);
             const dy = Math.round(positions[i][1] - prevY);
-            console.log("dx", dx);
-            console.log("dy", dy);
             if (dx < MAX_COMPACT_VALUE && dx > MIN_COMPACT_VALUE ) {
                 result += ENCODING_ALPHABET[ZERO_INDEX + dx];
             } else {
-                // TODO: Should we encode full value or delta?
                 result += `${FULL_NUMBER_DELIMITER}${encodeInt(dx)}${FULL_NUMBER_DELIMITER}`;
             }
             if (dy < MAX_COMPACT_VALUE && dy > MIN_COMPACT_VALUE ) {
                 result += ENCODING_ALPHABET[ZERO_INDEX + dy];
             } else {
-                // TODO: Should we encode full value or delta?
                 result += `${FULL_NUMBER_DELIMITER}${encodeInt(dy)}${FULL_NUMBER_DELIMITER}`;
             }
             prevX = positions[i][0];
