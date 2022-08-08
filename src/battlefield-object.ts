@@ -59,12 +59,10 @@ export class Path {
     considerAddingPoint(x: number, y: number, pathMode: PathCreationMode, smoothness: number | undefined) {
         const prevPoint = this.points[this.points.length - 1];
         const delta = PositionMath.delta([x, y], prevPoint);
-        // TODO: Need to first project on stuff with special modes
         const len = PositionMath.length2D(delta);
         const MIN_DISTANCE = 20;
         
         if ((pathMode === 'normal' || this.points.length < 2) && len > MIN_DISTANCE) {
-            // TODO: Consider when we have to add initial points for special modes
             this.addPoint(x, y);
         }
         else if (pathMode === 'fly_cardinals' && this.points.length > 0) {

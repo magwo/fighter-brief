@@ -36,7 +36,6 @@ describe('decodePositions', () => {
         const encoded = '_-u__-v_';
         const positions = decodePositions(encoded);
         const expected: Position[] = [[-30, -31]];
-        console.log("Decoded positions are", positions);
         // Note: Full numbers use 36-radix encoding
         expect(positions).toEqual(expected);
     });
