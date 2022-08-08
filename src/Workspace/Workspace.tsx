@@ -128,9 +128,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
       if (props.tool.toolType === 'placeMovable') {
         let creationMode: PathCreationMode = 'fly_smooth';
-        if (e.altKey) { creationMode = 'fly_smooth'; }
         if (e.shiftKey) { creationMode = 'fly_straight'; }
-        if (e.ctrlKey || e.metaKey) { creationMode = 'fly_cardinals'; }
+        if (e.ctrlKey || e.metaKey) { creationMode = 'normal'; }
         objectBeingPlaced.path.considerAddingPoint(e.clientX - pan[0], e.clientY - pan[1], creationMode, props.tool.pathSmoothness);
         if (objectBeingPlaced.path.points.length > 0) {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
