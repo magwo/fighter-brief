@@ -24,6 +24,8 @@ Note that mobile phones are currently __not__ supported.
 | Left arrow (hold)   | Rewind        |
 | Up arrow   | Increase playback speed        |
 | Down arrow   | Decrease playback speed        |
+| Shift key (hold) | Fly/drive straight        |
+| Ctrl/Cmd key (hold)   | Allow narrow turns when flying/driving |
 
 ### How to share a scenario
 
