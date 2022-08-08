@@ -23,23 +23,10 @@ describe('loadData', () => {
         const data = `#v1;Scenario%20name;yxje86l5,,viper,,301,168,84,0.000,400,8d,4o,8x,4m,9h,4m,a0,4t,af,57,ao,5p,ao,69,ag,6s,a2,75;yspli0ho,Test%20test,label,,473,188,0,0.000,0,;xaltc8r4,Test%20measure,measurement,,352,118,0,0.000,0,9s,3a,ce,3f`;
         const { scenarioName, loadedObjects } = loadData(data);
 
-        // Name currently disappears in process
+        // Scenario name currently disappears in process
         const expected = `v1;;yxje86l5,,viper,,301,168,84,0.000,400,8d,4o,8x,4m,9h,4m,a0,4t,af,57,ao,5p,ao,69,ag,6s,a2,75;yspli0ho,Test%20test,label,,473,188,0,0.000,0,;xaltc8r4,Test%20measure,measurement,,352,118,0,0.000,0,9s,3a,ce,3f`;
         const serialized = serializeData(loadedObjects);
 
         expect(serialized).toEqual(expected);
-    });
-});
-
-describe('encodePositions', () => {
-    test('it should encode single position correctly', () => {
-        const positions = [-30, -30];
-        
-    });
-});
-
-describe('decodePositions', () => {
-    test('it should load correctly', () => {
-        
     });
 });
