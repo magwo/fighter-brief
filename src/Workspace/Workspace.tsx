@@ -255,7 +255,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       onMouseMove={(e: React.MouseEvent) => movedMouse(e)}>
       <div className="panner" style={panStyle}>
         {objects.map((object) =>
-          <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={props.shouldShowPaths} time={time}></BattlefieldObj>
+          <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={props.shouldShowPaths} time={pseudoTime ?? time}></BattlefieldObj>
         )
         }
         {objectBeingPlaced && (
