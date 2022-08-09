@@ -79,7 +79,7 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
             <div>
               <select value={values.formation} onChange={handleFormationChange}>
                 {formationList.map((formation) =>
-                  <option value={formation}>{formation}</option>
+                  <option value={formation} key={'option-' + formation}>{formation}</option>
                 )
                 }
               </select>

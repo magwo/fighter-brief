@@ -9,8 +9,8 @@ describe('<Label />', () => {
     const object = createBattlefieldObject(null, "label text", 'label', null, [0, 0], 0, 0, 0, 0, '');
     render(<Label object={object} isInactive={false} />);
     
-    const aircraft = screen.getByTestId('Aircraft');
+    const label = screen.getByTestId('Label');
 
-    expect(aircraft).toBeInTheDocument();
+    expect(label).toBeInTheDocument();
   });
 });

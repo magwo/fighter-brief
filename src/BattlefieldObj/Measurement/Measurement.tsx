@@ -28,7 +28,7 @@ const Measurement: FC<MeasurementProps> = (props) => {
   }
   
   return (
-    <div className="Measurement" style={styles} onClick={props.onClick}>
+    <div className="Measurement" style={styles} onClick={props.onClick} data-testid="Measurement">
       <div className="left-arrow">◀</div>
       <div className="line"></div>
       <p style={textStyles}>{props.object.name}</p>

@@ -15,7 +15,7 @@ const Label: FC<LabelProps> = (props) => {
   };
   
   return (
-    <div className="Label" style={styles} onClick={props.onClick}>
+    <div className="Label" style={styles} onClick={props.onClick} data-testid="Label">
       <p>{props.object.name}</p>
     </div>
   );
