@@ -22,6 +22,12 @@ export class PositionMath {
         const angle = Math.atan2(vector[1], vector[0]);
         return 90 + angle * 360 / TWO_PI;
     }
+    static headingFromAngle(angleRadians: number): number {
+        return 90 + angleRadians * 360 / TWO_PI;
+    }
+    static angleFromHeading(headingDegrees: number): number {
+        return (headingDegrees - 90) * (TWO_PI / 360);
+    }
     static normalize(vector: Position): Position {
         const len = PositionMath.length2D(vector);
         return [vector[0] / len, vector[1] / len];
@@ -150,7 +156,7 @@ export class Path {
     }
 }
 
-const getRandomId = (size: number) => [...Array(size)].map(() => Math.floor(Math.random() * 36).toString(36)).join('');
+export const getRandomId = (size: number) => [...Array(size)].map(() => Math.floor(Math.random() * 36).toString(36)).join('');
 
 export interface BattlefieldObject {
     id: string;

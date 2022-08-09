@@ -22,5 +22,5 @@ export type InfoType = typeof infoList[number];
 export type BattleFieldObjectType = AirplaneType | HelicopterType | ShipType | GroundType | StaticType | WeaponType | InfoType;
 
 
-export const formationList = ['', 'echelon-right', 'echelon-left', 'finger-four-left', 'finger-four-right', 'abreast', 'trail'] as const;
+export const formationList = ['', 'echelon-right', 'echelon-left', 'finger-four-left', 'finger-four-right', 'combat-spread', 'trail'] as const;
 export type FormationType = typeof formationList[number];

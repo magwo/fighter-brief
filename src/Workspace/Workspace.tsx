@@ -24,6 +24,7 @@ function getClientPosWithPan(e: React.MouseEvent | MouseEvent, pan: Position): P
   return [e.clientX - pan[0], e.clientY - pan[1]];
 }
 
+// TODO: Use vector math functions instead of inline calculations
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [time, setTime] = useState<number>(0);
   const [pseudoTime, setPseudoTime] = useState<number | null>(null);
@@ -254,11 +255,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       onMouseMove={(e: React.MouseEvent) => movedMouse(e)}>
       <div className="panner" style={panStyle}>
         {objects.map((object) =>
-          <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={props.shouldShowPaths}></BattlefieldObj>
+          <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={props.shouldShowPaths} time={time}></BattlefieldObj>
         )
         }
         {objectBeingPlaced && (
-          <BattlefieldObj object={objectBeingPlaced} isInactive={true} shouldShowPath={true} />
+          <BattlefieldObj object={objectBeingPlaced} isInactive={true} shouldShowPath={true} time={0} />
         )}
 
         {selectedObject && (

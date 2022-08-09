@@ -44,8 +44,6 @@ const Unit: FC<UnitProps> = (props) => {
     svgPoly = props.object.path.points.map((p) => `${p[0]},${p[1]}`).join(" ");
   }
 
-  // TODO: Import images instead
-
   return (
     <div className={`Unit ${getTypeClass(props.object.type)}`} data-testid="Unit" onClick={props.onClick}>
       {endPosStyles && props.shouldShowPath && (
