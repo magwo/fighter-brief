@@ -7,7 +7,7 @@ import { BattleFieldObjectType, EndType, FormationType } from "./battlefield-obj
 
 // TODO: Could use even better compression for shorter urls
 
-const CURRENT_VERSION = "v2";
+const CURRENT_VERSION = "v3";
 
 
 export function loadData(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
@@ -19,12 +19,14 @@ export function loadData(data: string): { scenarioName: string, mapBackground: s
         return { ...decodeVersion1(data), mapBackground: '' };
     } else if (version === "v2") {
         return decodeVersion2(data);
+    } else if (version === "v3") {
+        return decodeVersion3(data);
     } else {
         throw new Error(`Unknown data version "${version}", unable to load`);
     }
 }
 
-function decodeVersion2(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
+function decodeVersion3(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
     const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
     const name = decodeURI(objectStrings[1]);
     const mapBackground = decodeURI(objectStrings[2]);
@@ -49,6 +51,35 @@ function decodeVersion2(data: string): { scenarioName: string, mapBackground: st
     });
 
     return { scenarioName: name, mapBackground, loadedObjects: objects };
+}
+
+function decodeVersion2(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
+    // DO NOT CHANGE
+    const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
+    const name = decodeURI(objectStrings[1]);
+    const mapBackground = decodeURI(objectStrings[2]);
+    const objects = objectStrings.slice(3).map((str) => {
+        const tokens = str.split(PROPERTY_DELIMITER);
+        let i = 0;
+        const obj = createBattlefieldObject(
+            tokens[i++],
+            decodeURI(tokens[i++]),
+            tokens[i++] as BattleFieldObjectType,
+            tokens[i++] === '' ? null : tokens[i - 1] as EndType,
+            [Number(tokens[i++]), Number(tokens[i++])],
+            Number(tokens[i++]) as HeadingDegrees,
+            Number(tokens[i++]),
+            Number(tokens[i++]) as SpeedKnots,
+            0,
+            '' as FormationType,
+        );
+        obj.path.points = decodePositions(tokens[i++]);
+        obj.path.refreshCurve();
+        return obj;
+    });
+
+    return { scenarioName: name, mapBackground, loadedObjects: objects };
+    // DO NOT CHANGE
 }
 
 function decodeVersion1(data: string): { scenarioName: string, loadedObjects: BattlefieldObject[] } {

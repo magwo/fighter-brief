@@ -18,13 +18,23 @@ describe('loadData', () => {
         expect(loadedObjects[loadedObjects.length - 1].name).toEqual('Overhead break'); // Due to known bug with comma handling
     });
 
+    test('it should be able to load version 2 data', () => {
+        const data = `#v2;Foo%20scenario;;r3uij6kg~~viper~~490~1053~0~0.000~370~_dm__t9_nRnQnQnQnSnSnSnSnMnSnLnQnSnSnQnSnSnRnPnPnRnQnMnSmTqTvUzW1Y2Y1Y1Y1Y1Y1Y1Y1Y1Y3X1Y3X1Y1Y1Y2Y1Y4W2Y;qeuxbbp5~~viper~~277~1062~0~0.000~315~_7p__ti_nSnSnSnSnRnRnSnRnSnRnRnRnRnSnSnRnSnRnRnSnRvU2Z6g6g6g6g6g8f6g6g7g8f7g7g7g7g7g6g7g7g?f?f/e7g9f7g9p7i3axVwVyTxUxUxVwVxVxVxUwVwV;7jz2uvni~1nm~measurement~~281~836~0~15.036~0~_7t__n8__5t_n;z5qy8rfa~0+30~measurement~~436~747~0~0.000~0~_c4__kr__2s_n;75td9udm~0+30~measurement~~238~825~0~0.000~0~_6m__mx__1m_m;3bijbyod~OPTIMIZE~measurement~~232~832~0~0.000~0~_6g__n4_l_-6k_;9a66d6om~1.%20TRIBE11_CAPTURE~label~~122~877~0~0.000~0~;dfavg45a~2.%20TRIBE12_10_SECONDS~label~~736~727~0~0.000~0~;vw99f45s~3.%20TRIBE12-1_AWAY_TOF_32_SEC,%20LASER_ON~label~~822~580~0~0.000~0~;fzc0hi6w~4.%20TRIBE11_LASING~label~~81~557~0~0.000~0~;v4jy8n9q~5.%20TRIBE11,%20SPLASH~label~~228~186~0~0.000~0~;wr8p0s68~IMPACT~measurement~~708~145~0~0.000~0~_jo__41__26__1s_;b5jmodvi~TRIBE11~label~~274~1098~0~0.000~0~;cno7nork~TRIBE12~label~~489~1098~0~0.000~0~;8tsgq4fy~1nm~measurement~~276~952~0~0.000~0~_7o__qg__5y_m;a0nz5anq~IP~label~~492~1142~0~0.000~0~;o49v2zor~IMPACT~measurement~~643~414~0~0.000~0~_hv__bi_:_1h_`;
+        
+        const { scenarioName, loadedObjects } = loadData(data);
+
+        expect(scenarioName).toEqual('Foo scenario');
+        expect(loadedObjects.length).toEqual(17);
+        expect(loadedObjects[0].type).toEqual('viper');
+    });
+
     
     test('it should be able to serialize to most recent data version', () => {
-        const data = `#v2;Scenario;cauc;2lwy0zvp~~viper~~365~278~50~0.000~400~2~finger-four-left~_a5__7q_/T4c8d/h/n*r:v/2;v0qbsebm~New~label~~497~146~0~0.000~0~0~~;grc0gimw~New~measurement~~721~138~0~0.000~0~0~~_k1__3u__54__37_;5rc4c8o8~~bullseye~~730~256~143~0.000~0~0~~`;
+        const data = `#v3;;;r3uij6kg~~viper~~490~1053~0~0.000~370~0~~_dm__t9_nRnQnQnQnSnSnSnSnMnSnLnQnSnSnQnSnSnRnPnPnRnQnMnSmTqTvUzW1Y2Y1Y1Y1Y1Y1Y1Y1Y1Y3X1Y3X1Y1Y1Y2Y1Y4W2Y;qeuxbbp5~~viper~~277~1062~0~0.000~315~0~~_7p__ti_nSnSnSnSnRnRnSnRnSnRnRnRnRnSnSnRnSnRnRnSnRvU2Z6g6g6g6g6g8f6g6g7g8f7g7g7g7g7g6g7g7g?f?f/e7g9f7g9p7i3axVwVyTxUxUxVwVxVxVxUwVwV;7jz2uvni~1nm~measurement~~281~836~0~15.036~0~0~~_7t__n8__5t_n;z5qy8rfa~0+30~measurement~~436~747~0~0.000~0~0~~_c4__kr__2s_n;75td9udm~0+30~measurement~~238~825~0~0.000~0~0~~_6m__mx__1m_m;3bijbyod~OPTIMIZE~measurement~~232~832~0~0.000~0~0~~_6g__n4_l_-6k_;9a66d6om~1.%20TRIBE11_CAPTURE~label~~122~877~0~0.000~0~0~~;dfavg45a~2.%20TRIBE12_10_SECONDS~label~~736~727~0~0.000~0~0~~;vw99f45s~3.%20TRIBE12-1_AWAY_TOF_32_SEC,%20LASER_ON~label~~822~580~0~0.000~0~0~~;fzc0hi6w~4.%20TRIBE11_LASING~label~~81~557~0~0.000~0~0~~;v4jy8n9q~5.%20TRIBE11,%20SPLASH~label~~228~186~0~0.000~0~0~~;wr8p0s68~IMPACT~measurement~~708~145~0~0.000~0~0~~_jo__41__26__1s_;b5jmodvi~TRIBE11~label~~274~1098~0~0.000~0~0~~;cno7nork~TRIBE12~label~~489~1098~0~0.000~0~0~~;8tsgq4fy~1nm~measurement~~276~952~0~0.000~0~0~~_7o__qg__5y_m;a0nz5anq~IP~label~~492~1142~0~0.000~0~0~~;o49v2zor~IMPACT~measurement~~643~414~0~0.000~0~0~~_hv__bi_:_1h_`;
         const { loadedObjects } = loadData(data);
 
         // Scenario name and map currently disappears in process
-        const expected = `v2;;;2lwy0zvp~~viper~~365~278~50~0.000~400~2~finger-four-left~_a5__7q_/T4c8d/h/n*r:v/2;v0qbsebm~New~label~~497~146~0~0.000~0~0~~;grc0gimw~New~measurement~~721~138~0~0.000~0~0~~_k1__3u__54__37_;5rc4c8o8~~bullseye~~730~256~143~0.000~0~0~~`;
+        const expected = `v3;;;r3uij6kg~~viper~~490~1053~0~0.000~370~0~~_dm__t9_nRnQnQnQnSnSnSnSnMnSnLnQnSnSnQnSnSnRnPnPnRnQnMnSmTqTvUzW1Y2Y1Y1Y1Y1Y1Y1Y1Y1Y3X1Y3X1Y1Y1Y2Y1Y4W2Y;qeuxbbp5~~viper~~277~1062~0~0.000~315~0~~_7p__ti_nSnSnSnSnRnRnSnRnSnRnRnRnRnSnSnRnSnRnRnSnRvU2Z6g6g6g6g6g8f6g6g7g8f7g7g7g7g7g6g7g7g?f?f/e7g9f7g9p7i3axVwVyTxUxUxVwVxVxVxUwVwV;7jz2uvni~1nm~measurement~~281~836~0~15.036~0~0~~_7t__n8__5t_n;z5qy8rfa~0+30~measurement~~436~747~0~0.000~0~0~~_c4__kr__2s_n;75td9udm~0+30~measurement~~238~825~0~0.000~0~0~~_6m__mx__1m_m;3bijbyod~OPTIMIZE~measurement~~232~832~0~0.000~0~0~~_6g__n4_l_-6k_;9a66d6om~1.%20TRIBE11_CAPTURE~label~~122~877~0~0.000~0~0~~;dfavg45a~2.%20TRIBE12_10_SECONDS~label~~736~727~0~0.000~0~0~~;vw99f45s~3.%20TRIBE12-1_AWAY_TOF_32_SEC,%20LASER_ON~label~~822~580~0~0.000~0~0~~;fzc0hi6w~4.%20TRIBE11_LASING~label~~81~557~0~0.000~0~0~~;v4jy8n9q~5.%20TRIBE11,%20SPLASH~label~~228~186~0~0.000~0~0~~;wr8p0s68~IMPACT~measurement~~708~145~0~0.000~0~0~~_jo__41__26__1s_;b5jmodvi~TRIBE11~label~~274~1098~0~0.000~0~0~~;cno7nork~TRIBE12~label~~489~1098~0~0.000~0~0~~;8tsgq4fy~1nm~measurement~~276~952~0~0.000~0~0~~_7o__qg__5y_m;a0nz5anq~IP~label~~492~1142~0~0.000~0~0~~;o49v2zor~IMPACT~measurement~~643~414~0~0.000~0~0~~_hv__bi_:_1h_`;
         const serialized = serializeData(loadedObjects);
 
         expect(serialized).toEqual(expected);
