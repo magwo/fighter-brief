@@ -70,23 +70,23 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
     const clientPosWithPan = getClientPosWithPan(e, pan);
     if (props.tool.toolType === 'placeMovable') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, time, props.tool.speedKnots);
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, time, props.tool.speedKnots, 0, '');
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeStatic') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, clientPosWithPan, 0 as HeadingDegrees, time, 0 as SpeedKnots);
+      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, clientPosWithPan, 0 as HeadingDegrees, time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeLabel') {
-      const newObj = createBattlefieldObject(null, "New", 'label', null, clientPosWithPan, 0 as HeadingDegrees, time, 0 as SpeedKnots);
+      const newObj = createBattlefieldObject(null, "New", 'label', null, clientPosWithPan, 0 as HeadingDegrees, time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
       checkStopTime(objects, newObj);
     }
     else if (props.tool.toolType === 'placeMeasurement') {
-      const newObj = createBattlefieldObject(null, "New", 'measurement', null, clientPosWithPan, 0 as HeadingDegrees, time, 0 as SpeedKnots);
+      const newObj = createBattlefieldObject(null, "New", 'measurement', null, clientPosWithPan, 0 as HeadingDegrees, time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);

@@ -1,6 +1,6 @@
 import { BattlefieldObject, createBattlefieldObject, HeadingDegrees, SpeedKnots } from "./battlefield-object";
-import { decodeInt, decodePositions, encodeInt, encodePositions, encodeStringSafely, OBJECT_DELIMITER, PROPERTY_DELIMITER } from "./battlefield-object-encoding";
-import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
+import { decodeInt, decodePositions, encodePositions, encodeStringSafely, OBJECT_DELIMITER, PROPERTY_DELIMITER } from "./battlefield-object-encoding";
+import { BattleFieldObjectType, EndType, FormationType } from "./battlefield-object-types";
 
 // Reserved characters: ,;
 // TODO: Stop using comma, or handle comma better
@@ -39,7 +39,9 @@ function decodeVersion2(data: string): { scenarioName: string, mapBackground: st
             [Number(tokens[i++]), Number(tokens[i++])],
             Number(tokens[i++]) as HeadingDegrees,
             Number(tokens[i++]),
-            Number(tokens[i++]) as SpeedKnots
+            Number(tokens[i++]) as SpeedKnots,
+            Number(tokens[i++]),
+            tokens[i++] as FormationType,
         );
         obj.path.points = decodePositions(tokens[i++]);
         obj.path.refreshCurve();
@@ -64,7 +66,9 @@ function decodeVersion1(data: string): { scenarioName: string, loadedObjects: Ba
             [Number(tokens[i++]), Number(tokens[i++])],
             Number(tokens[i++]) as HeadingDegrees,
             Number(tokens[i++]),
-            Number(tokens[i++]) as SpeedKnots
+            Number(tokens[i++]) as SpeedKnots,
+            0,
+            '' as FormationType,
         );
         for (; i < tokens.length - 1; i += 2) {
             obj.path.addPoint(decodeInt(tokens[i]), decodeInt(tokens[i + 1]));
@@ -91,7 +95,9 @@ export function serializeData(objects: BattlefieldObject[]): string {
             Math.round(o.position[1]), 
             Math.round(o.heading), 
             o.startTime.toFixed(3), 
-            Math.round(o.speed)
+            Math.round(o.speed),
+            Math.round(o.wingmanCount),
+            o.formation
         ].join(PROPERTY_DELIMITER);
         const pathPointsStr = encodePositions(o.path.points);
         return [propsStr, pathPointsStr].join(PROPERTY_DELIMITER);

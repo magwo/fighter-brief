@@ -6,7 +6,7 @@ import Label from './Label';
 
 describe('<Label />', () => {
   test('it should mount', () => {
-    const object = createBattlefieldObject(null, "label text", 'label', null, [0, 0], 0, 0, 0);
+    const object = createBattlefieldObject(null, "label text", 'label', null, [0, 0], 0, 0, 0, 0, '');
     render(<Label object={object} isInactive={false} />);
     
     const aircraft = screen.getByTestId('Aircraft');

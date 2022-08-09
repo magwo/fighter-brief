@@ -1,4 +1,4 @@
-import { BattleFieldObjectType, EndType } from "./battlefield-object-types";
+import { BattleFieldObjectType, EndType, FormationType } from "./battlefield-object-types";
 import { CurveInterpolator2D, simplify2d } from 'curve-interpolator';
 
 const TWO_PI = Math.PI * 2;
@@ -147,7 +147,6 @@ export class Path {
     getStopTime(startTime: number, speed: SpeedKnots): number {
         const travelTime = this.curve.length / (speed * SPEED_PIXEL_FACTOR);
         return startTime + travelTime;
-
     }
 }
 
@@ -162,12 +161,14 @@ export interface BattlefieldObject {
     heading: HeadingDegrees;
     startTime: number;
     speed: SpeedKnots;
+    wingmanCount: number;
+    formation: FormationType;
     path: Path;
     isVisible: boolean;
     hasReachedEnd: boolean;
 }
 
-export function createBattlefieldObject(id: string | null, name: string, type: BattleFieldObjectType, endType: EndType, position: Position, heading: HeadingDegrees, startTime: number, speed: SpeedKnots): BattlefieldObject {
+export function createBattlefieldObject(id: string | null, name: string, type: BattleFieldObjectType, endType: EndType, position: Position, heading: HeadingDegrees, startTime: number, speed: SpeedKnots, wingmanCount: number, formation: FormationType): BattlefieldObject {
     if (id === null) {
         id = getRandomId(8);
     }
@@ -180,6 +181,8 @@ export function createBattlefieldObject(id: string | null, name: string, type: B
         heading,
         startTime,
         speed,
+        wingmanCount,
+        formation,
         path: new Path(),
         isVisible: false,
         hasReachedEnd: false,

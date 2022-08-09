@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { BattlefieldObject, SpeedKnots } from '../../battlefield-object';
+import { formationList, FormationType, movableList } from '../../battlefield-object-types';
 import './ObjectEditor.css';
 
 interface ObjectEditorProps {
@@ -10,10 +11,12 @@ interface ObjectEditorProps {
 interface Values {
   name: string,
   speed: number,
+  wingmanCount: number,
+  formation: FormationType,
 }
 
 const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
-  const [values, setValues] = useState<Values>({ name: "", speed: 0 })
+  const [values, setValues] = useState<Values>({ name: "", speed: 0, wingmanCount: 0, formation: '' })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     // Do nothing
@@ -33,10 +36,22 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
     props.onObjectModified(props.object);
   }
 
+  const handleWingmanCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValues({...values, wingmanCount: Number(e.target.value)});
+    props.object.wingmanCount = Number(e.target.value);
+    props.onObjectModified(props.object);
+  }
+
+  const handleFormationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setValues({...values, formation: e.target.value as FormationType});
+    props.object.formation = e.target.value as FormationType;
+    props.onObjectModified(props.object);
+  }
+
   // TODO: Use effect and save object copy from props? Not sure if needed :S
 
   useEffect(() => {
-    setValues({name: props.object.name, speed: props.object.speed});
+    setValues({name: props.object.name, speed: props.object.speed, wingmanCount: props.object.wingmanCount, formation: props.object.formation});
   }, [props.object]);
 
 
@@ -49,10 +64,29 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
           Name
           <input type="text" value={values.name} onChange={handleNameChange} />
         </label>
-        <label>
-          Speed (knots)
-          <input type="number" step="10" value={values.speed} onChange={handleSpeedChange} />
-        </label>
+        {movableList.includes(props.object.type) &&
+        <div>
+          <label>
+            Speed (knots)
+            <input type="number" step="10" value={values.speed} onChange={handleSpeedChange} />
+          </label>
+          <label>
+            Number of wingmen
+            <input type="number" step="1" max="8" min="0" value={values.wingmanCount} onChange={handleWingmanCountChange} />
+          </label>
+          <label>
+            Formation
+            <div>
+              <select value={values.formation} onChange={handleFormationChange}>
+                {formationList.map((formation) =>
+                  <option value={formation}>{formation}</option>
+                )
+                }
+              </select>
+              </div>
+          </label>
+        </div>
+        }
       </form>
 
 
