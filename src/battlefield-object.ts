@@ -72,6 +72,7 @@ export class Path {
             this.addPoint(x, y);
         }
         else if (pathMode === 'fly_cardinals' && this.points.length > 0) {
+            // Currently not working correctly
             console.log("Cardinals");
             if (Math.abs(delta[0]) > Math.abs(delta[1])) {
                 y = this.points[this.points.length - 1][1];

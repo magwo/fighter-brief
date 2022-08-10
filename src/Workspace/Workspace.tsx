@@ -92,7 +92,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setObjectBeingPlaced(null);
       props.onPseudoTimeChange(null);
       props.onObjectsChange(newObjects, objectBeingPlaced);
-      forceUpdate(); // ???
+      // forceUpdate(); // ???
     }
   }
 

@@ -70,8 +70,6 @@ interface GroupProps {
 }
 
 const Group: FC<GroupProps> = (props) => {
-  // console.log("Group: Formation and wingmen is", props.object.wingmanCount, props.object.formation);
-
   const wingmen: BattlefieldObject[] = getWingmenPositionsAndHeadings(props.object, props.time);
 
   return (

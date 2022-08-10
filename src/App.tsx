@@ -10,7 +10,6 @@ import { loadData, serializeData } from './battlefield-object-persister';
 import { BattlefieldObject, getStopTime, update as updateObject } from './battlefield-object';
 
 const updateUrl = (_scenarioName: string, _map: MapType, _objects: BattlefieldObject[]) => {
-  // TODO: Move this to App or something
   const serialized = serializeData(_scenarioName, _map, _objects);
   window.location.hash = serialized;
 }
@@ -73,7 +72,6 @@ function App() {
   const handleObjectsChange = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null) => {
     updateAllObjects(newObjects, time); // TODO: Maybe consider pseudoTime?
     const newStopTime = getFinalStopTime(newObjects, extraObject);
-    console.log("New stop time", newStopTime);
     if (newStopTime !== stopTime) {
       setStopTime(newStopTime);
     }

@@ -10,7 +10,8 @@
     /* flex-wrap: nowrap; */
     text-align: center;
     white-space: nowrap;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: bold;
     margin: 0 6px;
     padding: 0;
 }
@@ -18,7 +19,7 @@
 .Measurement .left-arrow, .Measurement .right-arrow {
     flex-shrink: 0;
     font-size: 14px;
-    color: #bbb;
+    color: #888;
 }
 
 .Measurement .left-arrow {
@@ -34,7 +35,7 @@
 .Measurement .line {
     flex-basis: 50%;
     flex-shrink: 1;
-    border: 1px solid #bbb;
+    border: 1px solid #888;
     border-left: none;
     border-right: none;
     /* background-color: #ccf; */
