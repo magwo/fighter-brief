@@ -1,0 +1,27 @@
+.MapBackground {
+    position: absolute;
+}
+
+.MapBackground > img {
+    position: absolute;
+    opacity: 0.5;
+    transform-origin: 0 0;
+}
+
+.MapBackground > img.caucasus {
+    left: -900px;
+    top: -600px;
+    transform: scale(80%);
+}
+
+.MapBackground > img.syria {
+    left: -200px;
+    top: -300px;
+    transform: scale(100%);
+}
+
+.MapBackground > img.persian-gulf {
+    left: -300px;
+    top: -1000px;
+    transform: scale(110%);
+}

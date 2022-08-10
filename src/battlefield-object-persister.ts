@@ -1,6 +1,6 @@
 import { BattlefieldObject, createBattlefieldObject, HeadingDegrees, SpeedKnots } from "./battlefield-object";
 import { decodeInt, decodePositions, encodePositions, encodeStringSafely, OBJECT_DELIMITER, PROPERTY_DELIMITER } from "./battlefield-object-encoding";
-import { BattleFieldObjectType, EndType, FormationType } from "./battlefield-object-types";
+import { BattleFieldObjectType, EndType, FormationType, MapType } from "./battlefield-object-types";
 
 // Reserved characters: ,;
 // TODO: Stop using comma, or handle comma better
@@ -111,11 +111,10 @@ function decodeVersion1(data: string): { scenarioName: string, loadedObjects: Ba
     // DO NOT CHANGE
 }
 
-export function serializeData(objects: BattlefieldObject[]): string {
+export function serializeData(scenarioName: string, map: MapType, objects: BattlefieldObject[]): string {
     const version = CURRENT_VERSION;
-    const name = encodeStringSafely(''); // Scenario name, currently not used
-    const mapBackground = encodeStringSafely(''); // Map background, currently not used
-    const prefixStrings = [version, name, mapBackground];
+    const name = encodeStringSafely(scenarioName);
+    const prefixStrings = [version, name, map];
     const objectStrings: string[] = objects.map((o) => {
         const propsStr = [
             o.id, 

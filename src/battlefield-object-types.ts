@@ -24,3 +24,6 @@ export type BattleFieldObjectType = AirplaneType | HelicopterType | ShipType | G
 
 export const formationList = ['', 'echelon-right', 'echelon-left', 'finger-four-left', 'finger-four-right', 'combat-spread', 'trail'] as const;
 export type FormationType = typeof formationList[number];
+
+export const mapList: string[] = ['', 'ca', 'sy', 'pg'/*, 'sa'*/];
+export type MapType = typeof mapList[number];
