@@ -1,9 +1,12 @@
-/* TODO: Add this reset and adapt styling */
-/* *,
+:root {
+  /* TODO: Add some generic css variables for panel colors, buttons, border radius etc */
+}
+
+*,
 *::before,
 *::after {
   box-sizing: border-box;
-} */
+}
 
 body {
   margin: 0;
@@ -49,4 +52,37 @@ img {
   -moz-user-drag: none;
   -o-user-drag: none;
   user-drag: none;
+}
+
+input {
+  background-color: #555;
+  color: white;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 6px 6px;
+  margin: 0;
+  display: block;
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: inherit;
+  line-height: inherit;
+  outline: none;  
+}
+
+select {
+  /* appearance: none; */
+  background-color: #555;
+  color: white;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 6px 4px;
+  margin: 0;
+  display: block;
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: inherit;
+  line-height: inherit;
+  outline: none;
 }

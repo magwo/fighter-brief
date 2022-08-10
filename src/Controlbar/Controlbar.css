@@ -6,7 +6,7 @@
     align-items: center;
     left: 20px;
     bottom: 20px;
-    height: 40px;
+    height: 42px;
     border: 1px solid #333;
     border-radius: 6px;
     overflow: hidden;
@@ -26,8 +26,8 @@
     appearance: none;
     color: white;
     cursor: pointer;
-    width: 40px;
-    height: 40px;
+    width: 41px;
+    height: 41px;
     background-color: #666;
     border: .5px solid #444;
     user-select: none;
@@ -40,8 +40,8 @@
 
 .Controlbar .buttons .clickable .svg-icon {
     display: block;
-    height: 16px;
-    width: 16px;
+    height: 30px;
+    width: 30px;
     padding: 7px 0;
     fill: white;
     flex-shrink: 0;

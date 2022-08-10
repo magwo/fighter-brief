@@ -76,7 +76,7 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
           </label>
           <label>
             Formation
-            <div>
+            <div className="select-wrapper">
               <select value={values.formation} onChange={handleFormationChange}>
                 {formationList.map((formation) =>
                   <option value={formation} key={'option-' + formation}>{formation}</option>

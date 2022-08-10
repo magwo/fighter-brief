@@ -8,6 +8,8 @@
     top: 20px;
     width: 200px;
     padding: 8px;
+    background-color: #444;
+    color: white;
     border: 1px solid #333;
     border-radius: 6px;
     overflow: hidden;

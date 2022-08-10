@@ -30,12 +30,14 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
           <input autoFocus={true} type="text" value={props.scenarioName} onChange={handleNameChange}  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => { if(e.key === 'Enter') { setIsEditingName(false) } } } onBlur={() => setIsEditingName(false) } />
         }
       </div>
-      <select className="map-selector" value={props.map} onChange={handleMapChange}>
-        <option value="">None</option>
-        <option value="ca">Caucasus</option>
-        <option value="sy">Syria</option>
-        <option value="pg">Persian Gulf</option>
-      </select>
+      <div className="select-wrapper">
+        <select className="map-selector" value={props.map} onChange={handleMapChange}>
+          <option value="">None</option>
+          <option value="ca">Caucasus</option>
+          <option value="sy">Syria</option>
+          <option value="pg">Persian Gulf</option>
+        </select>
+        </div>
     </div>
   );
 }
