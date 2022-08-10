@@ -17,6 +17,7 @@ export type RouteDisplayMode = typeof ROUTE_DISPLAY_MODES[number];
 
 // TODO: Use parent-state props instead of local state
 interface ControlbarProps {
+  time: number;
   stopTime: number;
   onTimeChange: (time: number) => void,
   onPlayPause: (shouldPlay: boolean) => void,
@@ -24,7 +25,6 @@ interface ControlbarProps {
 }
 
 const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
-  const [time, setTime] = useState<number>(0);
   const [shouldPlay, setShouldPlay] = useState<boolean>(false);
   const [shouldLoop, setShouldLoop] = useState<boolean>(false);
   const [playbackSpeedIndex, setPlaybackSpeedIndex] = useState<number>(1);
@@ -36,7 +36,7 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     if (forcedPlayback !== null) {
       timeDelta = _time.delta * forcedPlayback;
     }
-    let newTime = time + timeDelta * PLAYBACK_SPEEDS[playbackSpeedIndex];
+    let newTime = props.time + timeDelta * PLAYBACK_SPEEDS[playbackSpeedIndex];
     newTime = Math.max(0, newTime);
     if (newTime > props.stopTime) {
       if (shouldLoop && forcedPlayback === null) {
@@ -50,21 +50,19 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
       }
     }
 
-    if (newTime !== time) {
-      setTime(newTime);
-      // props.onTimeChange(newTime);
+    if (newTime !== props.time) {
+      props.onTimeChange(newTime);
     }
   });
 
   const rewind = () => {
-    setTime(0);
-    // props.onTimeChange(0);
+    props.onTimeChange(0);
   }
 
   const playPause = () => {
     const newPlayState = !shouldPlay;
-    if (time === props.stopTime) {
-      setTime(0);
+    if (props.time === props.stopTime) {
+      props.onTimeChange(0);
     }
     props.onPlayPause(newPlayState);
     setShouldPlay(newPlayState);
@@ -89,8 +87,7 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
       let fraction = (e.clientX - relX) / TIME_BAR_WIDTH;
       fraction = Math.max(0, Math.min(1, fraction));
       const newTime = fraction * props.stopTime;
-      setTime((prevTime) => newTime);
-      // props.onTimeChange(newTime);
+      props.onTimeChange(newTime);
     }
   }
 
@@ -123,15 +120,14 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     }
   }, [handleKeydown, handleKeyup]);
 
-  useEffect(() => {
-    // Is this really needed?
-    // Was added due to time bug in workspace caused when deleting objects
-    props.onTimeChange(time);
-  }, [time, props]);
+  // useEffect(() => {
+  //   // Is this really needed?
+  //   // Was added due to time bug in workspace caused when deleting objects
+  //   props.onTimeChange(time);
+  // }, [time, props]);
 
   useEffect(() => {
     // Is this really needed?
-    // Was added due to time bug in workspace caused when deleting objects
     let shouldShow = true;
     if (ROUTE_DISPLAY_MODES[pathDisplayModeIndex] === 'always') {
       shouldShow = true;
@@ -145,7 +141,7 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
 
 
   const styleTimeHandle = {
-    transform: `translate(${((time / props.stopTime) * TIME_BAR_WIDTH) - 2}px, 0)`
+    transform: `translate(${((props.time / props.stopTime) * TIME_BAR_WIDTH) - 2}px, 0)`
   };
 
   return (

@@ -21,7 +21,7 @@ function updateAllObjects(objects: BattlefieldObject[], time: number) {
   });
 }
 
-const getFinalStopTime = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null = null): number => {
+const getFinalStopTime = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null): number => {
   let max = 1;
   newObjects.forEach((obj) => {
     max = Math.max(max, getStopTime(obj));
@@ -52,9 +52,10 @@ function App() {
       console.log("Map background is", mapBackground);
       console.log("Initial objects", loadedObjects);
       updateAllObjects(loadedObjects, 0);
+      setObjects(loadedObjects);
       setScenarioName(scenarioName);
       setMap(mapBackground);
-      setObjects(loadedObjects);
+      setStopTime(getFinalStopTime(loadedObjects, null));
       // checkStopTime(loadedObjects);
     }
   };
@@ -69,8 +70,13 @@ function App() {
     updateUrl(scenarioName, map, objects);
   };
 
-  const handleObjectsChange = (newObjects: BattlefieldObject[]) => {
+  const handleObjectsChange = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null) => {
     updateAllObjects(newObjects, time); // TODO: Maybe consider pseudoTime?
+    const newStopTime = getFinalStopTime(newObjects, extraObject);
+    console.log("New stop time", newStopTime);
+    if (newStopTime !== stopTime) {
+      setStopTime(newStopTime);
+    }
     setObjects(newObjects);
     updateUrl(scenarioName, map, newObjects);
   };
@@ -82,7 +88,7 @@ function App() {
 
   const handlePseudoTimeChange = (pseudoTime: number | null) => {
     updateAllObjects(objects, pseudoTime ?? time);
-    setPseudoTime(pseudoTime)
+    setPseudoTime(pseudoTime);
   }
   
 
@@ -97,7 +103,7 @@ function App() {
       <Mainbar scenarioName={scenarioName} map={map} onScenarioNameChange={handleScenarioNameChange} onMapChange={handleMapChange} />
       <Workspace objects={objects} tool={selectedTool} map={map} shouldPlay={shouldPlay} shouldShowPaths={shouldShowPaths} time={time} pseudoTime={pseudoTime} onPseudoTimeChange={handlePseudoTimeChange} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} onObjectsChange={handleObjectsChange} />
       <Toolbar onToolSelected={(tool: Tool) => setSelectedTool(tool)} />
-      <Controlbar stopTime={stopTime} onPlayPause={(shouldPlay: boolean) => setShouldPlay(shouldPlay)} onTimeChange={handleTimeChange} onShowPaths={(show) => setShouldShowPaths(show)} />
+      <Controlbar time={time} stopTime={stopTime} onPlayPause={(shouldPlay: boolean) => setShouldPlay(shouldPlay)} onTimeChange={handleTimeChange} onShowPaths={(show) => setShouldShowPaths(show)} />
     </div>
   );
 }

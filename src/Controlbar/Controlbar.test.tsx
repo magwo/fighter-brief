@@ -5,7 +5,7 @@ import Controlbar from './Controlbar';
 
 describe('<Controlbar />', () => {
   test('it should mount', () => {
-    render(<Controlbar stopTime={1} onPlayPause={() => ''} onShowPaths={() => ''} onTimeChange={() => ''}/>);
+    render(<Controlbar time={0} stopTime={1} onPlayPause={() => ''} onShowPaths={() => ''} onTimeChange={() => ''}/>);
     
     const controlbar = screen.getByTestId('Controlbar');
 

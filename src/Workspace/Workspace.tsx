@@ -17,7 +17,7 @@ interface WorkspaceProps {
   map: MapType;
   onStopTimeChange: (stopTime: number) => void;
   onPseudoTimeChange: (pseudoTime: number | null) => void;
-  onObjectsChange: (newObjects: BattlefieldObject[]) => void;
+  onObjectsChange: (newObjects: BattlefieldObject[], objectBeingPlaced: BattlefieldObject | null) => void;
 }
 
 function getClientPosWithPan(e: React.MouseEvent | MouseEvent, pan: Position): Position {
@@ -55,24 +55,24 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, props.time, props.tool.speedKnots, 0, '');
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       setObjectBeingPlaced(newObj);
-      // checkStopTime(props.objects, newObj);
+      props.onObjectsChange(props.objects, newObj);
     }
     else if (props.tool.toolType === 'placeStatic') {
       const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
-      // checkStopTime(props.objects, newObj);
+      props.onObjectsChange(props.objects, newObj);
     }
     else if (props.tool.toolType === 'placeLabel') {
       const newObj = createBattlefieldObject(null, "New", 'label', null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
-      // checkStopTime(props.objects, newObj);
+      props.onObjectsChange(props.objects, newObj);
     }
     else if (props.tool.toolType === 'placeMeasurement') {
       const newObj = createBattlefieldObject(null, "New", 'measurement', null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
-      // checkStopTime(props.objects, newObj);
+      props.onObjectsChange(props.objects, newObj);
     }
   }
 
@@ -91,9 +91,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setUndoStack([...undoStack, { action: 'delete', data: { id: objectBeingPlaced.id } }]);
       setObjectBeingPlaced(null);
       props.onPseudoTimeChange(null);
-      // updateAllObjects(newObjects, time);
-      // checkStopTime(newObjects, objectBeingPlaced);
-      props.onObjectsChange(newObjects);
+      props.onObjectsChange(newObjects, objectBeingPlaced);
       forceUpdate(); // ???
     }
   }
@@ -117,9 +115,9 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
           objectBeingPlaced.heading = startHdg;
           update(objectBeingPlaced, props.time);
           timeUsed = getStopTime(objectBeingPlaced);
+          props.onObjectsChange(props.objects, objectBeingPlaced);
           props.onPseudoTimeChange(timeUsed);
         }
-        // checkStopTime(objects, objectBeingPlaced);
       } else if (props.tool.toolType === 'placeStatic' || props.tool.toolType === 'placeLabel') {
         const dx = e.clientX - pressedPos[0];
         const dy = e.clientY - pressedPos[1];
@@ -127,14 +125,14 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         objectBeingPlaced.heading = heading;
         update(objectBeingPlaced, props.time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
+        props.onObjectsChange(props.objects, objectBeingPlaced);
       } else if (props.tool.toolType === 'placeMeasurement') {
         // TODO: Avoid recreating objects
         objectBeingPlaced.path.setPoints([[pressedPos[0] - pan[0], pressedPos[1] - pan[1]], getClientPosWithPan(e, pan)]);
         update(objectBeingPlaced, props.time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
+        props.onObjectsChange(props.objects, objectBeingPlaced);
       }
-      // updateAllObjects(objects, timeUsed);
-      // forceUpdate();
     }
   }
 
@@ -146,8 +144,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       }
       else if (action.action === 'recreate') {
         const newObjects = [...props.objects, action.data.object];
-        props.onObjectsChange(newObjects); // TODO: Immutability?
-        // checkStopTime(newObjects, objectBeingPlaced);
+        props.onObjectsChange(newObjects, objectBeingPlaced); // TODO: Immutability?
       }
       setUndoStack(undoStack.slice(0, undoStack.length - 1));
     }
@@ -159,9 +156,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     if (undoable) {
       setUndoStack([...undoStack, { action: 'recreate', data: { object: deletedObject } }]);
     }
-    // updateAllObjects(newObjects, time); // Do on next render instead? :S
-    // checkStopTime(newObjects, objectBeingPlaced); // Do on next render instead? :S
-    props.onObjectsChange(newObjects); // TODO: Immutability?
+    props.onObjectsChange(newObjects, objectBeingPlaced); // TODO: Immutability?
   }
 
   const clickedObject = (obj: BattlefieldObject) => {
@@ -173,9 +168,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   }
 
   const objectModified = (obj: BattlefieldObject) => {
-    // updateAllObjects(objects, time);
-    // forceUpdate();
-    props.onObjectsChange(props.objects); // TODO: Immutability?
+    props.onObjectsChange(props.objects, objectBeingPlaced); // TODO: Immutability?
   }
 
   const handleKeydown = (e: KeyboardEvent) => {
@@ -192,32 +185,12 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }, [handleKeydown]);
 
-  // useEffect(() => {
-  //   // Update objects
-  //   if (pseudoTime !== null) {
-  //     updateAllObjects(props.objects, pseudoTime);
-  //   } else {
-  //     const newTime = props.time;
-  //     setTime(newTime);
-  //     updateAllObjects(props.objects, newTime);
-  //   }
-  // }, [objects, pseudoTime, props.time]);
-
   useEffect(() => {
       // This is an actual true side effect
       if (props.tool.toolType !== 'select') {
         setSelectedObject(null);
       }
   }, [props.tool]);
-
-
-  // useEffect(() => {
-  //     console.log("Props.initialObjects changed", props.initialObjects);
-  //     // TODO: Can we use only props.objects instead of double storing? :S
-  //     updateAllObjects(props.initialObjects, 0);
-  //     setObjects(props.initialObjects);
-  //     checkStopTime(props.initialObjects);
-  // }, [props.initialObjects]);
 
   const panStyle = {
     transform: `translate(${pan[0]}px, ${pan[1]}px)`,
