@@ -10,7 +10,7 @@ Examples of usage scenarios include lectures, training, briefings, debriefings a
 
 Select the object type you would like to place from the toolbar on the left. If the object is a moving unit type, such as an airplane, place it by pressing the left mouse button and drag it along the workspace surface. This will result in the unit moving along the path drawn. To see the animation, press the _Play_ button.
 
-Note that mobile phones are currently __not__ supported.
+Disclaimer: touch devices such as mobile phones are currently __not__ supported.
 
 <img src="https://raw.githubusercontent.com/magwo/fighter-brief/main/fighterbrief-example.gif" style="width: 400px"></img>
 
@@ -38,3 +38,10 @@ If you create a complex scenario, the URL gets very long. It is therefore recomm
 ## Try it now
 
 [https://fighterbrief.com/](https://fighterbrief.com/)
+
+
+## Thanks
+
+To Eagle Dynamics for making such an awesome [combat simulator](https://www.digitalcombatsimulator.com/).
+
+To Flappie for making the open-source DCS map!
