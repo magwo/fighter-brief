@@ -13,6 +13,7 @@ interface WorkspaceProps {
   shouldPlay: boolean;
   shouldShowPaths: boolean;
   time: number;
+  map: MapType;
   onStopTimeChange: (stopTime: number) => void
 }
 
@@ -31,7 +32,6 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [time, setTime] = useState<number>(0);
   const [pseudoTime, setPseudoTime] = useState<number | null>(null);
   const [objects, setObjects] = useState<BattlefieldObject[]>([]);
-  const [mapBackground, setMapBackground] = useState<MapType>('');
   const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
   const [selectedObject, setSelectedObject] = useState<BattlefieldObject | null>(null);
@@ -44,7 +44,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   const updateUrl = (newObjects: BattlefieldObject[]) => {
     // TODO: Move this to App or something
-    const serialized = serializeData('', mapBackground, newObjects);
+    const serialized = serializeData('', props.map, newObjects);
     window.location.hash = serialized;
   }
 
@@ -237,13 +237,13 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   useEffect(() => {
     // Load initial objects
+    // TODO: Move this to App
     if (window.location.hash.length > 0) {
       const { scenarioName, mapBackground, loadedObjects } = loadData(window.location.hash);
       console.log("Scenario name is", scenarioName);
       console.log("Map background is", mapBackground);
       console.log("Initial objects", loadedObjects);
       updateAllObjects(loadedObjects, 0);
-      setMapBackground(mapBackground);
       setObjects(loadedObjects);
       checkStopTime(loadedObjects);
     }
@@ -259,7 +259,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       onMouseUp={(e: React.MouseEvent) => stopPressWorkspace(e)}
       onMouseMove={(e: React.MouseEvent) => movedMouse(e)}>
       <div className="panner" style={panStyle}>
-        <MapBackground map={mapBackground} />
+        <MapBackground map={props.map} />
         {objects.map((object) =>
           <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={props.shouldShowPaths} time={pseudoTime ?? time}></BattlefieldObj>
         )

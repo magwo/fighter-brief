@@ -1,0 +1,28 @@
+.Mainbar {
+    position: absolute;
+    height: 50px;
+    padding: 0 20px;
+    z-index: 101;
+    display: flex;
+    align-content: flex-start;
+    align-items: center;
+    left: calc(20px + 101px + 16px);
+    top: 20px;
+    border: 1px solid #333;
+    background-color: #444;
+    border-radius: 6px;
+    overflow: hidden;
+    color: white;
+}
+
+.Mainbar .name-container {
+    min-width: 200px;
+}
+
+.Mainbar h1 {
+    font-size: 20px;
+}
+
+.Mainbar .map-selector {
+    margin-left: 12px;
+}

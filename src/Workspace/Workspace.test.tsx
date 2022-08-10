@@ -6,7 +6,7 @@ import { toolCategories } from '../Toolbar/tools';
 
 describe('<Workspace />', () => {
   test('it should mount', () => {
-    render(<Workspace tool={toolCategories[0].tools[0]} shouldPlay={false} shouldShowPaths={true} time={0} onStopTimeChange={() => {}}/>);
+    render(<Workspace tool={toolCategories[0].tools[0]} map="" shouldPlay={false} shouldShowPaths={true} time={0} onStopTimeChange={() => {}}/>);
     
     const workspace = screen.getByTestId('Workspace');
 
