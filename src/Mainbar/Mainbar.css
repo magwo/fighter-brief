@@ -20,6 +20,7 @@
 }
 
 .Mainbar h1 {
+    cursor: pointer;
     font-size: 20px;
 }
 

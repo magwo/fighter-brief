@@ -13,13 +13,13 @@ const MapBackground: FC<MapBackgroundProps> = (props: MapBackgroundProps) => {
   return (
     <div className="MapBackground" data-testid="MapBackground">
       {props.map === 'ca' &&
-        <img className="caucasus" src={caucasus}></img>
+        <img className="caucasus" src={caucasus} draggable="false"></img>
       }
       {props.map === 'sy' &&
-        <img className="syria" src={syria}></img>
+        <img className="syria" src={syria} draggable="false"></img>
       }
       {props.map === 'pg' &&
-        <img className="persian-gulf" src={persianGulf}></img>
+        <img className="persian-gulf" src={persianGulf} draggable="false"></img>
       }
     </div>
   );
