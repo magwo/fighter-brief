@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
-import { BattlefieldObject, SpeedKnots } from '../../battlefield-object';
-import { formationList, FormationType, movableList } from '../../battlefield-object-types';
+import { BattlefieldObject, SpeedKnots } from '../battlefield-object';
+import { formationList, FormationType, movableList } from '../battlefield-object-types';
 import './ObjectEditor.css';
 
 interface ObjectEditorProps {

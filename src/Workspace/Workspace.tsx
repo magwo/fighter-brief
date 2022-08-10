@@ -3,12 +3,12 @@ import BattlefieldObj from '../BattlefieldObj/BattlefieldObj';
 import { BattlefieldObject, createBattlefieldObject, getStopTime, HeadingDegrees, PathCreationMode, Position, PositionMath, SpeedKnots, update } from '../battlefield-object';
 import { Tool } from '../Toolbar/tools';
 import './Workspace.css';
-import ObjectEditor from './ObjectEditor/ObjectEditor';
 import MapBackground from './MapBackground/MapBackground';
 import { MapType } from '../battlefield-object-types';
 
 interface WorkspaceProps {
   objects: BattlefieldObject[];
+  selectedObject: BattlefieldObject | null;
   tool: Tool;
   shouldPlay: boolean;
   shouldShowPaths: boolean;
@@ -17,6 +17,7 @@ interface WorkspaceProps {
   map: MapType;
   onStopTimeChange: (stopTime: number) => void;
   onPseudoTimeChange: (pseudoTime: number | null) => void;
+  onSelectedObject: (object: BattlefieldObject | null) => void;
   onObjectsChange: (newObjects: BattlefieldObject[], objectBeingPlaced: BattlefieldObject | null) => void;
 }
 
@@ -28,7 +29,6 @@ function getClientPosWithPan(e: React.MouseEvent | MouseEvent, pan: Position): P
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [mousePressed, setMousePressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
-  const [selectedObject, setSelectedObject] = useState<BattlefieldObject | null>(null);
   const [undoStack, setUndoStack] = useState<{ action: 'delete' | 'recreate', data: any }[]>([]);
   const [pressedPos, setPressedPos] = useState<Position>([0, 0]);
   const [pan, setPan] = useState<Position>([0, 0]);
@@ -41,13 +41,13 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     setMousePressed(true);
     setPressedPos([e.clientX, e.clientY]);
 
-    if (selectedObject) {
-      setSelectedObject(null);
-    }
-
     if (e.buttons === 2) {
       setPanOrigin(pan);
       return;
+    }
+
+    if (props.selectedObject) {
+      props.onSelectedObject(null);
     }
 
     const clientPosWithPan = getClientPosWithPan(e, pan);
@@ -163,12 +163,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     if(props.tool.toolType === 'delete') {
       deleteObject(obj.id);
     } else if(props.tool.toolType === 'select') {
-      setSelectedObject(obj);
+      props.onSelectedObject(obj);
     }
-  }
-
-  const objectModified = (obj: BattlefieldObject) => {
-    props.onObjectsChange(props.objects, objectBeingPlaced); // TODO: Immutability?
   }
 
   const handleKeydown = (e: KeyboardEvent) => {
@@ -188,7 +184,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   useEffect(() => {
       // This is an actual true side effect
       if (props.tool.toolType !== 'select') {
-        setSelectedObject(null);
+        props.onSelectedObject(null);
       }
   }, [props.tool]);
 
@@ -209,10 +205,6 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         }
         {objectBeingPlaced && (
           <BattlefieldObj object={objectBeingPlaced} isInactive={true} shouldShowPath={true} time={0} />
-        )}
-
-        {selectedObject && (
-          <ObjectEditor object={selectedObject} onObjectModified={(obj) => { objectModified(obj); }} />
         )}
         </div>
     </div>
