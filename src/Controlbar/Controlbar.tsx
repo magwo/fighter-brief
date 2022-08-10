@@ -15,6 +15,7 @@ const PLAYBACK_SPEEDS = [0.4, 1, 3, 9];
 const ROUTE_DISPLAY_MODES = ["when_paused" ,"always", "never"] as const;
 export type RouteDisplayMode = typeof ROUTE_DISPLAY_MODES[number];
 
+// TODO: Use parent-state props instead of local state
 interface ControlbarProps {
   stopTime: number;
   onTimeChange: (time: number) => void,

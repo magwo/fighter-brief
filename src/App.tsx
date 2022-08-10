@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tool, toolCategories } from './Toolbar/tools';
 import './App.css';
 import Workspace from './Workspace/Workspace';
@@ -6,24 +6,98 @@ import Controlbar from './Controlbar/Controlbar';
 import Toolbar from './Toolbar/Toolbar';
 import Mainbar from './Mainbar/Mainbar';
 import { MapType } from './battlefield-object-types';
+import { loadData, serializeData } from './battlefield-object-persister';
+import { BattlefieldObject, getStopTime, update as updateObject } from './battlefield-object';
+
+const updateUrl = (_scenarioName: string, _map: MapType, _objects: BattlefieldObject[]) => {
+  // TODO: Move this to App or something
+  const serialized = serializeData(_scenarioName, _map, _objects);
+  window.location.hash = serialized;
+}
+
+function updateAllObjects(objects: BattlefieldObject[], time: number) {
+  objects.forEach((obj) => {
+    updateObject(obj, time);
+  });
+}
+
+const getFinalStopTime = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null = null): number => {
+  let max = 1;
+  newObjects.forEach((obj) => {
+    max = Math.max(max, getStopTime(obj));
+  });
+  if (extraObject !== null) {
+    max = Math.max(max, getStopTime(extraObject));
+  }
+  return max;
+}
+
 
 function App() {
   const [scenarioName, setScenarioName] = useState<string>('New scenario');
   const [map, setMap] = useState<MapType>('');
+  const [objects, setObjects] = useState<BattlefieldObject[]>([]);
   const [selectedTool, setSelectedTool] = useState<Tool>(toolCategories[0].tools[0]);
   const [shouldPlay, setShouldPlay] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
+  const [pseudoTime, setPseudoTime] = useState<number | null>(0);
   const [stopTime, setStopTime] = useState<number>(1);
   const [shouldShowPaths, setShouldShowPaths] = useState<boolean>(true);
+
+  const loadFromUrl = () => {
+    // Load initial objects
+    if (window.location.hash.length > 0) {
+      const { scenarioName, mapBackground, loadedObjects } = loadData(window.location.hash);
+      console.log("Scenario name is", scenarioName);
+      console.log("Map background is", mapBackground);
+      console.log("Initial objects", loadedObjects);
+      updateAllObjects(loadedObjects, 0);
+      setScenarioName(scenarioName);
+      setMap(mapBackground);
+      setObjects(loadedObjects);
+      // checkStopTime(loadedObjects);
+    }
+  };
+
+  const handleScenarioNameChange = (name: string) => {
+    setScenarioName(name);
+    updateUrl(name, map, objects);
+  };
+
+  const handleMapChange = (map: MapType) => {
+    setMap(map);
+    updateUrl(scenarioName, map, objects);
+  };
+
+  const handleObjectsChange = (newObjects: BattlefieldObject[]) => {
+    updateAllObjects(newObjects, time); // TODO: Maybe consider pseudoTime?
+    setObjects(newObjects);
+    updateUrl(scenarioName, map, newObjects);
+  };
+
+  const handleTimeChange = (time: number) => {
+    updateAllObjects(objects, time);
+    setTime(time);
+  }
+
+  const handlePseudoTimeChange = (pseudoTime: number | null) => {
+    updateAllObjects(objects, pseudoTime ?? time);
+    setPseudoTime(pseudoTime)
+  }
+  
+
+  useEffect(() => {
+    loadFromUrl();
+  }, []);
 
   return (
     <div className="App" data-testid="App">
       <header className="App-header">
       </header>
-      <Mainbar scenarioName={scenarioName} map={map} onScenarioNameChange={(name) => setScenarioName(name) } onMapChange={(map) => setMap(map) } />
-      <Workspace tool={selectedTool} map={map} shouldPlay={shouldPlay} shouldShowPaths={shouldShowPaths} time={time} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} />
+      <Mainbar scenarioName={scenarioName} map={map} onScenarioNameChange={handleScenarioNameChange} onMapChange={handleMapChange} />
+      <Workspace objects={objects} tool={selectedTool} map={map} shouldPlay={shouldPlay} shouldShowPaths={shouldShowPaths} time={time} pseudoTime={pseudoTime} onPseudoTimeChange={handlePseudoTimeChange} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} onObjectsChange={handleObjectsChange} />
       <Toolbar onToolSelected={(tool: Tool) => setSelectedTool(tool)} />
-      <Controlbar stopTime={stopTime} onPlayPause={(shouldPlay: boolean) => setShouldPlay(shouldPlay)} onTimeChange={(time) => { setTime(time) }} onShowPaths={(show) => setShouldShowPaths(show)} />
+      <Controlbar stopTime={stopTime} onPlayPause={(shouldPlay: boolean) => setShouldPlay(shouldPlay)} onTimeChange={handleTimeChange} onShowPaths={(show) => setShouldShowPaths(show)} />
     </div>
   );
 }
