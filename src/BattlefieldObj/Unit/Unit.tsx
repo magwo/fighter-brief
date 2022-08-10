@@ -26,6 +26,7 @@ interface UnitProps {
   onClick?: (e: React.MouseEvent) => void,
 }
 
+// TODO: Optimize
 const Unit: FC<UnitProps> = (props) => {
   const styles = {
     transform: `translate(${props.object.position[0] - 16}px, ${props.object.position[1] - 16}px)`

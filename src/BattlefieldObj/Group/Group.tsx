@@ -51,7 +51,7 @@ function getWingmenPositionsAndHeadings(lead: BattlefieldObject, time: number): 
   const wingmen: BattlefieldObject[] = [];
 
   for (let i=1; i<=lead.wingmanCount; i++) {
-    const wingman = createBattlefieldObject(null, '', lead.type, lead.endType, [...lead.position], lead.heading, lead.startTime, lead.speed, 0, '');
+    const wingman = createBattlefieldObject(`${lead.id}-${i}`, '', lead.type, lead.endType, [...lead.position], lead.heading, lead.startTime, lead.speed, 0, '');
     const angle = PositionMath.angleFromHeading(lead.heading);
     formationFunctions[lead.formation](wingman, lead, angle, i, time);
     wingmen.push(wingman);
