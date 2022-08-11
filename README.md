@@ -27,6 +27,10 @@ Disclaimer: touch devices such as mobile phones are currently __not__ supported.
 | Shift key (hold) | Fly/drive straight        |
 | Ctrl/Cmd key (hold)   | Allow narrow turns when flying/driving |
 | Backspace/Delete   | Delete selected object |
+| V   | Use Select tool |
+| D   | Use Delete tool |
+| T   | Use Text tool |
+| M   | Use Measurement tool |
 
 ### How to share a scenario
 
