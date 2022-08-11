@@ -20,7 +20,6 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     // Do nothing
-    alert('Submitted ' + e);
     e.preventDefault();
   }
 
@@ -47,8 +46,6 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
     props.object.formation = e.target.value as FormationType;
     props.onObjectModified(props.object);
   }
-
-  // TODO: Use effect and save object copy from props? Not sure if needed :S
 
   useEffect(() => {
     setValues({name: props.object.name, speed: props.object.speed, wingmanCount: props.object.wingmanCount, formation: props.object.formation});
