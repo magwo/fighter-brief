@@ -59,7 +59,9 @@ const Unit: FC<UnitProps> = (props) => {
         <div style={graphicsStyles} className={`graphics-container${props.isInactive ? " inactive" : ""}`}>
           <img src={`${process.env.PUBLIC_URL}/aviation/${props.object.hasReachedEnd && !props.isInactive && props.object.endType ? props.object.endType : props.object.type}@2x.png`} className="unit-image" draggable="false" alt="" />
         </div>
-        <p>{props.object.name}</p>
+        {props.object.name.length > 0 &&
+          <p>{props.object.name}</p>
+        }
       </div>
       {endPosStyles && props.shouldShowPath && (
       <div style={endPosStyles} className="primary-container">

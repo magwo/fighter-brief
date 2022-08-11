@@ -14,6 +14,8 @@
     font-weight: bold;
     margin: 0 6px;
     padding: 0;
+    color: #385279;
+    text-shadow: 0 0 1px white;
 }
 
 .Measurement.is-selected p {
@@ -24,7 +26,7 @@
 .Measurement .left-arrow, .Measurement .right-arrow {
     flex-shrink: 0;
     font-size: 14px;
-    color: #888;
+    color: #385279;
 }
 
 .Measurement .left-arrow {
@@ -40,7 +42,7 @@
 .Measurement .line {
     flex-basis: 50%;
     flex-shrink: 1;
-    border: 1px solid #888;
+    border: 1px solid #385279;
     border-left: none;
     border-right: none;
     /* background-color: #ccf; */
