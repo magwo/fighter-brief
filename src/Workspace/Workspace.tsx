@@ -166,6 +166,9 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const handleKeydown = (e: KeyboardEvent) => {
     if (e.key === "z" && (e.getModifierState("Control") || e.getModifierState(("Meta")))) {
       undo();
+    } else if ((e.key === "Backspace" || e.key === "Delete") && props.selectedObject !== null) {
+      deleteObject(props.selectedObject.id);
+      props.onSelectedObject(null);
     }
   }
 
