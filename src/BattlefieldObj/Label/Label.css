@@ -4,7 +4,10 @@
     display: flex;
     z-index: 10;
     position: absolute;
+    min-width: 80px;
+    max-width: 120px;
 }
+
 
 .Label p {
     font-size: 13px;
@@ -12,4 +15,9 @@
     transform: translate(-50%, -50%);
     margin: 0;
     padding: 0;
+}
+
+.Label.is-selected p {
+    outline: 1px dashed #666;
+    outline-offset: 3px;
 }
