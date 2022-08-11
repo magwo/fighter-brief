@@ -26,6 +26,7 @@ Disclaimer: touch devices such as mobile phones are currently __not__ supported.
 | Down arrow   | Decrease playback speed        |
 | Shift key (hold) | Fly/drive straight        |
 | Ctrl/Cmd key (hold)   | Allow narrow turns when flying/driving |
+| Backspace/Delete   | Delete selected object |
 
 ### How to share a scenario
 
