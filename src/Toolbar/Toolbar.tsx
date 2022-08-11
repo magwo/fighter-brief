@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
 import { ReactComponent as ArrowPointer } from './images/arrow-pointer.svg';
 import { ReactComponent as ArrowsLeftRight } from './images/arrows-left-right-to-line.svg';
 import { ReactComponent as TrashCan } from './images/trash-can.svg';
@@ -54,10 +54,49 @@ function renderTool(tool: Tool, selectedTool: Tool, setSelectedTool: (tool: Tool
   }
 }
 
+function getFirstToolByType(toolType: string): Tool | null {
+  for (let cat of toolCategories) {
+    for (let tool of cat.tools) {
+      if (tool.toolType === toolType) {
+        return tool;
+      }
+    }
+  }
+  return null;
+}
+
 // TODO: Expandable categories
 const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
   const [selectedTool, setSelectedTool] = useState<Tool>(toolCategories[0].tools[0]);
   const [expandedCategory, setExpandedCategory] = useState<string>("");
+
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (e.key === "v") {
+      setToolByNameAndNotify('select');
+    } else if (e.key === "t") {
+      setToolByNameAndNotify('placeLabel');
+    } else if (e.key === "m") {
+      setToolByNameAndNotify('placeMeasurement');
+    } else if (e.key === "d") {
+      setToolByNameAndNotify('delete');
+    }
+  };
+  
+  useEffect(() => {
+    // Setup global keypress handler
+    window.document.addEventListener("keydown", handleKeydown);
+    return () => {
+      window.document.removeEventListener('keydown', handleKeydown);
+    }
+  }, [handleKeydown]);
+  
+  const setToolByNameAndNotify = (toolName: string) => {
+    const tool = getFirstToolByType(toolName);
+    if (tool) {
+      setSelectedTool(tool);
+      props.onToolSelected(tool);
+    }
+  }
 
   const tools = toolCategories.map((c) => {
     const isExpanded = (c.showAlways || expandedCategory === c.categoryName);
