@@ -9,7 +9,7 @@ describe('<Measurement />', () => {
     const object = createBattlefieldObject(null, "measurement text", 'measurement', null, [0, 0], 0, 0, 0, 0, '');
     object.path.addPoint(0, 0);
     object.path.addPoint(10, 0);
-    render(<Measurement object={object} isInactive={false} />);
+    render(<Measurement object={object} isSelected={false} isInactive={false} />);
     
     const measurement = screen.getByTestId('Measurement');
 

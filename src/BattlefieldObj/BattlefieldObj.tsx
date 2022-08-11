@@ -9,6 +9,7 @@ import Measurement from './Measurement/Measurement';
 
 interface BattlefieldObjProps {
   object: BattlefieldObject,
+  isSelected: boolean;
   isInactive: boolean,
   shouldShowPath: boolean,
   time: number, // Only needed for trail formation - to delay wingmen positions in path
@@ -20,13 +21,13 @@ const BattlefieldObj: FC<BattlefieldObjProps> = (props) => {
     <div className={`BattlefieldObj${props.object.isVisible ? '' : ' invisible'}`} data-testid="BattlefieldObj" onClick={props.onClick}>
         {unitList.includes(props.object.type as string) &&
           //  TOOD: pass onClick?
-          <Group object={props.object} isInactive={props.isInactive} shouldShowPath={props.shouldShowPath} time={props.time} />
+          <Group object={props.object} isSelected={props.isSelected} isInactive={props.isInactive} shouldShowPath={props.shouldShowPath} time={props.time} />
         }
         {props.object.type === 'label' &&
-          <Label object={props.object} isInactive={props.isInactive} />
+          <Label object={props.object} isSelected={props.isSelected} isInactive={props.isInactive} />
         }
         {props.object.type === 'measurement' &&
-          <Measurement object={props.object} isInactive={props.isInactive} />
+          <Measurement object={props.object} isSelected={props.isSelected} isInactive={props.isInactive} />
         }
     </div>
   );

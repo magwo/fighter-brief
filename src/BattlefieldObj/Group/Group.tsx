@@ -62,11 +62,12 @@ function getWingmenPositionsAndHeadings(lead: BattlefieldObject, time: number): 
 
 
 interface GroupProps {
-  object: BattlefieldObject,
-  isInactive: boolean,
-  shouldShowPath: boolean,
-  time: number,
-  onClick?: (e: React.MouseEvent) => void,
+  object: BattlefieldObject;
+  isSelected: boolean;
+  isInactive: boolean;
+  shouldShowPath: boolean;
+  time: number;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 const Group: FC<GroupProps> = (props) => {
@@ -74,9 +75,9 @@ const Group: FC<GroupProps> = (props) => {
 
   return (
     <div className={`Group`} data-testid="Group" onClick={props.onClick}>
-      <Unit object={props.object} isInactive={props.isInactive} shouldShowPath={props.shouldShowPath} />
+      <Unit object={props.object} isSelected={props.isSelected} isInactive={props.isInactive} shouldShowPath={props.shouldShowPath} />
       {wingmen.map((object) =>
-          <Unit object={object} isInactive={props.isInactive} key={object.id} shouldShowPath={false} />
+          <Unit object={object} isSelected={false} isInactive={props.isInactive} key={object.id} shouldShowPath={false} />
       )}
     </div>
   );

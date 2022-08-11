@@ -7,7 +7,7 @@ import { createBattlefieldObject } from '../../battlefield-object';
 describe('<Unit />', () => {
   test('it should mount', () => {
     const object = createBattlefieldObject(null, "", 'viper', null, [0, 0], 0, 0, 0, 0, '');
-    render(<Unit object={object} isInactive={false} shouldShowPath={true} />);
+    render(<Unit object={object} isSelected={false} isInactive={false} shouldShowPath={true} />);
     
     const unit = screen.getByTestId('Unit');
 

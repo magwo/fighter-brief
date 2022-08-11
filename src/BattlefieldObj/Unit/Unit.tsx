@@ -20,10 +20,11 @@ function getTypeClass(type: BattleFieldObjectType) {
 }
 
 interface UnitProps {
-  object: BattlefieldObject,
-  isInactive: boolean,
-  shouldShowPath: boolean,
-  onClick?: (e: React.MouseEvent) => void,
+  object: BattlefieldObject;
+  isSelected: boolean;
+  isInactive: boolean;
+  shouldShowPath: boolean;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 // TODO: Optimize
@@ -54,7 +55,7 @@ const Unit: FC<UnitProps> = (props) => {
           </svg>
         </div>
       )}
-      <div style={styles} className={`primary-container`}>
+      <div style={styles} className={`primary-container${props.isSelected ? ' is-selected' : ''}`}>
         <div style={graphicsStyles} className={`graphics-container${props.isInactive ? " inactive" : ""}`}>
           <img src={`${process.env.PUBLIC_URL}/aviation/${props.object.hasReachedEnd && !props.isInactive && props.object.endType ? props.object.endType : props.object.type}@2x.png`} className="unit-image" draggable="false" alt="" />
         </div>

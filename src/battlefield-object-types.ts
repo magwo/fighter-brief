@@ -8,7 +8,7 @@ export const groundList = ['infantry', 'manpad', 'truck', 'apc', 'tank', 'mobile
 export const endList = ['expl_m'] as const;
 export const infoList = ['label', 'measurement'] as const;
 export const unitList: string[] = [...airplaneList, ...helicopterList, ...shipList, ...groundList, ...staticList, ...weaponList];
-export const movableList: string[] = [...airplaneList, ...helicopterList, ...shipList, ...groundList];
+export const movableList: string[] = [...airplaneList, ...helicopterList, ...shipList, ...groundList, ...weaponList];
 
 export type AirplaneType = typeof airplaneList[number];
 export type HelicopterType = typeof helicopterList[number];

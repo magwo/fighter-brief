@@ -3,9 +3,10 @@ import { BattlefieldObject } from '../../battlefield-object';
 import './Measurement.css';
 
 interface MeasurementProps {
-  object: BattlefieldObject,
-  isInactive: boolean,
-  onClick?: (e: React.MouseEvent) => void,
+  object: BattlefieldObject;
+  isSelected: boolean;
+  isInactive: boolean;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 const Measurement: FC<MeasurementProps> = (props) => {

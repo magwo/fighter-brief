@@ -34,9 +34,6 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [pan, setPan] = useState<Position>([0, 0]);
   const [panOrigin, setPanOrigin] = useState<Position>([0, 0]);
 
-  // TODO: Find out how much forceUpdate is actually needed anymore
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
-
   const startPressWorkspace = (e: React.MouseEvent) => {
     setMousePressed(true);
     setPressedPos([e.clientX, e.clientY]);
@@ -92,7 +89,6 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       setObjectBeingPlaced(null);
       props.onPseudoTimeChange(null);
       props.onObjectsChange(newObjects, objectBeingPlaced);
-      // forceUpdate(); // ???
     }
   }
 
@@ -200,11 +196,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       <div className="panner" style={panStyle}>
         <MapBackground map={props.map} />
         {props.objects.map((object) =>
-          <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isInactive={false} key={object.id} shouldShowPath={props.shouldShowPaths} time={props.pseudoTime ?? props.time}></BattlefieldObj>
+          <BattlefieldObj object={object} onClick={ () => clickedObject(object) } isSelected={props.selectedObject?.id === object.id} isInactive={false} key={object.id} shouldShowPath={props.shouldShowPaths} time={props.pseudoTime ?? props.time}></BattlefieldObj>
         )
         }
         {objectBeingPlaced && (
-          <BattlefieldObj object={objectBeingPlaced} isInactive={true} shouldShowPath={true} time={0} />
+          <BattlefieldObj object={objectBeingPlaced} isSelected={false} isInactive={true} shouldShowPath={true} time={0} />
         )}
         </div>
     </div>

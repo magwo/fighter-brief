@@ -3,9 +3,10 @@ import { BattlefieldObject } from '../../battlefield-object';
 import './Label.css';
 
 interface LabelProps {
-  object: BattlefieldObject,
-  isInactive: boolean,
-  onClick?: (e: React.MouseEvent) => void,
+  object: BattlefieldObject;
+  isSelected: boolean;
+  isInactive: boolean;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 const Label: FC<LabelProps> = (props) => {
