@@ -16,6 +16,11 @@
     padding: 0;
 }
 
+.Measurement.is-selected p {
+    outline: 1px dashed #666;
+    outline-offset: 3px;
+}
+
 .Measurement .left-arrow, .Measurement .right-arrow {
     flex-shrink: 0;
     font-size: 14px;
