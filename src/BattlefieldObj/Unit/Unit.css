@@ -83,3 +83,7 @@
     color: #555;
     text-shadow: 0 0 1px white;
 }
+
+.Unit p.large {
+    font-size: 14px;
+}

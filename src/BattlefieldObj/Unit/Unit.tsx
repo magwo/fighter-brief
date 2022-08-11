@@ -60,7 +60,7 @@ const Unit: FC<UnitProps> = (props) => {
           <img src={`${process.env.PUBLIC_URL}/aviation/${props.object.hasReachedEnd && !props.isInactive && props.object.endType ? props.object.endType : props.object.type}@2x.png`} className="unit-image" draggable="false" alt="" />
         </div>
         {props.object.name.length > 0 &&
-          <p>{props.object.name}</p>
+          <p className={`${props.object.name.length < 6 ? 'large' : ''}`}>{props.object.name}</p>
         }
       </div>
       {endPosStyles && props.shouldShowPath && (

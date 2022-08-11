@@ -5,6 +5,10 @@ import syria from './syria.jpg';
 import persianGulf from './persiangulf.jpg';
 import './MapBackground.css';
 
+// Note about map images:
+// All images must be authored so that each pixel corresponds
+// to the number specified in PositionMath (2.14 at time of writing)
+
 interface MapBackgroundProps {
   map: MapType
 }

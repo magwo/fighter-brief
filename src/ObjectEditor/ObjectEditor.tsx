@@ -3,6 +3,10 @@ import { BattlefieldObject, SpeedKnots } from '../battlefield-object';
 import { formationList, FormationType, movableList } from '../battlefield-object-types';
 import './ObjectEditor.css';
 
+
+const EMOJI_BUTTONS = ["🇮🇱", "🇸🇾", "🇺🇸", "🇷🇺", "🇸🇪"];
+
+
 interface ObjectEditorProps {
   object: BattlefieldObject,
   onObjectModified: (object: BattlefieldObject) => void,
@@ -47,6 +51,13 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
     props.onObjectModified(props.object);
   }
 
+  const addNameString = (str: string) => {
+    const newName = values.name + str;
+    setValues({...values, name: newName});
+    props.object.name = newName;
+    props.onObjectModified(props.object);
+  }
+
   useEffect(() => {
     setValues({name: props.object.name, speed: props.object.speed, wingmanCount: props.object.wingmanCount, formation: props.object.formation});
   }, [props.object]);
@@ -61,6 +72,11 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
           Name
           <input type="text" value={values.name} onChange={handleNameChange} />
         </label>
+        <div className="emoji-buttons">
+          {EMOJI_BUTTONS.map((b) => {
+            return <div className="clickable" onClick={() => addNameString(b)}>{b}</div>
+          })}
+        </div>
         {movableList.includes(props.object.type) &&
         <div>
           <label>

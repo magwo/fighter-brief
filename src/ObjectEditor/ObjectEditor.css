@@ -34,3 +34,19 @@
     margin-top: 4px;
 }
 
+.ObjectEditor .emoji-buttons {
+    display: flex;
+    padding: 2px 0;
+    gap: 3px;
+    /* padding: 4px 0; */
+}
+
+.ObjectEditor .clickable {
+    padding: 1px 3px;
+    font-size: 14px;
+    background-color: #555;
+    border-radius: 3px;
+}
+.ObjectEditor .clickable:hover {
+    background-color: #5a5a5a;
+}

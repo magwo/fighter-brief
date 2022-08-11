@@ -4,6 +4,9 @@ import { CurveInterpolator2D, simplify2d } from 'curve-interpolator';
 const TWO_PI = Math.PI * 2;
 export type Position = [number, number];
 export class PositionMath {
+
+    static readonly PIXELS_PER_KM = 4.433369156;
+    static readonly KM_PER_NM = 1.852;
     
     private constructor() {}
     static length2D(p: Position) {
@@ -45,6 +48,14 @@ export class PositionMath {
         const factor = dotProduct / targetLenSqrd;
         return [targetVector[0] * factor, targetVector[1] * factor];
     }
+
+    static getDistanceKm(pixelPos1: Position, pixelPos2: Position) {
+        return PositionMath.length2D(PositionMath.delta(pixelPos2, pixelPos1)) / PositionMath.PIXELS_PER_KM;
+    };
+
+    static getDistanceNm(pixelPos1: Position, pixelPos2: Position) {
+        return PositionMath.getDistanceKm(pixelPos1, pixelPos2) / PositionMath.KM_PER_NM;
+    };
 
     static makeAngleWorkable(angle: number) {
         return ((angle + TWO_PI) % TWO_PI) + TWO_PI;

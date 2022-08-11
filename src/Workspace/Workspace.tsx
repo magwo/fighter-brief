@@ -124,7 +124,10 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         props.onObjectsChange(props.objects, objectBeingPlaced);
       } else if (props.tool.toolType === 'placeMeasurement') {
         // TODO: Avoid recreating objects
-        objectBeingPlaced.path.setPoints([[pressedPos[0] - pan[0], pressedPos[1] - pan[1]], getClientPosWithPan(e, pan)]);
+        const p1: Position = [pressedPos[0] - pan[0], pressedPos[1] - pan[1]];
+        const p2 = getClientPosWithPan(e, pan);
+        objectBeingPlaced.name = `${Math.round(PositionMath.getDistanceNm(p1, p2))} NM`;
+        objectBeingPlaced.path.setPoints([p1, p2]);
         update(objectBeingPlaced, props.time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
         props.onObjectsChange(props.objects, objectBeingPlaced);

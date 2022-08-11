@@ -2,26 +2,26 @@
     position: absolute;
 }
 
+/* NOTE: If any of these top/left/scale are changed, all existing scenarios become incorrect */
+/* TODO: Should probably use pan preset instead, for setting initial view */
 .MapBackground > img {
     position: absolute;
     opacity: 0.5;
     transform-origin: 0 0;
-}
-
-.MapBackground > img.caucasus {
-    left: -900px;
-    top: -600px;
-    transform: scale(80%);
-}
-
-.MapBackground > img.syria {
-    left: -200px;
-    top: -300px;
     transform: scale(100%);
 }
 
+.MapBackground > img.caucasus {
+    left: -1000px;
+    top: -800px;
+}
+
+.MapBackground > img.syria {
+    left: -1100px;
+    top: -1200px;
+}
+
 .MapBackground > img.persian-gulf {
-    left: -300px;
-    top: -1000px;
-    transform: scale(110%);
+    left: -600px;
+    top: -2200px;
 }
