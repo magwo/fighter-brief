@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.css": "/static/css/main.38072222.css",
-    "main.js": "/static/js/main.6a7ecaa8.js",
+    "main.css": "/static/css/main.08406f3a.css",
+    "main.js": "/static/js/main.3c3d1800.js",
     "static/js/787.7c0a625b.chunk.js": "/static/js/787.7c0a625b.chunk.js",
+    "static/media/syria.jpg": "/static/media/syria.c48d2d5da60c31abb8e9.jpg",
+    "static/media/persiangulf.jpg": "/static/media/persiangulf.2bf77bf6b6aad94303bb.jpg",
     "static/media/caucasus.jpg": "/static/media/caucasus.cfd0879380043715da8a.jpg",
-    "static/media/syria.jpg": "/static/media/syria.1ddefe19c7455da541b6.jpg",
-    "static/media/persiangulf.jpg": "/static/media/persiangulf.bb9acbd42e07671b21bc.jpg",
     "static/media/route.svg": "/static/media/route.db2f8b1fdce2736c8a900697ef4b4621.svg",
     "static/media/arrows-left-right-to-line.svg": "/static/media/arrows-left-right-to-line.83aed2f4a54ae2adea7f2a38be6fe654.svg",
     "static/media/repeat.svg": "/static/media/repeat.62e22743cf4cf46bd6b590de8d59ae7c.svg",
@@ -16,12 +16,12 @@
     "static/media/arrow-pointer.svg": "/static/media/arrow-pointer.ea450b87001dc34a6fec16f0520050e9.svg",
     "static/media/pause.svg": "/static/media/pause.739f2b249204840026c986ef6543aa21.svg",
     "static/media/play.svg": "/static/media/play.2de65d36cdfbcd5bebcbde19b1f1ffe6.svg",
-    "main.38072222.css.map": "/static/css/main.38072222.css.map",
-    "main.6a7ecaa8.js.map": "/static/js/main.6a7ecaa8.js.map",
+    "main.08406f3a.css.map": "/static/css/main.08406f3a.css.map",
+    "main.3c3d1800.js.map": "/static/js/main.3c3d1800.js.map",
     "787.7c0a625b.chunk.js.map": "/static/js/787.7c0a625b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.38072222.css",
-    "static/js/main.6a7ecaa8.js"
+    "static/css/main.08406f3a.css",
+    "static/js/main.3c3d1800.js"
   ]
 }
