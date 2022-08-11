@@ -97,7 +97,10 @@ function App() {
 
   const handleObjectModified = (obj: BattlefieldObject) => {
     const newObjects = objects.map(o => (o.id === obj.id ? { ...obj } : o))
-    // TODO: What actually happens when the selected object here?
+    // TODO: What happens with the selected object?
+    // The selected object (according to this component) no longer exists
+    // in the workspace component.
+    // It's a detached copy that might get outdated.
     handleObjectsChange(newObjects, null);
   }
 
@@ -107,8 +110,7 @@ function App() {
 
   return (
     <div className="App" data-testid="App">
-      <header className="App-header">
-      </header>
+      <div></div>
       <Mainbar scenarioName={scenarioName} map={map} onScenarioNameChange={handleScenarioNameChange} onMapChange={handleMapChange} />
       <Workspace objects={objects} selectedObject={selectedObject} tool={selectedTool} map={map} shouldPlay={shouldPlay} shouldShowPaths={shouldShowPaths} time={time} pseudoTime={pseudoTime} onSelectedObject={handleObjectSelected} onPseudoTimeChange={handlePseudoTimeChange} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} onObjectsChange={handleObjectsChange} />
       <Toolbar onToolSelected={(tool: Tool) => setSelectedTool(tool)} />
