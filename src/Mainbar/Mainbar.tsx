@@ -1,15 +1,13 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { MapType } from '../battlefield-object-types';
 import { ReactComponent as ShareIcon } from './images/share-from-square.svg';
 import './Mainbar.css';
 
-function getStringHashNumber(str: string): number {
-  return str.split('').reduce((prevHash, currVal) =>
-    (((prevHash << 5) - prevHash) + currVal.charCodeAt(0))|0, 0);
-}
-
-function getNeatStringHashNumber(str: string): number {
-  return Math.round(Math.abs(getStringHashNumber(str)));
+function getNeatRandomString(): string {
+  const BIG_INT1 = 10e7;
+  const BIG_INT2 = 10e11;
+  const num = Math.round(BIG_INT1 + Math.random() * BIG_INT2);
+  return num.toString(36);
 }
 
 interface MainbarProps {
@@ -22,6 +20,7 @@ interface MainbarProps {
 
 const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
+  const [shareUrl, setShareUrl] = useState<string>('');
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     props.onScenarioNameChange(e.target.value as MapType);
@@ -48,10 +47,14 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
   //     });
   // }
 
-  const ourUrl = encodeURIComponent(props.fullUrl);
-  console.log("Our url is", ourUrl);
-  const desiredShortUrl = 'fighterbrief_' + getNeatStringHashNumber(props.fullUrl).toString(36);
-  const urlShorteningUrl = `https://is.gd/create.php?format=web&shorturl=${desiredShortUrl}&url=${ourUrl}`;
+  useEffect(() => {
+    const ourUrl = encodeURIComponent(props.fullUrl);
+    console.log("Our url is", ourUrl);
+    const desiredShortUrl = 'fighterbrief_' + getNeatRandomString();
+    console.log("Desired short url is", desiredShortUrl);
+    const urlShorteningUrl = `https://is.gd/create.php?format=web&shorturl=${desiredShortUrl}&url=${ourUrl}`;
+    setShareUrl(urlShorteningUrl);
+  }, [props.fullUrl]);
 
   return (
     <div className="Mainbar" data-testid="Mainbar" onMouseDown={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
@@ -71,7 +74,7 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
           <option value="pg">Persian Gulf</option>
         </select>
         </div>
-        <a className='clickable' href={urlShorteningUrl} target="_blank">
+        <a className='clickable' href={shareUrl} target="_blank">
           <ShareIcon className="svg-icon" />
         </a>
     </div>
