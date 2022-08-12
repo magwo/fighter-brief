@@ -1,8 +1,12 @@
 import React, { FC, useState } from 'react';
 import { MapType } from '../battlefield-object-types';
 import { ReactComponent as ShareIcon } from './images/share-from-square.svg';
-
 import './Mainbar.css';
+
+function getStringHashNumber(str: string): number {
+  return str.split('').reduce((prevHash, currVal) =>
+    (((prevHash << 5) - prevHash) + currVal.charCodeAt(0))|0, 0);
+}
 
 interface MainbarProps {
   scenarioName: string,
@@ -25,8 +29,10 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
   const getShortUrl = () => {
     const ourUrl = encodeURI(window.location.href + window.location.hash);
     console.log("Our URL is", ourUrl);
-    const fullUrl = `https://is.gd/create.php?format=simple&url=${ourUrl}`;
-    fetch(fullUrl, { method: 'GET', mode: 'no-cors', headers: { 'Content-Type': 'application/json' } })
+    const desiredShortUrl = 'fighterbrief' + Math.round(getStringHashNumber(ourUrl)).toString(36);
+    console.log("Desired short URL is", desiredShortUrl);
+    const fullUrl = `https://is.gd/create.php?format=simple&shorturl=${desiredShortUrl}&url=${ourUrl}`;
+    fetch(fullUrl, { method: 'GET', mode: 'cors', headers: { 'Content-Type': 'text/plain' } })
     .then((response: Response) => response.text())
     .then((text) => {
       console.log("Got response text", text);
