@@ -26,7 +26,7 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
     const ourUrl = encodeURI(window.location.href + window.location.hash);
     console.log("Our URL is", ourUrl);
     const fullUrl = `https://is.gd/create.php?format=simple&url=${ourUrl}`;
-    fetch(fullUrl, { mode: 'cors' })
+    fetch(fullUrl, { method: 'GET', mode: 'no-cors', headers: { 'Content-Type': 'application/json' } })
     .then((response: Response) => response.text())
     .then((text) => {
       console.log("Got response text", text);
