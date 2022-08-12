@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.3462db7d.css",
-    "main.js": "/static/js/main.2b6db03a.js",
+    "main.css": "/static/css/main.b18c8d71.css",
+    "main.js": "/static/js/main.9f37ec40.js",
     "static/js/787.7c0a625b.chunk.js": "/static/js/787.7c0a625b.chunk.js",
     "static/media/syria.jpg": "/static/media/syria.c48d2d5da60c31abb8e9.jpg",
     "static/media/persiangulf.jpg": "/static/media/persiangulf.2bf77bf6b6aad94303bb.jpg",
@@ -10,18 +10,19 @@
     "static/media/arrows-left-right-to-line.svg": "/static/media/arrows-left-right-to-line.83aed2f4a54ae2adea7f2a38be6fe654.svg",
     "static/media/repeat.svg": "/static/media/repeat.62e22743cf4cf46bd6b590de8d59ae7c.svg",
     "static/media/trash-can.svg": "/static/media/trash-can.94eb279ebdbf1733329554a79ad1bdc7.svg",
+    "static/media/share-from-square.svg": "/static/media/share-from-square.0361aee603680ae82faa389a98c1916f.svg",
     "index.html": "/index.html",
     "static/media/question.svg": "/static/media/question.cf8ebf737a7262418ba9f2aae0d3216e.svg",
     "static/media/backward-fast.svg": "/static/media/backward-fast.8e79634426dab26babd50888a6dd9b7a.svg",
     "static/media/arrow-pointer.svg": "/static/media/arrow-pointer.ea450b87001dc34a6fec16f0520050e9.svg",
     "static/media/pause.svg": "/static/media/pause.739f2b249204840026c986ef6543aa21.svg",
     "static/media/play.svg": "/static/media/play.2de65d36cdfbcd5bebcbde19b1f1ffe6.svg",
-    "main.3462db7d.css.map": "/static/css/main.3462db7d.css.map",
-    "main.2b6db03a.js.map": "/static/js/main.2b6db03a.js.map",
+    "main.b18c8d71.css.map": "/static/css/main.b18c8d71.css.map",
+    "main.9f37ec40.js.map": "/static/js/main.9f37ec40.js.map",
     "787.7c0a625b.chunk.js.map": "/static/js/787.7c0a625b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3462db7d.css",
-    "static/js/main.2b6db03a.js"
+    "static/css/main.b18c8d71.css",
+    "static/js/main.9f37ec40.js"
   ]
 }
