@@ -1,13 +1,8 @@
 import { BattlefieldObject, createBattlefieldObject, HeadingDegrees, SpeedKnots } from "./battlefield-object";
 import { decodeInt, decodePositions, encodePositions, encodeStringSafely, OBJECT_DELIMITER, PROPERTY_DELIMITER } from "./battlefield-object-encoding";
-import { BattleFieldObjectType, EndType, FormationType, MapType } from "./battlefield-object-types";
+import { BattleFieldObjectType, CoalitionType, EndType, FormationType, MapType } from "./battlefield-object-types";
 
-// Reserved characters: ,;
-// TODO: Stop using comma, or handle comma better
-
-// TODO: Could use even better compression for shorter urls
-
-const CURRENT_VERSION = "v3";
+const CURRENT_VERSION = "v4";
 
 
 export function loadData(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
@@ -21,9 +16,43 @@ export function loadData(data: string): { scenarioName: string, mapBackground: s
         return decodeVersion2(data);
     } else if (version === "v3") {
         return decodeVersion3(data);
+    } else if (version === "v4") {
+        return decodeVersion4(data);
     } else {
         throw new Error(`Unknown data version "${version}", unable to load`);
     }
+}
+
+function decodeVersion4(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
+    const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
+    const name = decodeURI(objectStrings[1]);
+    const mapBackground = decodeURI(objectStrings[2]);
+    const panX = decodeURI(objectStrings[3]);
+    const panY = decodeURI(objectStrings[4]);
+    const zoomLevel = decodeURI(objectStrings[5]);
+    const reservedProperty = decodeURI(objectStrings[6]);
+    const objects = objectStrings.slice(7).map((str) => {
+        const tokens = str.split(PROPERTY_DELIMITER);
+        let i = 0;
+        const obj = createBattlefieldObject(
+            tokens[i++],
+            decodeURI(tokens[i++]),
+            tokens[i++] as CoalitionType,
+            tokens[i++] as BattleFieldObjectType,
+            tokens[i++] === '' ? null : tokens[i - 1] as EndType,
+            [Number(tokens[i++]), Number(tokens[i++])],
+            Number(tokens[i++]) as HeadingDegrees,
+            Number(tokens[i++]),
+            Number(tokens[i++]) as SpeedKnots,
+            Number(tokens[i++]),
+            tokens[i++] as FormationType,
+        );
+        obj.path.points = decodePositions(tokens[i++]);
+        obj.path.refreshCurve();
+        return obj;
+    });
+
+    return { scenarioName: name, mapBackground, loadedObjects: objects };
 }
 
 function decodeVersion3(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
@@ -36,6 +65,7 @@ function decodeVersion3(data: string): { scenarioName: string, mapBackground: st
         const obj = createBattlefieldObject(
             tokens[i++],
             decodeURI(tokens[i++]),
+            '',
             tokens[i++] as BattleFieldObjectType,
             tokens[i++] === '' ? null : tokens[i - 1] as EndType,
             [Number(tokens[i++]), Number(tokens[i++])],
@@ -64,6 +94,7 @@ function decodeVersion2(data: string): { scenarioName: string, mapBackground: st
         const obj = createBattlefieldObject(
             tokens[i++],
             decodeURI(tokens[i++]),
+            '',
             tokens[i++] as BattleFieldObjectType,
             tokens[i++] === '' ? null : tokens[i - 1] as EndType,
             [Number(tokens[i++]), Number(tokens[i++])],
@@ -92,6 +123,7 @@ function decodeVersion1(data: string): { scenarioName: string, loadedObjects: Ba
         const obj = createBattlefieldObject(
             tokens[i++],
             decodeURI(tokens[i++]),
+            '',
             tokens[i++] as BattleFieldObjectType,
             tokens[i++] === '' ? null : tokens[i - 1] as EndType,
             [Number(tokens[i++]), Number(tokens[i++])],
@@ -114,11 +146,16 @@ function decodeVersion1(data: string): { scenarioName: string, loadedObjects: Ba
 export function serializeData(scenarioName: string, map: MapType, objects: BattlefieldObject[]): string {
     const version = CURRENT_VERSION;
     const name = encodeStringSafely(scenarioName);
-    const prefixStrings = [version, name, map];
+    const panX = ''; // Reserved, not in use
+    const panY = ''; // Reserved, not in use
+    const zoomLevel = ''; // Reserved, not in use
+    const reservedExtra = ''; // Reserved, not in use
+    const prefixStrings = [version, name, map, panX, panY, zoomLevel, reservedExtra];
     const objectStrings: string[] = objects.map((o) => {
         const propsStr = [
             o.id, 
             encodeStringSafely(o.name), 
+            o.coalition, 
             o.type, 
             o.endType ? o.endType : '',
             Math.round(o.position[0]), 

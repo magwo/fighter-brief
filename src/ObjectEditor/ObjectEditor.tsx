@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { BattlefieldObject, SpeedKnots } from '../battlefield-object';
-import { formationList, FormationType, movableList } from '../battlefield-object-types';
+import { CoalitionType, formationList, FormationType, movableList } from '../battlefield-object-types';
 import './ObjectEditor.css';
 
 
@@ -14,13 +14,14 @@ interface ObjectEditorProps {
 
 interface Values {
   name: string,
+  coalition: CoalitionType,
   speed: number,
   wingmanCount: number,
   formation: FormationType,
 }
 
 const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
-  const [values, setValues] = useState<Values>({ name: "", speed: 0, wingmanCount: 0, formation: '' })
+  const [values, setValues] = useState<Values>({ name: "", coalition: '', speed: 0, wingmanCount: 0, formation: '' })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     // Do nothing
@@ -51,6 +52,12 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
     props.onObjectModified(props.object);
   }
 
+  const handleCoalitionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setValues({...values, coalition: e.target.value as CoalitionType});
+    props.object.coalition = e.target.value as CoalitionType;
+    props.onObjectModified(props.object);
+  }
+
   const addNameString = (str: string) => {
     const newName = values.name + str;
     setValues({...values, name: newName});
@@ -59,7 +66,7 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
   }
 
   useEffect(() => {
-    setValues({name: props.object.name, speed: props.object.speed, wingmanCount: props.object.wingmanCount, formation: props.object.formation});
+    setValues({name: props.object.name, coalition: props.object.coalition, speed: props.object.speed, wingmanCount: props.object.wingmanCount, formation: props.object.formation});
   }, [props.object]);
 
 
@@ -74,9 +81,19 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
         </label>
         <div className="emoji-buttons">
           {EMOJI_BUTTONS.map((b) => {
-            return <div className="clickable" onClick={() => addNameString(b)}>{b}</div>
+            return <div className="clickable" key={`emojibutton-${b}`} onClick={() => addNameString(b)}>{b}</div>
           })}
         </div>
+        <label>
+          Coalition
+          <div className="select-wrapper">
+            <select value={values.coalition} onChange={handleCoalitionChange}>
+              <option value={''} key={'coalition-neutral'}>Neutral</option>
+              <option value={'blue'} key={'coalition-blue'}>Blue</option>
+              <option value={'red'} key={'coalition-red'}>Red</option>
+            </select>
+            </div>
+        </label>
         {movableList.includes(props.object.type) &&
         <div>
           <label>

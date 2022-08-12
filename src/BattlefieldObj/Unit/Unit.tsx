@@ -55,7 +55,7 @@ const Unit: FC<UnitProps> = (props) => {
           </svg>
         </div>
       )}
-      <div style={styles} className={`primary-container${props.isSelected ? ' is-selected' : ''}`}>
+      <div style={styles} className={`primary-container${props.isSelected ? ' is-selected' : ''} coalition-${props.object.coalition}`}>
         <div style={graphicsStyles} className={`graphics-container${props.isInactive ? " inactive" : ""}`}>
           <img src={`${process.env.PUBLIC_URL}/aviation/${props.object.hasReachedEnd && !props.isInactive && props.object.endType ? props.object.endType : props.object.type}@2x.png`} className="unit-image" draggable="false" alt="" />
         </div>

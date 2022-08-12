@@ -1,4 +1,4 @@
-import { BattleFieldObjectType, EndType, FormationType } from "./battlefield-object-types";
+import { BattleFieldObjectType, CoalitionType, EndType, FormationType } from "./battlefield-object-types";
 import { CurveInterpolator2D, simplify2d } from 'curve-interpolator';
 
 const TWO_PI = Math.PI * 2;
@@ -173,6 +173,7 @@ export const getRandomId = (size: number) => [...Array(size)].map(() => Math.flo
 export interface BattlefieldObject {
     id: string;
     name: string;
+    coalition: CoalitionType;
     type: BattleFieldObjectType;
     endType: EndType;
     position: Position;
@@ -186,13 +187,14 @@ export interface BattlefieldObject {
     hasReachedEnd: boolean;
 }
 
-export function createBattlefieldObject(id: string | null, name: string, type: BattleFieldObjectType, endType: EndType, position: Position, heading: HeadingDegrees, startTime: number, speed: SpeedKnots, wingmanCount: number, formation: FormationType): BattlefieldObject {
+export function createBattlefieldObject(id: string | null, name: string, coalition: CoalitionType, type: BattleFieldObjectType, endType: EndType, position: Position, heading: HeadingDegrees, startTime: number, speed: SpeedKnots, wingmanCount: number, formation: FormationType): BattlefieldObject {
     if (id === null) {
         id = getRandomId(8);
     }
     return {
         id,
         name,
+        coalition,
         type,
         endType,
         position,

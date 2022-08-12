@@ -4,7 +4,7 @@ import { BattlefieldObject, createBattlefieldObject, getStopTime, HeadingDegrees
 import { Tool } from '../Toolbar/tools';
 import './Workspace.css';
 import MapBackground from './MapBackground/MapBackground';
-import { MapType } from '../battlefield-object-types';
+import { CoalitionType, MapType } from '../battlefield-object-types';
 
 interface WorkspaceProps {
   objects: BattlefieldObject[];
@@ -49,23 +49,23 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
     const clientPosWithPan = getClientPosWithPan(e, pan);
     if (props.tool.toolType === 'placeMovable') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, props.time, props.tool.speedKnots, 0, '');
+      const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, props.time, props.tool.speedKnots, 0, '');
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       setObjectBeingPlaced(newObj);
       props.onObjectsChange(props.objects, newObj);
     }
     else if (props.tool.toolType === 'placeStatic') {
-      const newObj = createBattlefieldObject(null, "", props.tool.objectType, null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
+      const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
       props.onObjectsChange(props.objects, newObj);
     }
     else if (props.tool.toolType === 'placeLabel') {
-      const newObj = createBattlefieldObject(null, "New", 'label', null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
+      const newObj = createBattlefieldObject(null, "New", '' as CoalitionType, 'label', null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
       props.onObjectsChange(props.objects, newObj);
     }
     else if (props.tool.toolType === 'placeMeasurement') {
-      const newObj = createBattlefieldObject(null, "New", 'measurement', null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
+      const newObj = createBattlefieldObject(null, "New", '' as CoalitionType, 'measurement', null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);

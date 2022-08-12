@@ -27,3 +27,6 @@ export type FormationType = typeof formationList[number];
 
 export const mapList: string[] = ['', 'ca', 'sy', 'pg'/*, 'sa'*/];
 export type MapType = typeof mapList[number];
+
+export const coalitionList: string[] = ['', 'blue', 'red'];
+export type CoalitionType = typeof coalitionList[number];

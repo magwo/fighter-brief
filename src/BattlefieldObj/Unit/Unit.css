@@ -56,6 +56,14 @@
     /* transform-origin: -50% -50%; */
 }
 
+.Unit .primary-container.coalition-red .graphics-container {
+    filter: drop-shadow(0 0 4px rgba(255, 0, 0, 0.4));
+}
+
+.Unit .primary-container.coalition-blue .graphics-container {
+    filter: drop-shadow(0 0 4px rgba(0, 0, 255, 0.4));
+}
+
 .Unit .unit-image {
     height: 100%;
     width: 100%;
