@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/static/css/main.a58e961e.css",
+    "main.css": "/static/css/main.3462db7d.css",
     "main.js": "/static/js/main.2b6db03a.js",
     "static/js/787.7c0a625b.chunk.js": "/static/js/787.7c0a625b.chunk.js",
     "static/media/syria.jpg": "/static/media/syria.c48d2d5da60c31abb8e9.jpg",
@@ -16,12 +16,12 @@
     "static/media/arrow-pointer.svg": "/static/media/arrow-pointer.ea450b87001dc34a6fec16f0520050e9.svg",
     "static/media/pause.svg": "/static/media/pause.739f2b249204840026c986ef6543aa21.svg",
     "static/media/play.svg": "/static/media/play.2de65d36cdfbcd5bebcbde19b1f1ffe6.svg",
-    "main.a58e961e.css.map": "/static/css/main.a58e961e.css.map",
+    "main.3462db7d.css.map": "/static/css/main.3462db7d.css.map",
     "main.2b6db03a.js.map": "/static/js/main.2b6db03a.js.map",
     "787.7c0a625b.chunk.js.map": "/static/js/787.7c0a625b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.a58e961e.css",
+    "static/css/main.3462db7d.css",
     "static/js/main.2b6db03a.js"
   ]
 }
