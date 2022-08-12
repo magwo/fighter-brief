@@ -44,7 +44,7 @@ function App() {
   const loadFromUrl = () => {
     // Load initial objects
     if (window.location.hash.length > 0) {
-      setFullUrl(window.location.href + window.location.hash);
+      setFullUrl(window.location.href);
       const { scenarioName, mapBackground, loadedObjects } = loadData(window.location.hash);
       console.log("Scenario name is", scenarioName);
       console.log("Map background is", mapBackground);
