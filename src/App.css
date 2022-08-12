@@ -8,9 +8,6 @@
 
 @keyframes fadeWithDelayAnimation {
   0%{
-    opacity: 0;
-  }
-  10% {
     opacity: 1;
   }
   90% {
