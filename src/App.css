@@ -4,3 +4,46 @@
   height: 100%;
   overflow: hidden;
 }
+
+
+@keyframes fadeWithDelayAnimation {
+  0%{
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+.App .touch-device-warning {
+  display: none;
+  position: absolute;
+  background: #d84;
+  color: white;
+  display: none;
+  border-radius: 6px;
+  box-shadow: 0 0px 8px rgba(0,0,0,0.4);
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  padding: 0 20px;
+  z-index: 200;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+@media (hover: none) {
+  .App .touch-device-warning {
+    display: flex;
+    animation-name: fadeWithDelayAnimation;
+    animation-duration: 4000ms;
+    animation-fill-mode: forwards;
+  }
+}

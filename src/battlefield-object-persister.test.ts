@@ -41,10 +41,10 @@ describe('loadData', () => {
     
     test('it should be able to serialize to most recent data version', () => {
         // TODO: Update to v4
-        const data = `#v4;New%20scenario;;;;;;44binijf~~~viper~~279~268~67~0.000~400~0~~_7r__7g_8e7g7j9m9o/r7s7t7t;ivldpy4c~New~~label~~395~213~0~0.000~0~0~~;7gdz3eja~25%20NM~~measurement~~591~147~0~0.000~0~0~~_gf__43__58__25_;kz6jmio2~~~bullseye~~521~183~133~0.000~0~0~~`;
+        const data = `#v4;New%20scenario;;;;;;44binijf~~blue~viper~~279~268~67~0.000~400~0~~_7r__7g_8e7g7j9m9o/r7s7t7t;ivldpy4c~New~~label~~395~213~0~0.000~0~0~~;7gdz3eja~25%20NM~~measurement~~591~147~0~0.000~0~0~~_gf__43__58__25_;kz6jmio2~~red~bullseye~~521~183~133~0.000~0~0~~`;
         const { loadedObjects, scenarioName, mapBackground } = loadData(data);
 
-        const expected = `v4;New%20scenario;;;;;;44binijf~~~viper~~279~268~67~0.000~400~0~~_7r__7g_8e7g7j9m9o/r7s7t7t;ivldpy4c~New~~label~~395~213~0~0.000~0~0~~;7gdz3eja~25%20NM~~measurement~~591~147~0~0.000~0~0~~_gf__43__58__25_;kz6jmio2~~~bullseye~~521~183~133~0.000~0~0~~`;
+        const expected = `v4;New%20scenario;;;;;;44binijf~~blue~viper~~279~268~67~0.000~400~0~~_7r__7g_8e7g7j9m9o/r7s7t7t;ivldpy4c~New~~label~~395~213~0~0.000~0~0~~;7gdz3eja~25%20NM~~measurement~~591~147~0~0.000~0~0~~_gf__43__58__25_;kz6jmio2~~red~bullseye~~521~183~133~0.000~0~0~~`;
         const serialized = serializeData(scenarioName, mapBackground, loadedObjects);
 
         expect(serialized).toEqual(expected);

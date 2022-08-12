@@ -110,7 +110,9 @@ function App() {
 
   return (
     <div className="App" data-testid="App">
-      <div></div>
+      <div className="touch-device-warning">
+        <p>Warning: Fighter Brief currently does not support touch devices.</p>
+      </div>
       <Mainbar scenarioName={scenarioName} map={map} onScenarioNameChange={handleScenarioNameChange} onMapChange={handleMapChange} />
       <Workspace objects={objects} selectedObject={selectedObject} tool={selectedTool} map={map} shouldPlay={shouldPlay} shouldShowPaths={shouldShowPaths} time={time} pseudoTime={pseudoTime} onSelectedObject={handleObjectSelected} onPseudoTimeChange={handlePseudoTimeChange} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} onObjectsChange={handleObjectsChange} />
       <Toolbar onToolSelected={(tool: Tool) => setSelectedTool(tool)} />
