@@ -5,7 +5,7 @@ import Mainbar from './Mainbar';
 
 describe('<Mainbar />', () => {
   test('it should mount', () => {
-    render(<Mainbar scenarioName='New scenario' map={''} onMapChange={() => {}} onScenarioNameChange={() => {}} />);
+    render(<Mainbar scenarioName='New scenario' map={''} fullUrl={''} onMapChange={() => {}} onScenarioNameChange={() => {}} />);
     
     const mainbar = screen.getByTestId('Mainbar');
 

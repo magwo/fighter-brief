@@ -10,11 +10,6 @@ import { loadData, serializeData } from './battlefield-object-persister';
 import { BattlefieldObject, getStopTime, update as updateObject } from './battlefield-object';
 import ObjectEditor from './ObjectEditor/ObjectEditor';
 
-const updateUrl = (_scenarioName: string, _map: MapType, _objects: BattlefieldObject[]) => {
-  const serialized = serializeData(_scenarioName, _map, _objects);
-  window.location.hash = serialized;
-}
-
 function updateAllObjects(objects: BattlefieldObject[], time: number) {
   objects.forEach((obj) => {
     updateObject(obj, time);
@@ -44,10 +39,12 @@ function App() {
   const [pseudoTime, setPseudoTime] = useState<number | null>(null);
   const [stopTime, setStopTime] = useState<number>(1);
   const [shouldShowPaths, setShouldShowPaths] = useState<boolean>(true);
+  const [fullUrl, setFullUrl] = useState<string>('');
 
   const loadFromUrl = () => {
     // Load initial objects
     if (window.location.hash.length > 0) {
+      setFullUrl(window.location.href + window.location.hash);
       const { scenarioName, mapBackground, loadedObjects } = loadData(window.location.hash);
       console.log("Scenario name is", scenarioName);
       console.log("Map background is", mapBackground);
@@ -57,9 +54,14 @@ function App() {
       setScenarioName(scenarioName);
       setMap(mapBackground);
       setStopTime(getFinalStopTime(loadedObjects, null));
-      // checkStopTime(loadedObjects);
     }
   };
+
+  const updateUrl = (_scenarioName: string, _map: MapType, _objects: BattlefieldObject[]) => {
+    const serialized = serializeData(_scenarioName, _map, _objects);
+    window.location.hash = serialized;
+    setFullUrl(window.location.href);
+  }
 
   const handleScenarioNameChange = (name: string) => {
     setScenarioName(name);
@@ -113,7 +115,7 @@ function App() {
       <div className="touch-device-warning">
         <p>Warning: Fighter Brief currently does not support touch devices.</p>
       </div>
-      <Mainbar scenarioName={scenarioName} map={map} onScenarioNameChange={handleScenarioNameChange} onMapChange={handleMapChange} />
+      <Mainbar scenarioName={scenarioName} map={map} fullUrl={fullUrl} onScenarioNameChange={handleScenarioNameChange} onMapChange={handleMapChange} />
       <Workspace objects={objects} selectedObject={selectedObject} tool={selectedTool} map={map} shouldPlay={shouldPlay} shouldShowPaths={shouldShowPaths} time={time} pseudoTime={pseudoTime} onSelectedObject={handleObjectSelected} onPseudoTimeChange={handlePseudoTimeChange} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} onObjectsChange={handleObjectsChange} />
       <Toolbar onToolSelected={(tool: Tool) => setSelectedTool(tool)} />
       <Controlbar time={time} stopTime={stopTime} onPlayPause={(shouldPlay: boolean) => setShouldPlay(shouldPlay)} onTimeChange={handleTimeChange} onShowPaths={(show) => setShouldShowPaths(show)} />

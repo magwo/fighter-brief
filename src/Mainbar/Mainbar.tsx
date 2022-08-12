@@ -8,9 +8,14 @@ function getStringHashNumber(str: string): number {
     (((prevHash << 5) - prevHash) + currVal.charCodeAt(0))|0, 0);
 }
 
+function getNeatStringHashNumber(str: string): number {
+  return Math.round(Math.abs(getStringHashNumber(str)));
+}
+
 interface MainbarProps {
   scenarioName: string,
   map: MapType,
+  fullUrl: string;
   onScenarioNameChange: (name: string) => void,
   onMapChange: (map: MapType) => void,
 }
@@ -26,21 +31,27 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
     props.onMapChange(e.target.value as MapType);
   }
 
-  const getShortUrl = () => {
-    const ourUrl = encodeURI(window.location.href + window.location.hash);
-    console.log("Our URL is", ourUrl);
-    const desiredShortUrl = 'fighterbrief' + Math.round(getStringHashNumber(ourUrl)).toString(36);
-    console.log("Desired short URL is", desiredShortUrl);
-    const fullUrl = `https://is.gd/create.php?format=simple&shorturl=${desiredShortUrl}&url=${ourUrl}`;
-    fetch(fullUrl, { method: 'GET', mode: 'cors', headers: { 'Content-Type': 'text/plain' } })
-    .then((response: Response) => response.text())
-    .then((text) => {
-      console.log("Got response text", text);
-      navigator.clipboard?.writeText(text).then(() => {
-          console.log("Copied URL!", text);
-        });
-      });
-  }
+  // const getShortUrl = () => {
+  //   // TODO: Fix annoying CORS errors so that we can produce the URL
+  //   const ourUrl = encodeURI(window.location.href + window.location.hash);
+  //   console.log("Our URL is", ourUrl);
+  //   const desiredShortUrl = 'fighterbrief_' + Math.round(getStringHashNumber(ourUrl)).toString(36);
+  //   console.log("Desired short URL is", desiredShortUrl);
+  //   const fullUrl = `https://is.gd/create.php?format=simple&shorturl=${desiredShortUrl}&url=${ourUrl}`;
+  //   fetch(fullUrl, { method: 'GET', mode: 'cors', headers: { 'Content-Type': 'text/plain' } })
+  //   .then((response: Response) => response.text())
+  //   .then((text) => {
+  //     console.log("Got response text", text);
+  //     navigator.clipboard?.writeText(text).then(() => {
+  //         console.log("Copied URL!", text);
+  //       });
+  //     });
+  // }
+
+  const ourUrl = encodeURIComponent(props.fullUrl);
+  console.log("Our url is", ourUrl);
+  const desiredShortUrl = 'fighterbrief_' + getNeatStringHashNumber(props.fullUrl).toString(36);
+  const urlShorteningUrl = `https://is.gd/create.php?format=web&shorturl=${desiredShortUrl}&url=${ourUrl}`;
 
   return (
     <div className="Mainbar" data-testid="Mainbar" onMouseDown={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
@@ -60,9 +71,9 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
           <option value="pg">Persian Gulf</option>
         </select>
         </div>
-        <button className='clickable' onClick={() => getShortUrl()}>
+        <a className='clickable' href={urlShorteningUrl} target="_blank">
           <ShareIcon className="svg-icon" />
-        </button>
+        </a>
     </div>
   );
 }
