@@ -1,5 +1,7 @@
 import React, { FC, useState } from 'react';
 import { MapType } from '../battlefield-object-types';
+import { ReactComponent as ShareIcon } from './images/share-from-square.svg';
+
 import './Mainbar.css';
 
 interface MainbarProps {
@@ -20,6 +22,20 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
     props.onMapChange(e.target.value as MapType);
   }
 
+  const getShortUrl = () => {
+    const ourUrl = encodeURI(window.location.href + window.location.hash);
+    console.log("Our URL is", ourUrl);
+    const fullUrl = `https://is.gd/create.php?format=simple&url=${ourUrl}`;
+    fetch(fullUrl, { mode: 'cors' })
+    .then((response: Response) => response.text())
+    .then((text) => {
+      console.log("Got response text", text);
+      navigator.clipboard?.writeText(text).then(() => {
+          console.log("Copied URL!", text);
+        });
+      });
+  }
+
   return (
     <div className="Mainbar" data-testid="Mainbar" onMouseDown={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
       <div className="name-container">
@@ -38,6 +54,9 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
           <option value="pg">Persian Gulf</option>
         </select>
         </div>
+        <button className='clickable' onClick={() => getShortUrl()}>
+          <ShareIcon className="svg-icon" />
+        </button>
     </div>
   );
 }

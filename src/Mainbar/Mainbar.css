@@ -1,9 +1,10 @@
 .Mainbar {
     position: absolute;
     height: 50px;
-    padding: 0 20px;
+    padding: 0 10px 0 20px;
     z-index: 101;
     display: flex;
+    gap: 8px;
     align-content: flex-start;
     align-items: center;
     left: calc(20px + 101px + 16px);
@@ -16,7 +17,7 @@
 }
 
 .Mainbar .name-container {
-    min-width: 200px;
+    min-width: 250px;
 }
 
 .Mainbar h1 {
@@ -24,6 +25,29 @@
     font-size: 20px;
 }
 
-.Mainbar .map-selector {
-    margin-left: 12px;
+/* TODO: Move this duplicated styling to something common */
+.Mainbar .clickable {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    appearance: none;
+    color: white;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    background-color: #666;
+    border: .5px solid #444;
+    border-radius: 6px;
+    user-select: none;
+    font-size: 24px;
+}
+
+.Mainbar .clickable .svg-icon {
+    display: block;
+    height: 30px;
+    width: 30px;
+    padding: 7px 0;
+    fill: white;
+    flex-shrink: 0;
+    filter: drop-shadow( 0px 0px 1px black);
 }
