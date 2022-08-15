@@ -177,8 +177,10 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   useEffect(() => {
     // Setup global keypress handler
+    console.log("Adding global keydown listener");
     window.document.addEventListener("keydown", handleKeydown);
     return () => {
+      console.log("Removing global keydown listener");
       window.document.removeEventListener('keydown', handleKeydown);
     }
   }, [handleKeydown]);
