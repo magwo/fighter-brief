@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useReducer, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import BattlefieldObj from '../BattlefieldObj/BattlefieldObj';
 import { BattlefieldObject, createBattlefieldObject, getStopTime, HeadingDegrees, PathCreationMode, Position, PositionMath, SpeedKnots, update } from '../battlefield-object';
 import { Tool } from '../Toolbar/tools';
@@ -21,21 +21,21 @@ interface WorkspaceProps {
   onObjectsChange: (newObjects: BattlefieldObject[], objectBeingPlaced: BattlefieldObject | null) => void;
 }
 
-function getClientPosWithPan(e: React.MouseEvent | MouseEvent, pan: Position): Position {
+function getClientPosWithPan(e: React.PointerEvent | PointerEvent, pan: Position): Position {
   return [e.clientX - pan[0], e.clientY - pan[1]];
 }
 
 // TODO: Use vector math functions instead of inline calculations
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
-  const [mousePressed, setMousePressed] = useState<boolean>(false);
+  const [pointerPressed, setPointerPressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
   const [undoStack, setUndoStack] = useState<{ action: 'delete' | 'recreate', data: any }[]>([]);
   const [pressedPos, setPressedPos] = useState<Position>([0, 0]);
   const [pan, setPan] = useState<Position>([0, 0]);
   const [panOrigin, setPanOrigin] = useState<Position>([0, 0]);
 
-  const startPressWorkspace = (e: React.MouseEvent) => {
-    setMousePressed(true);
+  const startPressWorkspace = (e: React.PointerEvent) => {
+    setPointerPressed(true);
     setPressedPos([e.clientX, e.clientY]);
 
     if (e.buttons === 2) {
@@ -73,8 +73,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }
 
-  const stopPressWorkspace = (e: React.MouseEvent) => {
-    setMousePressed(false);
+  const stopPressWorkspace = (e: React.PointerEvent) => {
+    setPointerPressed(false);
 
     if (objectBeingPlaced) {
       if (props.tool.toolType === 'placeLabel' || props.tool.toolType === 'placeMeasurement') {
@@ -92,13 +92,13 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }
 
-  const movedMouse = (e: React.MouseEvent) => {
+  const movedPointer = (e: React.PointerEvent) => {
     if (e.buttons === 2) {
       const delta = PositionMath.delta([e.clientX, e.clientY], pressedPos);
       setPan(PositionMath.add(panOrigin, delta));
       e.preventDefault();
     }
-    if (mousePressed && objectBeingPlaced) {
+    if (pointerPressed && objectBeingPlaced) {
       let timeUsed = props.time;
 
       if (props.tool.toolType === 'placeMovable') {
@@ -196,9 +196,9 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   return (
     <div className="Workspace"  data-testid="Workspace"
-      onMouseDown={(e: React.MouseEvent) => startPressWorkspace(e)}
-      onMouseUp={(e: React.MouseEvent) => stopPressWorkspace(e)}
-      onMouseMove={(e: React.MouseEvent) => movedMouse(e)}>
+      onPointerDown={(e: React.PointerEvent) => startPressWorkspace(e)}
+      onPointerUp={(e: React.PointerEvent) => stopPressWorkspace(e)}
+      onPointerMove={(e: React.PointerEvent) => movedPointer(e)}>
       <div className="panner" style={panStyle}>
         <MapBackground map={props.map} />
         {props.objects.map((object) =>
