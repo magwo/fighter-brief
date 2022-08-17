@@ -21,8 +21,8 @@ interface WorkspaceProps {
   onObjectsChange: (newObjects: BattlefieldObject[], objectBeingPlaced: BattlefieldObject | null) => void;
 }
 
-function getClientPosWithPanAndZoom(clientX: number, clientY: number, pan: Position, zoomLevel: number): Position {
-  const result: Position = [(clientX + pan[0]) / zoomLevel, (clientY + pan[1]) / zoomLevel];
+function getWorldPosWithPanAndZoom(viewportX: number, viewportY: number, pan: Position, zoomLevel: number): Position {
+  const result: Position = [(viewportX + pan[0]) / zoomLevel, (viewportY + pan[1]) / zoomLevel];
   return result;
 }
 
@@ -49,7 +49,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       props.onSelectedObject(null);
     }
 
-    const clientPosWithPan = getClientPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
+    const clientPosWithPan = getWorldPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
     if (props.tool.toolType === 'placeMovable') {
       const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, props.time, props.tool.speedKnots, 0, '');
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
@@ -107,7 +107,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         let creationMode: PathCreationMode = 'fly_smooth';
         if (e.shiftKey) { creationMode = 'fly_straight'; }
         if (e.ctrlKey || e.metaKey) { creationMode = 'normal'; }
-        const newPoint = getClientPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
+        const newPoint = getWorldPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
         objectBeingPlaced.path.considerAddingPoint(newPoint[0], newPoint[1], creationMode, props.tool.pathSmoothness);
         if (objectBeingPlaced.path.points.length > 0) {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
@@ -128,8 +128,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       } else if (props.tool.toolType === 'placeMeasurement') {
         // TODO: Avoid recreating objects
 
-        const p1: Position = getClientPosWithPanAndZoom(pressedPos[0], pressedPos[1], pan, zoomLevel);
-        const p2 = getClientPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
+        const p1: Position = getWorldPosWithPanAndZoom(pressedPos[0], pressedPos[1], pan, zoomLevel);
+        const p2 = getWorldPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
         objectBeingPlaced.name = `${Math.round(PositionMath.getDistanceNm(p1, p2))} NM`;
         objectBeingPlaced.path.setPoints([p1, p2]);
         update(objectBeingPlaced, props.time);
@@ -182,8 +182,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const handleWheel = (event: React.WheelEvent) => {
     // TODO: Use a center point
     setZoomLevel((currentZoomLevel) => {
+      const prevZoom = currentZoomLevel;
       currentZoomLevel -= event.deltaY / 100;
       currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel));
+      const ratio = 1 - currentZoomLevel / prevZoom;
+      setPan([pan[0] + (-event.clientX - pan[0]) * ratio, pan[1] + (-event.clientY - pan[1]) * ratio]);
       return currentZoomLevel;
     });
   };
