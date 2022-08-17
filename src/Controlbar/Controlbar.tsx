@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import useAnimationFrame from '../useAnimationFrame';
 import { ReactComponent as Play } from './images/play.svg';
 import { ReactComponent as Pause } from './images/pause.svg';
@@ -9,6 +9,7 @@ import { ReactComponent as Question } from './images/question.svg';
 import './Controlbar.css';
 
 const TIME_BAR_WIDTH = 400;
+const TIME_BAR_LEFT = 191;
 
 const PLAYBACK_SPEEDS = [0.4, 1, 3, 9];
 
@@ -30,6 +31,13 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
   const [playbackSpeedIndex, setPlaybackSpeedIndex] = useState<number>(1);
   const [forcedPlayback, setForcedPlayback] = useState<number | null>(null);
   const [pathDisplayModeIndex, setPathDisplayModeIndex] = useState<number>(0);
+  const [draggingTimebar, setDraggingTimebar] = useState<boolean>(false);
+
+  // Destructure props for more efficient dependency handling (I think?):
+  const propsTime = props.time;
+  const propsStopTime = props.stopTime;
+  const propsOnTimeChange = props.onTimeChange;
+  const propsOnPlayPause = props.onPlayPause;
 
   useAnimationFrame((_time: { time: number; delta: number }) => {
     let timeDelta = shouldPlay ? _time.delta : 0;
@@ -59,14 +67,14 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     props.onTimeChange(0);
   }
 
-  const playPause = () => {
+  const playPause = useCallback(() => {
     const newPlayState = !shouldPlay;
-    if (props.time === props.stopTime) {
-      props.onTimeChange(0);
+    if (propsTime === propsStopTime) {
+      propsOnTimeChange(0);
     }
-    props.onPlayPause(newPlayState);
+    propsOnPlayPause(newPlayState);
     setShouldPlay(newPlayState);
-  }
+  }, [propsTime, propsStopTime, propsOnPlayPause, propsOnTimeChange, shouldPlay]);
 
   const toggleLoop = () => {
     const newLoopState = !shouldLoop;
@@ -81,44 +89,54 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     setPathDisplayModeIndex((pathDisplayModeIndex + 1) % ROUTE_DISPLAY_MODES.length);
   }
 
-  const mouseMoveOnTimebar = (e: React.MouseEvent) => {
-    if (e.buttons === 1 && e.target === e.currentTarget) {
-      const relX = e.currentTarget.getBoundingClientRect().left;
+  const handlePointerUp = useCallback((e: PointerEvent) => {
+    setDraggingTimebar(false);
+  }, []);
+
+  const handlePointerMove = useCallback((e: PointerEvent | React.PointerEvent, force: 'FORCE' | 'RESPECT_PRESS' = 'RESPECT_PRESS') => {
+    // TODO: Maybe use actual element to calculate drag position
+    if (draggingTimebar || force === 'FORCE') {
+      const relX = TIME_BAR_LEFT; // (e.target as Element).getBoundingClientRect().left;
       let fraction = (e.clientX - relX) / TIME_BAR_WIDTH;
       fraction = Math.max(0, Math.min(1, fraction));
-      const newTime = fraction * props.stopTime;
-      props.onTimeChange(newTime);
+      const newTime = fraction * propsStopTime;
+      propsOnTimeChange(newTime);
     }
-  }
+  }, [propsOnTimeChange, propsStopTime, draggingTimebar]);
 
-  const handleKeydown = (e: KeyboardEvent) => {
+  const handleKeydown = useCallback((e: KeyboardEvent) => {
     if (e.key === ' ') {
       playPause();
     } else if(e.key === 'ArrowUp') {
-      setPlaybackSpeedIndex(Math.min(PLAYBACK_SPEEDS.length - 1, playbackSpeedIndex + 1));
+      setPlaybackSpeedIndex((currentIndex) => Math.min(PLAYBACK_SPEEDS.length - 1, currentIndex + 1));
     } else if(e.key === 'ArrowDown') {
-      setPlaybackSpeedIndex(Math.max(0, playbackSpeedIndex - 1));
+      setPlaybackSpeedIndex((currentIndex) => Math.max(0, currentIndex - 1));
     } else if(e.key === 'ArrowRight') {
       setForcedPlayback(1.0);
     } else if(e.key === 'ArrowLeft') {
       setForcedPlayback(-1.0);
     }
-  }
-  const handleKeyup = (e: KeyboardEvent) => {
+  }, [playPause]);
+
+  const handleKeyup = useCallback((e: KeyboardEvent) => {
     if(e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
       setForcedPlayback(null);
     }
-  }
+  }, []);
 
   useEffect(() => {
-    // Setup global keypress handler
+    // Setup global handlers
     window.document.addEventListener("keydown", handleKeydown);
     window.document.addEventListener("keyup", handleKeyup);
+    window.document.addEventListener("pointermove", handlePointerMove);
+    window.document.addEventListener("pointerup", handlePointerUp);
     return () => {
       window.document.removeEventListener('keydown', handleKeydown);
       window.document.removeEventListener("keyup", handleKeyup);
+      window.document.removeEventListener("pointermove", handlePointerMove);
+      window.document.removeEventListener("pointerup", handlePointerUp);
     }
-  }, [handleKeydown, handleKeyup]);
+  }, [handleKeydown, handleKeyup, handlePointerMove, handlePointerUp]);
 
   // useEffect(() => {
   //   // Is this really needed?
@@ -139,13 +157,14 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     props.onShowPaths(shouldShow);
   }, [playPause, pathDisplayModeIndex, shouldPlay, props]);
 
+  
 
   const styleTimeHandle = {
     transform: `translate(${((props.time / props.stopTime) * TIME_BAR_WIDTH) - 2}px, 0)`
   };
 
   return (
-    // Use clickable divs instead of buttons - focus messes with global hotkeys
+    // Uses clickable divs instead of buttons - focus messes with global hotkeys
     <div className="Controlbar" data-testid="Controlbar">
       <div className="buttons">
         <div className={`clickable play-pause${shouldPlay ? " selected" : ""}`} onClick={() => { playPause() }}>
@@ -161,7 +180,7 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
           {(PLAYBACK_SPEEDS[playbackSpeedIndex] + 'x').replace('0.', '.')}
         </div>
       </div>
-      <div className="timebar" onMouseMove={(e: React.MouseEvent) => { mouseMoveOnTimebar(e); } } onMouseDown={(e: React.MouseEvent) => mouseMoveOnTimebar(e) }>
+      <div className="timebar" onPointerDown={(e: React.PointerEvent) => { handlePointerMove(e, 'FORCE'); setDraggingTimebar(true) } }>
         <div style={styleTimeHandle} className="handle"></div>
       </div>
 
