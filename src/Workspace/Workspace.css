@@ -6,3 +6,7 @@
     height: 100%;
     background-color: #eee;
 }
+
+.Workspace .panner {
+    transform-origin: 0 0;
+}

@@ -21,8 +21,9 @@ interface WorkspaceProps {
   onObjectsChange: (newObjects: BattlefieldObject[], objectBeingPlaced: BattlefieldObject | null) => void;
 }
 
-function getClientPosWithPan(e: React.PointerEvent | PointerEvent, pan: Position): Position {
-  return [e.clientX - pan[0], e.clientY - pan[1]];
+function getClientPosWithPanAndZoom(clientX: number, clientY: number, pan: Position, zoomLevel: number): Position {
+  const result: Position = [(clientX + pan[0]) / zoomLevel, (clientY + pan[1]) / zoomLevel];
+  return result;
 }
 
 // TODO: Use vector math functions instead of inline calculations
@@ -33,6 +34,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [pressedPos, setPressedPos] = useState<Position>([0, 0]);
   const [pan, setPan] = useState<Position>([0, 0]);
   const [panOrigin, setPanOrigin] = useState<Position>([0, 0]);
+  const [zoomLevel, setZoomLevel] = useState<number>(1);
 
   const startPressWorkspace = (e: React.PointerEvent) => {
     setPointerPressed(true);
@@ -47,7 +49,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       props.onSelectedObject(null);
     }
 
-    const clientPosWithPan = getClientPosWithPan(e, pan);
+    const clientPosWithPan = getClientPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
     if (props.tool.toolType === 'placeMovable') {
       const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, props.time, props.tool.speedKnots, 0, '');
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
@@ -95,7 +97,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const movedPointer = (e: React.PointerEvent) => {
     if (e.buttons === 2) {
       const delta = PositionMath.delta([e.clientX, e.clientY], pressedPos);
-      setPan(PositionMath.add(panOrigin, delta));
+      setPan(PositionMath.delta(panOrigin, delta));
       e.preventDefault();
     }
     if (pointerPressed && objectBeingPlaced) {
@@ -105,7 +107,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         let creationMode: PathCreationMode = 'fly_smooth';
         if (e.shiftKey) { creationMode = 'fly_straight'; }
         if (e.ctrlKey || e.metaKey) { creationMode = 'normal'; }
-        objectBeingPlaced.path.considerAddingPoint(e.clientX - pan[0], e.clientY - pan[1], creationMode, props.tool.pathSmoothness);
+        const newPoint = getClientPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
+        objectBeingPlaced.path.considerAddingPoint(newPoint[0], newPoint[1], creationMode, props.tool.pathSmoothness);
         if (objectBeingPlaced.path.points.length > 0) {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
           objectBeingPlaced.heading = startHdg;
@@ -124,8 +127,9 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         props.onObjectsChange(props.objects, objectBeingPlaced);
       } else if (props.tool.toolType === 'placeMeasurement') {
         // TODO: Avoid recreating objects
-        const p1: Position = [pressedPos[0] - pan[0], pressedPos[1] - pan[1]];
-        const p2 = getClientPosWithPan(e, pan);
+
+        const p1: Position = getClientPosWithPanAndZoom(pressedPos[0], pressedPos[1], pan, zoomLevel);
+        const p2 = getClientPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
         objectBeingPlaced.name = `${Math.round(PositionMath.getDistanceNm(p1, p2))} NM`;
         objectBeingPlaced.path.setPoints([p1, p2]);
         update(objectBeingPlaced, props.time);
@@ -175,6 +179,16 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }
 
+  const handleWheel = (event: React.WheelEvent) => {
+    // TODO: Use a center point
+    setZoomLevel((currentZoomLevel) => {
+      currentZoomLevel -= event.deltaY / 100;
+      currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel));
+      return currentZoomLevel;
+    });
+  };
+
+
   useEffect(() => {
     // Setup global keypress handler
     window.document.addEventListener("keydown", handleKeydown);
@@ -191,14 +205,16 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   }, [props.tool]);
 
   const panStyle = {
-    transform: `translate(${pan[0]}px, ${pan[1]}px)`,
+    transform: `translate(${-pan[0]}px, ${-pan[1]}px) scale(${zoomLevel})`,
   }
 
   return (
     <div className="Workspace"  data-testid="Workspace"
       onPointerDown={(e: React.PointerEvent) => startPressWorkspace(e)}
       onPointerUp={(e: React.PointerEvent) => stopPressWorkspace(e)}
-      onPointerMove={(e: React.PointerEvent) => movedPointer(e)}>
+      onPointerMove={(e: React.PointerEvent) => movedPointer(e)}
+      onWheel={(e: React.WheelEvent) => handleWheel(e) }>
+      
       <div className="panner" style={panStyle}>
         <MapBackground map={props.map} />
         {props.objects.map((object) =>
