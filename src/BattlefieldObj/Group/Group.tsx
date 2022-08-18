@@ -40,8 +40,10 @@ const formationFunctions: Record<FormationType, (wingman: BattlefieldObject, lea
     wingman.position[1] = lead.position[1] + distance * Math.sin(posAngle);
   },
   'trail': (wingman: BattlefieldObject, lead: BattlefieldObject, leadsAngle: number, wingmanNum: number, time: number) => {
-    const timeDelay = wingmanNum * 10 * WINGMAN_STD_DISTANCE / lead.speed;
-    const wingmanTime = Math.max(0, time - timeDelay);
+    const timeDelayHrs = wingmanNum * PositionMath.getNmFromPixelDistance(WINGMAN_STD_DISTANCE * 1.8) / lead.speed;
+    console.log("Time delay hours", timeDelayHrs);
+    const timeDelaySeconds = timeDelayHrs * 60 * 60;
+    const wingmanTime = Math.max(0, time - timeDelaySeconds);
     wingman.heading = getHeadingAlongCurve(lead, wingmanTime);
     wingman.position = getPositionAlongCurve(lead, wingmanTime);
   },
