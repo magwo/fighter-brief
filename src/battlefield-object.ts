@@ -5,8 +5,8 @@ const TWO_PI = Math.PI * 2;
 export type Position = [number, number];
 export class PositionMath {
 
-    static readonly PIXELS_PER_KM = 4.433369156;
     static readonly KM_PER_NM = 1.852;
+    static readonly PIXELS_PER_KM = 4.433369156;
     
     private constructor() {}
     static length2D(p: Position) {
@@ -49,6 +49,10 @@ export class PositionMath {
         return [targetVector[0] * factor, targetVector[1] * factor];
     }
 
+    static getNmFromPixelDistance(distancePixels: number) {
+        return distancePixels / (PositionMath.PIXELS_PER_KM * PositionMath.KM_PER_NM);
+    }
+
     static getDistanceKm(pixelPos1: Position, pixelPos2: Position) {
         return PositionMath.length2D(PositionMath.delta(pixelPos2, pixelPos1)) / PositionMath.PIXELS_PER_KM;
     };
@@ -65,7 +69,6 @@ export class PositionMath {
 
 export type HeadingDegrees = number;
 export type SpeedKnots = number;
-const SPEED_PIXEL_FACTOR = 0.22;
 
 export type PathCreationMode = 'normal' | 'fly_cardinals' | 'fly_straight' | 'fly_smooth';
 
@@ -163,8 +166,10 @@ export class Path {
     }
 
     getStopTime(startTime: number, speed: SpeedKnots): number {
-        const travelTime = this.curve.length / (speed * SPEED_PIXEL_FACTOR);
-        return startTime + travelTime;
+        const distanceNm = PositionMath.getNmFromPixelDistance(this.curve.length);
+        const travelTimeHrs = distanceNm / speed;
+        const travelTimeSecs = travelTimeHrs * 60 * 60;
+        return startTime + travelTimeSecs;
     }
 }
 

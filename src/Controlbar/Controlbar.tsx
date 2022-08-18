@@ -11,7 +11,7 @@ import './Controlbar.css';
 const TIME_BAR_WIDTH = 400;
 const TIME_BAR_LEFT = 191;
 
-const PLAYBACK_SPEEDS = [0.4, 1, 3, 9];
+const PLAYBACK_SPEEDS = [1, 15, 60, 180];
 
 const ROUTE_DISPLAY_MODES = ["when_paused" ,"always", "never"] as const;
 export type RouteDisplayMode = typeof ROUTE_DISPLAY_MODES[number];
@@ -28,7 +28,7 @@ interface ControlbarProps {
 const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
   const [shouldPlay, setShouldPlay] = useState<boolean>(false);
   const [shouldLoop, setShouldLoop] = useState<boolean>(false);
-  const [playbackSpeedIndex, setPlaybackSpeedIndex] = useState<number>(1);
+  const [playbackSpeedIndex, setPlaybackSpeedIndex] = useState<number>(2);
   const [forcedPlayback, setForcedPlayback] = useState<number | null>(null);
   const [pathDisplayModeIndex, setPathDisplayModeIndex] = useState<number>(0);
   const [draggingTimebar, setDraggingTimebar] = useState<boolean>(false);
@@ -138,11 +138,6 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     }
   }, [handleKeydown, handleKeyup, handlePointerMove, handlePointerUp]);
 
-  // useEffect(() => {
-  //   // Is this really needed?
-  //   // Was added due to time bug in workspace caused when deleting objects
-  //   props.onTimeChange(time);
-  // }, [time, props]);
 
   useEffect(() => {
     // Is this really needed?
@@ -156,7 +151,6 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     }
     props.onShowPaths(shouldShow);
   }, [playPause, pathDisplayModeIndex, shouldPlay, props]);
-
   
 
   const styleTimeHandle = {
