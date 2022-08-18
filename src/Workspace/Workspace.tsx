@@ -79,15 +79,20 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     setPointerPressed(false);
 
     if (objectBeingPlaced) {
+      let abort = false;
       if (props.tool.toolType === 'placeLabel' || props.tool.toolType === 'placeMeasurement') {
         const name = prompt("Enter text", objectBeingPlaced.name);
-        if (name) {
+        if (name !== null) {
           objectBeingPlaced.name = name;
+        } else {
+          abort = true;
         }
       }
       const newObjects = [...props.objects];
-      newObjects.push(objectBeingPlaced);
-      setUndoStack([...undoStack, { action: 'delete', data: { id: objectBeingPlaced.id } }]);
+      if (!abort) {
+        newObjects.push(objectBeingPlaced);
+        setUndoStack([...undoStack, { action: 'delete', data: { id: objectBeingPlaced.id } }]);
+      }
       setObjectBeingPlaced(null);
       props.onPseudoTimeChange(null);
       props.onObjectsChange(newObjects, objectBeingPlaced);
