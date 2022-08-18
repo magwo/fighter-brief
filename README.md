@@ -38,7 +38,7 @@ Once you have made a change to the current scenario, the URL will be updated. To
 
 ### URL shortening
 
-If you create a complex scenario, the URL gets very long. It is therefore recommended to use an URL shortening service.
+If you create a complex scenario, the URL gets very long. It is therefore recommended to use a URL shortening service. URL shortening will be done for you if you click the "Share" button.
 
 ## Try it now
 
