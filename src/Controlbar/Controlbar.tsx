@@ -161,16 +161,16 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     // Uses clickable divs instead of buttons - focus messes with global hotkeys
     <div className="Controlbar" data-testid="Controlbar">
       <div className="buttons">
-        <div className={`clickable play-pause${shouldPlay ? " selected" : ""}`} onClick={() => { playPause() }}>
+        <div className={`clickable play-pause${shouldPlay ? " selected" : ""}`} onClick={() => { playPause() }} title="Play/pause (spacebar)">
           {shouldPlay ? <Pause className="svg-icon" /> : <Play className="svg-icon" />}
         </div>
-        <div className='clickable rewind' onClick={() => rewind()}>
+        <div className='clickable rewind' onClick={() => rewind()} title="Rewind">
           <BackwardFast className="svg-icon" />
         </div>
-        <div className={`clickable loop${shouldLoop ? " selected" : ""}`} onClick={() => toggleLoop()}>
+        <div className={`clickable loop${shouldLoop ? " selected" : ""}`} onClick={() => toggleLoop()} title="Loop toggle">
         <Repeat className="svg-icon" />
         </div>
-        <div className="clickable playback-speed" onClick={() => togglePlaybackSpeed()}>
+        <div className="clickable playback-speed" onClick={() => togglePlaybackSpeed()} title="Playback speed (up/down arrow)">
           {(PLAYBACK_SPEEDS[playbackSpeedIndex] + 'x').replace('0.', '.')}
         </div>
       </div>
