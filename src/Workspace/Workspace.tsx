@@ -188,7 +188,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     // TODO: Use a center point
     setZoomLevel((currentZoomLevel) => {
       const prevZoom = currentZoomLevel;
-      currentZoomLevel -= event.deltaY / 100;
+      currentZoomLevel -= event.deltaY / 300;
       currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel));
       const ratio = 1 - currentZoomLevel / prevZoom;
       setPan([pan[0] + (-event.clientX - pan[0]) * ratio, pan[1] + (-event.clientY - pan[1]) * ratio]);
