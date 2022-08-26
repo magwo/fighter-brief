@@ -32,7 +32,7 @@ const Measurement: FC<MeasurementProps> = (props) => {
     <div className={`Measurement${props.isSelected ? ' is-selected' : ''}`} style={styles} onClick={props.onClick} data-testid="Measurement">
       <div className="left-arrow">◀</div>
       <div className="line"></div>
-      <p style={textStyles}>{props.object.name}</p>
+      <p className={`${props.object.name.length === 0 ? "empty" : ""}`} style={textStyles}>{props.object.name}</p>
       <div className="line"></div>
       <div className="right-arrow">▶</div>
     </div>

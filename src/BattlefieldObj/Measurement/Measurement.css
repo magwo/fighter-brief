@@ -16,11 +16,16 @@
     padding: 0;
     color: #385279;
     text-shadow: 0 0 1px white;
+    flex-shrink: 1;
 }
 
 .Measurement.is-selected p {
     outline: 1px dashed #666;
     outline-offset: 3px;
+}
+
+.Measurement p.empty {
+    margin: 0;
 }
 
 .Measurement .left-arrow, .Measurement .right-arrow {
@@ -42,9 +47,6 @@
 .Measurement .line {
     flex-basis: 50%;
     flex-shrink: 1;
-    border: 1px solid #385279;
-    border-left: none;
-    border-right: none;
-    /* background-color: #ccf; */
-    height: 0px;
+    background-color: #385279;
+    height: 2px;
 }
