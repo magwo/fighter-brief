@@ -60,7 +60,7 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
     <div className="Mainbar" data-testid="Mainbar" onMouseDown={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
       <div className="name-container">
         {!isEditingName &&
-          <h1 onClick={() => setIsEditingName(true)}>{props.scenarioName}</h1>
+          <h1 onClick={() => setIsEditingName(true)} title="Click to edit scenario name">{props.scenarioName}</h1>
         }
         {isEditingName &&
           <input autoFocus={true} type="text" value={props.scenarioName} onChange={handleNameChange}  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => { if(e.key === 'Enter') { setIsEditingName(false) } } } onBlur={() => setIsEditingName(false) } />
@@ -74,7 +74,7 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
           <option value="pg">Persian Gulf</option>
         </select>
         </div>
-        <a className='clickable' href={shareUrl} target="_blank">
+        <a className='clickable' href={shareUrl} target="_blank" title="Share scenario using URL shortener">
           <ShareIcon className="svg-icon" />
         </a>
     </div>
