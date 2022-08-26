@@ -44,7 +44,8 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     if (forcedPlayback !== null) {
       timeDelta = _time.delta * forcedPlayback;
     }
-    let newTime = props.time + timeDelta * PLAYBACK_SPEEDS[playbackSpeedIndex];
+    let dragSpeedFactor = draggingTimebar ? 0.0 : 1.0;
+    let newTime = props.time + timeDelta * PLAYBACK_SPEEDS[playbackSpeedIndex] * dragSpeedFactor;
     newTime = Math.max(0, newTime);
     if (newTime > props.stopTime) {
       if (shouldLoop && forcedPlayback === null) {
