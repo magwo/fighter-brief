@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { BattlefieldObject, createBattlefieldObject, getHeadingAlongCurve, getPositionAlongCurve, Path, Position, PositionMath } from '../../battlefield-object';
+import { BattlefieldObject, createBattlefieldObject, getHeadingAlongCurve, getPositionAlongCurve, Path, Position, PositionMath, update } from '../../battlefield-object';
 import { CoalitionType, FormationType } from '../../battlefield-object-types';
 import Unit from '../Unit/Unit';
 import './Group.css';
@@ -42,9 +42,13 @@ const formationFunctions: Record<FormationType, (wingman: BattlefieldObject, lea
   'trail': (wingman: BattlefieldObject, lead: BattlefieldObject, leadsAngle: number, wingmanNum: number, time: number) => {
     const timeDelayHrs = wingmanNum * PositionMath.getNmFromPixelDistance(WINGMAN_STD_DISTANCE * 1.8) / lead.speed;
     const timeDelaySeconds = timeDelayHrs * 60 * 60;
-    const wingmanTime = Math.max(0, time - timeDelaySeconds);
-    wingman.heading = getHeadingAlongCurve(lead, wingmanTime);
-    wingman.position = getPositionAlongCurve(lead, wingmanTime);
+    const wingmanTime = time - timeDelaySeconds;
+    wingman.path = lead.path;
+    // TODO: Not sure why timeDelayHrs works here - should be seconds? :D
+    wingman.startTime = lead.startTime - timeDelayHrs;
+    update(wingman, wingmanTime);
+    // wingman.heading = getHeadingAlongCurve(lead, wingmanTime);
+    // wingman.position = getPositionAlongCurve(lead, wingmanTime);
   },
 }
 
