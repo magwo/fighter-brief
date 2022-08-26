@@ -13,13 +13,15 @@ function renderTool(tool: Tool, selectedTool: Tool, setSelectedTool: (tool: Tool
   if (tool.toolType === 'placeMovable' || tool.toolType === 'placeStatic') {
     return <button
       key={`aircraft-button-${tool.objectType}`}
+      title={tool.label}
       onClick={() => { setSelectedTool(tool); onToolSelectedCb(tool) }} className={tool === selectedTool ? 'selected' : ''}>
-      <img src={`${process.env.PUBLIC_URL}/aviation/${tool.objectType}@2x.png`} alt={`Place ${tool.objectType}`} title={`Place ${tool.objectType}`} />
+      <img src={`${process.env.PUBLIC_URL}/aviation/${tool.objectType}@2x.png`} alt={`Place ${tool.objectType}`} />
       <p>{tool.objectType}</p>
     </button>;
   } else if (tool.toolType === 'placeLabel') {
     return <button
       key={`label-button`}
+      title={tool.label}
       onClick={() => { setSelectedTool(tool); onToolSelectedCb(tool) }} className={tool === selectedTool ? 'selected' : ''}>
       <div className="big-text">Abc</div>
       <p>Text</p>
@@ -27,6 +29,7 @@ function renderTool(tool: Tool, selectedTool: Tool, setSelectedTool: (tool: Tool
   } else if (tool.toolType === 'placeMeasurement') {
     return <button
       key={`measurement-button`}
+      title={tool.label}
       onClick={() => { setSelectedTool(tool); onToolSelectedCb(tool) }} className={tool === selectedTool ? 'selected' : ''}>
       <ArrowsLeftRight className="svg-icon" />
       <p>Measure</p>
@@ -34,6 +37,7 @@ function renderTool(tool: Tool, selectedTool: Tool, setSelectedTool: (tool: Tool
   } else if (tool.toolType === 'select') {
     return <button
       key={`select-button`}
+      title={tool.label}
       onClick={() => { setSelectedTool(tool); onToolSelectedCb(tool) }} className={tool === selectedTool ? 'selected' : ''}>
       <ArrowPointer className="svg-icon"/>
       <p>Select</p>
@@ -41,6 +45,7 @@ function renderTool(tool: Tool, selectedTool: Tool, setSelectedTool: (tool: Tool
   } else if (tool.toolType === 'delete') {
     return <button
       key={`delete-button`}
+      title={tool.label}
       onClick={() => { setSelectedTool(tool); onToolSelectedCb(tool) }} className={tool === selectedTool ? 'selected' : ''}>
       <TrashCan className="svg-icon" />
       <p>Delete</p>
@@ -48,6 +53,7 @@ function renderTool(tool: Tool, selectedTool: Tool, setSelectedTool: (tool: Tool
   } else if (tool.toolType === 'reset') {
     return <button
       key={`reset-button`}
+      title={tool.label}
       onClick={() => { alert("Not implemented. To reset, clear the URL path and reload the page."); }}>
       <p>Reset</p>
     </button>;
