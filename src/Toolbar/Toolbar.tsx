@@ -5,7 +5,7 @@ import { ReactComponent as TrashCan } from './images/trash-can.svg';
 import { ReactComponent as Arrow } from './images/arrow-right-long.svg';
 import { ReactComponent as Line } from './images/lines-leaning.svg';
 import './Toolbar.css';
-import { MeasurementSubType, Tool, toolCategories } from './tools';
+import { MeasurementSubType, PlaceMeasurementTool, Tool, toolCategories } from './tools';
 
 interface ToolbarProps {
   onToolSelected: (selectedTool: Tool) => void;
@@ -73,11 +73,17 @@ function renderTool(tool: Tool, selectedTool: Tool, setSelectedTool: (tool: Tool
   }
 }
 
-function getFirstToolByType(toolType: string): Tool | null {
+function getFirstToolByType(toolType: string, subType?: string): Tool | null {
   for (let cat of toolCategories) {
     for (let tool of cat.tools) {
       if (tool.toolType === toolType) {
-        return tool;
+        if (subType && tool.toolType === 'placeMeasurement') {
+          if (tool.subType === subType) {
+            return tool;
+          }
+        } else {
+          return tool;
+        }
       }
     }
   }
@@ -95,10 +101,15 @@ const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
     } else if (e.key === "t") {
       setToolByNameAndNotify('placeLabel');
     } else if (e.key === "m") {
-      setToolByNameAndNotify('placeMeasurement');
+      setToolByNameAndNotify('placeMeasurement', 'measurement');
     } else if (e.key === "d") {
       setToolByNameAndNotify('delete');
+    } else if (e.key === "a") {
+      setToolByNameAndNotify('placeMeasurement', 'arrow');
+    } else if (e.key === "l") {
+      setToolByNameAndNotify('placeMeasurement', 'line');
     }
+    
   };
   
   useEffect(() => {
@@ -109,8 +120,8 @@ const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
     }
   }, [handleKeydown]);
   
-  const setToolByNameAndNotify = (toolName: string) => {
-    const tool = getFirstToolByType(toolName);
+  const setToolByNameAndNotify = (toolName: string, subType?: string) => {
+    const tool = getFirstToolByType(toolName, subType);
     if (tool) {
       setSelectedTool(tool);
       props.onToolSelected(tool);

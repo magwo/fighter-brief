@@ -1,7 +1,10 @@
 import { AirplaneType, EndType, GroundType, HelicopterType, ShipType, StaticType, WeaponType } from '../battlefield-object-types';
 
+type ToolType = 'placeMovable' | 'placeStatic' | 'delete' | 'reset' | 'select' | 'placeLabel' | 'placeMeasurement';
+
+const PLACE_MOVABLE: ToolType = 'placeMovable'
 export interface PlaceMovableTool {
-    toolType: 'placeMovable';
+    toolType: typeof PLACE_MOVABLE;
     objectType: AirplaneType | HelicopterType | ShipType | GroundType | WeaponType;
     speedKnots: number;
     label: string;
@@ -9,36 +12,43 @@ export interface PlaceMovableTool {
     endType?: EndType | null;
 }
 
+const PLACE_STATIC: ToolType = 'placeStatic'
 export interface PlaceStaticTool {
-    toolType: 'placeStatic';
+    toolType: typeof PLACE_STATIC;
     label: string;
     objectType: StaticType;
 }
 
+const DELETE: ToolType = 'delete'
 export interface DeleteTool {
-    toolType: 'delete';
+    toolType: typeof DELETE;
     label: string;
 }
 
+const RESET: ToolType = 'reset'
 export interface ResetTool {
-    toolType: 'reset';
+    toolType: typeof RESET;
     label: string;
 }
 
+const PLACE_LABEL: ToolType = 'placeLabel'
 export interface PlaceLabelTool {
-    toolType: 'placeLabel';
+    toolType: typeof PLACE_LABEL;
     label: string;
 }
 
+const PLACE_MEASUREMENT: ToolType = 'placeMeasurement'
 export type MeasurementSubType = 'measurement' | 'arrow' | 'line';
 export interface PlaceMeasurementTool {
-    toolType: 'placeMeasurement';
+    toolType: typeof PLACE_MEASUREMENT;
     label: string;
     title: string;
     subType: MeasurementSubType;
 }
+
+const SELECT: ToolType = 'select'
 export interface SelectTool {
-    toolType: 'select';
+    toolType: typeof SELECT;
     label: string;
 }
 
