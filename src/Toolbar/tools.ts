@@ -30,9 +30,12 @@ export interface PlaceLabelTool {
     label: string;
 }
 
+export type MeasurementSubType = 'measurement' | 'arrow' | 'line';
 export interface PlaceMeasurementTool {
     toolType: 'placeMeasurement';
     label: string;
+    title: string;
+    subType: MeasurementSubType;
 }
 export interface SelectTool {
     toolType: 'select';
@@ -49,7 +52,9 @@ export const toolCategories: { categoryName: string, showAlways: boolean, tools:
             { toolType: 'select', label: 'Select object (V)', },
             { toolType: 'delete', label: 'Eraser (D)', },
             { toolType: 'placeLabel', label: 'Place label (T)', },
-            { toolType: 'placeMeasurement', label: 'Place measurement (M)', },
+            { toolType: 'placeMeasurement', subType: 'measurement', label: 'Measure', title: 'Place measurement (M)', },
+            { toolType: 'placeMeasurement', subType: 'arrow', label: 'Arrow', title: 'Place arrow', },
+            { toolType: 'placeMeasurement', subType: 'line', label: 'Line', title: 'Place line', },
             // { toolType: 'reset' },
         ]
     },

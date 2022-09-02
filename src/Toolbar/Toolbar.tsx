@@ -2,11 +2,23 @@ import React, { FC, ReactNode, useEffect, useState } from 'react';
 import { ReactComponent as ArrowPointer } from './images/arrow-pointer.svg';
 import { ReactComponent as ArrowsLeftRight } from './images/arrows-left-right-to-line.svg';
 import { ReactComponent as TrashCan } from './images/trash-can.svg';
+import { ReactComponent as Arrow } from './images/arrow-right-long.svg';
+import { ReactComponent as Line } from './images/lines-leaning.svg';
 import './Toolbar.css';
-import { Tool, toolCategories } from './tools';
+import { MeasurementSubType, Tool, toolCategories } from './tools';
 
 interface ToolbarProps {
   onToolSelected: (selectedTool: Tool) => void;
+}
+
+function renderMeasurementSubTypeIcon(subType: MeasurementSubType) {
+  if(subType === 'measurement') {
+    return <ArrowsLeftRight className="svg-icon" />
+  } else if(subType === 'arrow') {
+    return <Arrow className="svg-icon" />
+  } else {
+    return <Line className="svg-icon" />
+  }
 }
 
 function renderTool(tool: Tool, selectedTool: Tool, setSelectedTool: (tool: Tool) => void, onToolSelectedCb: (tool: Tool) => void): ReactNode {
@@ -27,12 +39,13 @@ function renderTool(tool: Tool, selectedTool: Tool, setSelectedTool: (tool: Tool
       <p>Text</p>
     </button>;
   } else if (tool.toolType === 'placeMeasurement') {
+    const icon = renderMeasurementSubTypeIcon(tool.subType);
     return <button
-      key={`measurement-button`}
-      title={tool.label}
+      key={`measurement-${tool.subType}-button`}
+      title={tool.title}
       onClick={() => { setSelectedTool(tool); onToolSelectedCb(tool) }} className={tool === selectedTool ? 'selected' : ''}>
-      <ArrowsLeftRight className="svg-icon" />
-      <p>Measure</p>
+      {icon}
+      <p>{tool.label}</p>
     </button>;
   } else if (tool.toolType === 'select') {
     return <button
