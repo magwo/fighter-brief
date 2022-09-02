@@ -80,6 +80,8 @@ function App() {
       setStopTime(newStopTime);
     }
     setObjects(newObjects);
+    // TODO: Differentiate between normal update and update that should update URL
+    // This spams the URL a lot causing security errors
     updateUrl(scenarioName, map, newObjects);
   };
 

@@ -5,7 +5,8 @@ import { ReactComponent as TrashCan } from './images/trash-can.svg';
 import { ReactComponent as Arrow } from './images/arrow-right-long.svg';
 import { ReactComponent as Line } from './images/lines-leaning.svg';
 import './Toolbar.css';
-import { MeasurementSubType, PlaceMeasurementTool, Tool, toolCategories } from './tools';
+import { Tool, toolCategories } from './tools';
+import { MeasurementSubType } from '../battlefield-object-types';
 
 interface ToolbarProps {
   onToolSelected: (selectedTool: Tool) => void;
@@ -132,7 +133,7 @@ const Toolbar: FC<ToolbarProps> = (props: ToolbarProps) => {
     const isExpanded = (c.showAlways || expandedCategory === c.categoryName);
     // const filteredTools = isExpanded ? c.tools : c.tools.slice(0, 2);
     const buttonsStyle = isExpanded ? {} : {
-      maxHeight: '30px',
+      maxHeight: '24px',
       filter: 'drop-shadow(0px 10px 5px rgba(0,0,0,0.1))',
     };
     return (

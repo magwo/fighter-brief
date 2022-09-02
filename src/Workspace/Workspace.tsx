@@ -67,7 +67,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       props.onObjectsChange(props.objects, newObj);
     }
     else if (props.tool.toolType === 'placeMeasurement') {
-      const newObj = createBattlefieldObject(null, "New", '' as CoalitionType, 'measurement', null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
+      const newObj = createBattlefieldObject(null, '', '' as CoalitionType, props.tool.subType, null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
@@ -80,7 +80,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
     if (objectBeingPlaced) {
       let abort = false;
-      if (props.tool.toolType === 'placeLabel' || props.tool.toolType === 'placeMeasurement') {
+      if (props.tool.toolType === 'placeLabel' || (props.tool.toolType === 'placeMeasurement' && props.tool.subType !== 'line')) {
         const name = prompt("Enter text", objectBeingPlaced.name);
         if (name !== null) {
           objectBeingPlaced.name = name;
@@ -135,7 +135,9 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
         const p1: Position = getWorldPosWithPanAndZoom(pressedPos[0], pressedPos[1], pan, zoomLevel);
         const p2 = getWorldPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
-        objectBeingPlaced.name = `${Math.round(PositionMath.getDistanceNm(p1, p2))} NM`;
+        if (props.tool.subType !== 'line') {
+          objectBeingPlaced.name = `${Math.round(PositionMath.getDistanceNm(p1, p2))} NM`;
+        }
         objectBeingPlaced.path.setPoints([p1, p2]);
         update(objectBeingPlaced, props.time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );

@@ -49,9 +49,9 @@ const Mainbar: FC<MainbarProps> = (props: MainbarProps) => {
 
   useEffect(() => {
     const ourUrl = encodeURIComponent(props.fullUrl);
-    console.log("Our url is", ourUrl);
+    // console.log("Our url is", ourUrl);
     const desiredShortUrl = 'fighterbrief_' + getNeatRandomString();
-    console.log("Desired short url is", desiredShortUrl);
+    // console.log("Desired short url is", desiredShortUrl);
     const urlShorteningUrl = `https://is.gd/create.php?format=web&shorturl=${desiredShortUrl}&url=${ourUrl}`;
     setShareUrl(urlShorteningUrl);
   }, [props.fullUrl]);

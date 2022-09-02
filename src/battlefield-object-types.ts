@@ -6,7 +6,8 @@ export const staticList = ['bullseye', 'airfield', 'samsite', 'factory', 'bridge
 export const weaponList = ['amraam', 'sidewinder', 'mk82', 'harm', 'hellfire', 'rockets', 'cruise-missile'] as const;
 export const groundList = ['infantry', 'manpad', 'truck', 'apc', 'tank', 'mobilesam'] as const;
 export const endList = ['expl_m'] as const;
-export const infoList = ['label', 'measurement'] as const;
+export const measurementSubTypeList = ['measurement', 'arrow', 'line'];
+export const infoList = ['label', ...measurementSubTypeList] as const;
 export const unitList: string[] = [...airplaneList, ...helicopterList, ...shipList, ...groundList, ...staticList, ...weaponList];
 export const movableList: string[] = [...airplaneList, ...helicopterList, ...shipList, ...groundList, ...weaponList];
 
@@ -30,3 +31,5 @@ export type MapType = typeof mapList[number];
 
 export const coalitionList: string[] = ['', 'blue', 'red'];
 export type CoalitionType = typeof coalitionList[number];
+
+export type MeasurementSubType = typeof measurementSubTypeList[number];

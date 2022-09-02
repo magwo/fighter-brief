@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { BattlefieldObject } from '../../battlefield-object';
+import { MeasurementSubType } from '../../battlefield-object-types';
 import './Measurement.css';
 
 interface MeasurementProps {
@@ -8,6 +9,11 @@ interface MeasurementProps {
   isInactive: boolean;
   onClick?: (e: React.MouseEvent) => void;
 }
+
+const RIGHT_ARROW_TYPES: MeasurementSubType[] = [
+  'measurement',
+  'arrow',
+]
 
 const Measurement: FC<MeasurementProps> = (props) => {
 
@@ -30,11 +36,15 @@ const Measurement: FC<MeasurementProps> = (props) => {
   
   return (
     <div className={`Measurement${props.isSelected ? ' is-selected' : ''}`} style={styles} onClick={props.onClick} data-testid="Measurement">
-      <div className="left-arrow">◀</div>
+      {props.object.type === 'measurement' &&
+        <div className="left-arrow">◀</div>
+      }
       <div className="line"></div>
       <p className={`${props.object.name.length === 0 ? "empty" : ""}`} style={textStyles}>{props.object.name}</p>
       <div className="line"></div>
-      <div className="right-arrow">▶</div>
+      {RIGHT_ARROW_TYPES.includes(props.object.type) &&
+        <div className="right-arrow">▶</div>
+      }
     </div>
   );
 }

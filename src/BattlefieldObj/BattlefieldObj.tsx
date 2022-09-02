@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { BattlefieldObject } from '../battlefield-object';
-import { unitList } from '../battlefield-object-types';
+import { measurementSubTypeList, unitList } from '../battlefield-object-types';
 import './BattlefieldObj.css';
 import Group from './Group/Group';
 import Label from './Label/Label';
@@ -26,7 +26,7 @@ const BattlefieldObj: FC<BattlefieldObjProps> = (props) => {
         {props.object.type === 'label' &&
           <Label object={props.object} isSelected={props.isSelected} isInactive={props.isInactive} />
         }
-        {props.object.type === 'measurement' &&
+        {measurementSubTypeList.includes(props.object.type) &&
           <Measurement object={props.object} isSelected={props.isSelected} isInactive={props.isInactive} />
         }
     </div>

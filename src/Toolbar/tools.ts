@@ -1,4 +1,4 @@
-import { AirplaneType, EndType, GroundType, HelicopterType, ShipType, StaticType, WeaponType } from '../battlefield-object-types';
+import { AirplaneType, EndType, GroundType, HelicopterType, MeasurementSubType, ShipType, StaticType, WeaponType } from '../battlefield-object-types';
 
 type ToolType = 'placeMovable' | 'placeStatic' | 'delete' | 'reset' | 'select' | 'placeLabel' | 'placeMeasurement';
 
@@ -38,7 +38,6 @@ export interface PlaceLabelTool {
 }
 
 const PLACE_MEASUREMENT: ToolType = 'placeMeasurement'
-export type MeasurementSubType = 'measurement' | 'arrow' | 'line';
 export interface PlaceMeasurementTool {
     toolType: typeof PLACE_MEASUREMENT;
     label: string;
