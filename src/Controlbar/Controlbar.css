@@ -54,6 +54,7 @@
 
 .Controlbar .timebar {
     position: relative;
+    touch-action: none;
     margin: 0 6px;
     background: #bbb;
     height: 30px;
