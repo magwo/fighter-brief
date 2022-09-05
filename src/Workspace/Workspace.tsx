@@ -26,6 +26,7 @@ function getWorldPosWithPanAndZoom(viewportX: number, viewportY: number, pan: Po
   return result;
 }
 
+// TODO: Use use-gesture lib instead https://use-gesture.netlify.app/docs/
 // TODO: Use vector math functions instead of inline calculations
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [pointerPressed, setPointerPressed] = useState<boolean>(false);
