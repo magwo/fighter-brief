@@ -73,7 +73,7 @@ function App() {
     updateUrl(scenarioName, map, objects);
   };
 
-  const handleObjectsChange = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null) => {
+  const handleObjectsChange = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null, state: 'FINAL' | 'NOT_FINAL') => {
     updateAllObjects(newObjects, time); // TODO: Maybe consider pseudoTime?
     const newStopTime = getFinalStopTime(newObjects, extraObject);
     if (newStopTime !== stopTime) {
@@ -82,7 +82,9 @@ function App() {
     setObjects(newObjects);
     // TODO: Differentiate between normal update and update that should update URL
     // This spams the URL a lot causing security errors
-    updateUrl(scenarioName, map, newObjects);
+    if (state === 'FINAL') {
+      updateUrl(scenarioName, map, newObjects);
+    }
   };
 
   const handleTimeChange = (time: number) => {
@@ -105,7 +107,7 @@ function App() {
     // The selected object (according to this component) no longer exists
     // in the workspace component.
     // It's a detached copy that might get outdated.
-    handleObjectsChange(newObjects, null);
+    handleObjectsChange(newObjects, null, 'FINAL');
   }
 
   useEffect(() => {

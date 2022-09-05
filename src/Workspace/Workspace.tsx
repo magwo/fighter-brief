@@ -18,7 +18,7 @@ interface WorkspaceProps {
   onStopTimeChange: (stopTime: number) => void;
   onPseudoTimeChange: (pseudoTime: number | null) => void;
   onSelectedObject: (object: BattlefieldObject | null) => void;
-  onObjectsChange: (newObjects: BattlefieldObject[], objectBeingPlaced: BattlefieldObject | null) => void;
+  onObjectsChange: (newObjects: BattlefieldObject[], objectBeingPlaced: BattlefieldObject | null, state: 'FINAL' | 'NOT_FINAL') => void;
 }
 
 function getWorldPosWithPanAndZoom(viewportX: number, viewportY: number, pan: Position, zoomLevel: number): Position {
@@ -54,24 +54,24 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, props.time, props.tool.speedKnots, 0, '');
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       setObjectBeingPlaced(newObj);
-      props.onObjectsChange(props.objects, newObj);
+      props.onObjectsChange(props.objects, newObj, 'NOT_FINAL');
     }
     else if (props.tool.toolType === 'placeStatic') {
       const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
-      props.onObjectsChange(props.objects, newObj);
+      props.onObjectsChange(props.objects, newObj, 'NOT_FINAL');
     }
     else if (props.tool.toolType === 'placeLabel') {
       const newObj = createBattlefieldObject(null, "New", '' as CoalitionType, 'label', null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
-      props.onObjectsChange(props.objects, newObj);
+      props.onObjectsChange(props.objects, newObj, 'NOT_FINAL');
     }
     else if (props.tool.toolType === 'placeMeasurement') {
       const newObj = createBattlefieldObject(null, '', '' as CoalitionType, props.tool.subType, null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
       setObjectBeingPlaced(newObj);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
-      props.onObjectsChange(props.objects, newObj);
+      props.onObjectsChange(props.objects, newObj, 'NOT_FINAL');
     }
   }
 
@@ -95,7 +95,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       }
       setObjectBeingPlaced(null);
       props.onPseudoTimeChange(null);
-      props.onObjectsChange(newObjects, objectBeingPlaced);
+      props.onObjectsChange(newObjects, objectBeingPlaced, 'FINAL');
     }
   }
 
@@ -119,7 +119,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
           objectBeingPlaced.heading = startHdg;
           update(objectBeingPlaced, props.time);
           timeUsed = getStopTime(objectBeingPlaced);
-          props.onObjectsChange(props.objects, objectBeingPlaced);
+          props.onObjectsChange(props.objects, objectBeingPlaced, 'NOT_FINAL');
           props.onPseudoTimeChange(timeUsed);
         }
       } else if (props.tool.toolType === 'placeStatic' || props.tool.toolType === 'placeLabel') {
@@ -129,7 +129,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         objectBeingPlaced.heading = heading;
         update(objectBeingPlaced, props.time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
-        props.onObjectsChange(props.objects, objectBeingPlaced);
+        props.onObjectsChange(props.objects, objectBeingPlaced, 'NOT_FINAL');
       } else if (props.tool.toolType === 'placeMeasurement') {
         // TODO: Avoid recreating objects
 
@@ -141,7 +141,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         objectBeingPlaced.path.setPoints([p1, p2]);
         update(objectBeingPlaced, props.time);
         setObjectBeingPlaced({ ...objectBeingPlaced } );
-        props.onObjectsChange(props.objects, objectBeingPlaced);
+        props.onObjectsChange(props.objects, objectBeingPlaced, 'NOT_FINAL');
       }
     }
   }
@@ -154,7 +154,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       }
       else if (action.action === 'recreate') {
         const newObjects = [...props.objects, action.data.object];
-        props.onObjectsChange(newObjects, objectBeingPlaced); // TODO: Immutability?
+        props.onObjectsChange(newObjects, objectBeingPlaced, 'FINAL'); // TODO: Immutability?
       }
       setUndoStack(undoStack.slice(0, undoStack.length - 1));
     }
@@ -166,7 +166,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     if (undoable) {
       setUndoStack([...undoStack, { action: 'recreate', data: { object: deletedObject } }]);
     }
-    props.onObjectsChange(newObjects, objectBeingPlaced); // TODO: Immutability?
+    props.onObjectsChange(newObjects, objectBeingPlaced, 'FINAL'); // TODO: Immutability?
   }
 
   const clickedObject = (obj: BattlefieldObject) => {
