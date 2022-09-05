@@ -98,7 +98,7 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
         <div>
           <label>
             Speed (knots)
-            <input type="number" step="10" value={values.speed} onChange={handleSpeedChange} />
+            <input type="number" step="10" max="10000" min="0" value={values.speed} onChange={handleSpeedChange} />
           </label>
           <label>
             Number of wingmen
