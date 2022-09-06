@@ -31,6 +31,8 @@ Disclaimer: touch devices such as mobile phones are currently __not__ supported.
 | D   | Use Delete tool |
 | T   | Use Text tool |
 | M   | Use Measurement tool |
+| A   | Use Arrow tool |
+| L   | Use Line tool |
 
 ### How to share a scenario
 
