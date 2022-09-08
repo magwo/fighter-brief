@@ -1,5 +1,12 @@
 :root {
   /* TODO: Add some generic css variables for panel colors, buttons, border radius etc */
+  --viewport-margin: 12px;
+  --panel-border-radius: 6px;
+}
+@media screen and (min-width: 600px) {
+  :root {
+    --viewport-margin: 20px;
+  }
 }
 
 *,

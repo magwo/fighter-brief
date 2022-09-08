@@ -7,9 +7,7 @@ import { ReactComponent as Repeat } from './images/repeat.svg';
 import { ReactComponent as Route } from './images/route.svg';
 import { ReactComponent as Question } from './images/question.svg';
 import './Controlbar.css';
-
-const TIME_BAR_WIDTH = 400;
-const TIME_BAR_LEFT = 191;
+import Timebar from './Timebar/Timebar';
 
 const PLAYBACK_SPEEDS = [1, 15, 60, 180];
 
@@ -90,21 +88,6 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     setPathDisplayModeIndex((pathDisplayModeIndex + 1) % ROUTE_DISPLAY_MODES.length);
   }
 
-  const handlePointerUp = useCallback((e: PointerEvent) => {
-    setDraggingTimebar(false);
-  }, []);
-
-  const handlePointerMove = useCallback((e: PointerEvent | React.PointerEvent, force: 'FORCE' | 'RESPECT_PRESS' = 'RESPECT_PRESS') => {
-    // TODO: Maybe use actual element to calculate drag position
-    if (draggingTimebar || force === 'FORCE') {
-      const relX = TIME_BAR_LEFT; // (e.target as Element).getBoundingClientRect().left;
-      let fraction = (e.clientX - relX) / TIME_BAR_WIDTH;
-      fraction = Math.max(0, Math.min(1, fraction));
-      const newTime = fraction * propsStopTime;
-      propsOnTimeChange(newTime);
-    }
-  }, [propsOnTimeChange, propsStopTime, draggingTimebar]);
-
   const handleKeydown = useCallback((e: KeyboardEvent) => {
     if (e.key === ' ') {
       playPause();
@@ -127,18 +110,14 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
 
   useEffect(() => {
     // Setup global handlers
+    // TODO: Use use-hotkey instead
     window.document.addEventListener("keydown", handleKeydown);
     window.document.addEventListener("keyup", handleKeyup);
-    window.document.addEventListener("pointermove", handlePointerMove);
-    window.document.addEventListener("pointerup", handlePointerUp);
     return () => {
       window.document.removeEventListener('keydown', handleKeydown);
       window.document.removeEventListener("keyup", handleKeyup);
-      window.document.removeEventListener("pointermove", handlePointerMove);
-      window.document.removeEventListener("pointerup", handlePointerUp);
     }
-  }, [handleKeydown, handleKeyup, handlePointerMove, handlePointerUp]);
-
+  }, [handleKeydown, handleKeyup]);
 
   useEffect(() => {
     // Is this really needed?
@@ -153,10 +132,6 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
     props.onShowPaths(shouldShow);
   }, [playPause, pathDisplayModeIndex, shouldPlay, props]);
   
-
-  const styleTimeHandle = {
-    transform: `translate(${((props.time / props.stopTime) * TIME_BAR_WIDTH) - 2}px, 0)`
-  };
 
   return (
     // Uses clickable divs instead of buttons - focus messes with global hotkeys
@@ -175,9 +150,11 @@ const Controlbar: FC<ControlbarProps> = (props: ControlbarProps) => {
           {(PLAYBACK_SPEEDS[playbackSpeedIndex] + 'x').replace('0.', '.')}
         </div>
       </div>
-      <div className="timebar" onPointerDown={(e: React.PointerEvent) => { handlePointerMove(e, 'FORCE'); setDraggingTimebar(true) } }>
-        <div style={styleTimeHandle} className="handle"></div>
-      </div>
+      <Timebar
+        time={props.time} 
+        stopTime={props.stopTime} 
+        onDraggingTimeBar={(dragging: boolean) => setDraggingTimebar(dragging)}
+        onTimeChange={(time: number) => props.onTimeChange(time)} />
 
       <div className="buttons">
         <div className={`clickable toggle-paths`} onClick={() => { togglePathsMode() }} title={`Path display mode: ${ROUTE_DISPLAY_MODES[pathDisplayModeIndex]}`}>

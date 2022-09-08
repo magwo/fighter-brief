@@ -1,29 +1,39 @@
 .Mainbar {
     position: absolute;
     height: 50px;
+    max-width: 500px;
     padding: 0 10px 0 20px;
     z-index: 101;
     display: flex;
     gap: 8px;
     align-content: flex-start;
     align-items: center;
-    left: calc(20px + 101px + 16px);
-    top: 20px;
+    left: calc(var(--viewport-margin) + 101px + var(--viewport-margin));
+    top: var(--viewport-margin);
+    right: var(--viewport-margin);
     border: 1px solid #333;
     background-color: #444;
-    border-radius: 6px;
+    border-radius: var(--panel-border-radius);
     overflow: hidden;
     color: white;
 }
 
 .Mainbar .name-container {
-    min-width: 250px;
+    flex-grow: 1;
 }
 
 .Mainbar h1 {
     cursor: pointer;
-    font-size: 20px;
+    font-size: 14px;
 }
+@media screen and (min-width: 600px) {
+    .Mainbar h1 {
+        cursor: pointer;
+        font-size: 18px;
+    }
+}
+
+
 
 /* TODO: Move this duplicated styling to something common */
 .Mainbar .clickable {

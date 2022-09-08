@@ -1,12 +1,12 @@
 .Toolbar {
     position: absolute;
     z-index: 100;
-    top: 20px;
-    left: 20px;
+    top: var(--viewport-margin);
+    left: var(--viewport-margin);
     width: 103px;
     border: 1px solid #333;
     background-color: #444;
-    border-radius: 6px;
+    border-radius: var(--panel-border-radius);
     max-height: 90vh;
     overflow: hidden;
 }

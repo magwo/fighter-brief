@@ -46,6 +46,7 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^4.0.0"
+    "gh-pages": "^4.0.0",
+    "use-resize-observer": "^9.0.2"
   }
 }
