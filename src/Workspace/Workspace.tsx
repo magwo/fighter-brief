@@ -29,17 +29,13 @@ function getWorldPosWithPanAndZoom(viewportX: number, viewportY: number, pan: Po
 
 // TODO: Use vector math functions instead of inline calculations
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
-  const [pointerPressed, setPointerPressed] = useState<boolean>(false);
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
   const [undoStack, setUndoStack] = useState<{ action: 'delete' | 'recreate', data: any }[]>([]);
-  const [pressedPos, setPressedPos] = useState<Position>([0, 0]);
   const [pan, setPan] = useState<Position>([0, 0]);
+  const [panStart, setPanStart] = useState<Position | null>(null);
   const [zoomLevel, setZoomLevel] = useState<number>(1);
 
-  const handleStartDrag = (xy: Position, dxy: Position, buttons: number, touches: number) => {
-    setPointerPressed(true);
-    setPressedPos([xy[0], xy[1]]);
-
+  const handleStartDrag = (xy: Position, buttons: number, touches: number) => {
     if (buttons === 2 || touches === 2) {
       return;
     }
@@ -75,8 +71,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   }
 
   const handleStopDrag = () => {
-    setPointerPressed(false);
-
+    setPanStart(null);
     if (objectBeingPlaced) {
       let abort = false;
       if (props.tool.toolType === 'placeLabel' || (props.tool.toolType === 'placeMeasurement' && props.tool.subType !== 'line')) {
@@ -98,12 +93,20 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }
 
-  const handleDrag = (xy: Position, dxy: Position, buttons: number, touches: number, shiftKey: boolean, ctrlKey: boolean, metaKey: boolean, event: { buttons?: number, preventDefault: () => void} ) => {
+  const handleDrag = (xy: Position, movement: Position, initial: Position, buttons: number, touches: number, shiftKey: boolean, ctrlKey: boolean, metaKey: boolean, event: { buttons?: number, preventDefault: () => void} ) => {
     if (buttons === 2 || touches === 2 || (buttons === 1 && props.tool.toolType === 'select')) {
-      setPan(PositionMath.delta(pan, dxy));
+      if (objectBeingPlaced) {
+        setObjectBeingPlaced(null);
+        props.onPseudoTimeChange(null);
+      }
+      if (panStart === null) {
+        setPanStart(pan);
+      }
+      setPan(PositionMath.delta(panStart ?? pan, movement));
       event.preventDefault();
+      return;
     }
-    if (pointerPressed && objectBeingPlaced) {
+    if (buttons === 1 && objectBeingPlaced) {
       let timeUsed = props.time;
 
       if (props.tool.toolType === 'placeMovable') {
@@ -121,8 +124,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
           props.onPseudoTimeChange(timeUsed);
         }
       } else if (props.tool.toolType === 'placeStatic' || props.tool.toolType === 'placeLabel') {
-        const dx = xy[0] - pressedPos[0];
-        const dy = xy[1] - pressedPos[1];
+        const dx = xy[0] - initial[0];
+        const dy = xy[1] - initial[1];
         const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
         objectBeingPlaced.heading = heading;
         update(objectBeingPlaced, props.time);
@@ -131,7 +134,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       } else if (props.tool.toolType === 'placeMeasurement') {
         // TODO: Avoid recreating objects
 
-        const p1: Position = getWorldPosWithPanAndZoom(pressedPos[0], pressedPos[1], pan, zoomLevel);
+        const p1: Position = getWorldPosWithPanAndZoom(initial[0], initial[1], pan, zoomLevel);
         const p2 = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoomLevel);
         if (props.tool.subType !== 'line') {
           objectBeingPlaced.name = `${Math.round(PositionMath.getDistanceNm(p1, p2))} NM`;
@@ -196,10 +199,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     });
   };
 
-  const handlePinch = (xy: Position, delta: number) => {
+  const handlePinch = (xy: Position, offset: number) => {
+    // alert(`Pinching at ${xy[0]} , ${xy[1]} with ${delta}`);
     setZoomLevel((currentZoomLevel) => {
       const prevZoom = currentZoomLevel;
-      currentZoomLevel -= delta / 300;
+      currentZoomLevel -= offset / 50;
       currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel));
       const ratio = 1 - currentZoomLevel / prevZoom;
       setPan([pan[0] + (-xy[0] - pan[0]) * ratio, pan[1] + (-xy[1] - pan[1]) * ratio]);
@@ -229,10 +233,10 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   const bind = useGesture(
     {
-      onDrag: (state) => handleDrag(state.xy, state.delta, state.buttons, state.touches, state.shiftKey, state.ctrlKey, state.metaKey, state.event),
-      onDragStart: (state) => handleStartDrag(state.xy, state.delta, state.buttons, state.touches),
+      onDrag: (state) => handleDrag(state.xy, state.movement, state.initial, state.buttons, state.touches, state.shiftKey, state.ctrlKey, state.metaKey, state.event),
+      onDragStart: (state) => handleStartDrag(state.xy, state.buttons, state.touches),
       onDragEnd: () => handleStopDrag(),
-      onPinch: (state) => handlePinch(state.origin, state.delta[0]),
+      // onPinch: (state) => handlePinch(state.origin, state.delta[0]),
       // onPinchStart: (state) => console.log("onPinchStart", state),
       // onPinchEnd: (state) => console.log("onPinchEnd", state),
       // onScroll: (state) => console.log("onScroll", state),
