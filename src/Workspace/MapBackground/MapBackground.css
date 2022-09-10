@@ -1,5 +1,6 @@
 .MapBackground {
     position: absolute;
+    touch-action: none;
 }
 
 /* NOTE: If any of these top/left/scale are changed, all existing scenarios become incorrect */
@@ -9,6 +10,7 @@
     opacity: 0.5;
     transform-origin: 0 0;
     transform: scale(100%);
+    touch-action: none;
 }
 
 .MapBackground > img.caucasus {

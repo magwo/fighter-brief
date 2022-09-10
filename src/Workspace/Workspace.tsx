@@ -36,11 +36,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [pan, setPan] = useState<Position>([0, 0]);
   const [zoomLevel, setZoomLevel] = useState<number>(1);
 
-  const handleStartDrag = (xy: Position, dxy: Position, buttons: number) => {
+  const handleStartDrag = (xy: Position, dxy: Position, buttons: number, touches: number) => {
     setPointerPressed(true);
     setPressedPos([xy[0], xy[1]]);
 
-    if (buttons === 2) {
+    if (buttons === 2 || touches === 2) {
       return;
     }
 
@@ -98,8 +98,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }
 
-  const handleDrag = (xy: Position, dxy: Position, buttons: number, shiftKey: boolean, ctrlKey: boolean, metaKey: boolean, event: { buttons?: number, preventDefault: () => void} ) => {
-    if (buttons === 2 || (buttons === 1 && props.tool.toolType === 'select')) {
+  const handleDrag = (xy: Position, dxy: Position, buttons: number, touches: number, shiftKey: boolean, ctrlKey: boolean, metaKey: boolean, event: { buttons?: number, preventDefault: () => void} ) => {
+    if (buttons === 2 || touches === 2 || (buttons === 1 && props.tool.toolType === 'select')) {
       setPan(PositionMath.delta(pan, dxy));
       event.preventDefault();
     }
@@ -186,10 +186,20 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   }
 
   const handleWheel = (xy: Position, wheelDeltaY: number) => {
-    // TODO: Use a center point
     setZoomLevel((currentZoomLevel) => {
       const prevZoom = currentZoomLevel;
       currentZoomLevel -= wheelDeltaY / 300;
+      currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel));
+      const ratio = 1 - currentZoomLevel / prevZoom;
+      setPan([pan[0] + (-xy[0] - pan[0]) * ratio, pan[1] + (-xy[1] - pan[1]) * ratio]);
+      return currentZoomLevel;
+    });
+  };
+
+  const handlePinch = (xy: Position, delta: number) => {
+    setZoomLevel((currentZoomLevel) => {
+      const prevZoom = currentZoomLevel;
+      currentZoomLevel -= delta / 300;
       currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel));
       const ratio = 1 - currentZoomLevel / prevZoom;
       setPan([pan[0] + (-xy[0] - pan[0]) * ratio, pan[1] + (-xy[1] - pan[1]) * ratio]);
@@ -219,10 +229,10 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
   const bind = useGesture(
     {
-      onDrag: (state) => handleDrag(state.xy, state.delta, state.buttons, state.shiftKey, state.ctrlKey, state.metaKey, state.event),
-      onDragStart: (state) => handleStartDrag(state.xy, state.delta, state.buttons),
-      onDragEnd: (state) => handleStopDrag(),
-      // onPinch: (state) => console.log("onPinch", state),
+      onDrag: (state) => handleDrag(state.xy, state.delta, state.buttons, state.touches, state.shiftKey, state.ctrlKey, state.metaKey, state.event),
+      onDragStart: (state) => handleStartDrag(state.xy, state.delta, state.buttons, state.touches),
+      onDragEnd: () => handleStopDrag(),
+      onPinch: (state) => handlePinch(state.origin, state.delta[0]),
       // onPinchStart: (state) => console.log("onPinchStart", state),
       // onPinchEnd: (state) => console.log("onPinchEnd", state),
       // onScroll: (state) => console.log("onScroll", state),
