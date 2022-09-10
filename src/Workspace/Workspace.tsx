@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
+import { useGesture } from '@use-gesture/react'
 import BattlefieldObj from '../BattlefieldObj/BattlefieldObj';
 import { BattlefieldObject, createBattlefieldObject, getStopTime, HeadingDegrees, PathCreationMode, Position, PositionMath, SpeedKnots, update } from '../battlefield-object';
 import { Tool } from '../Toolbar/tools';
@@ -26,7 +27,6 @@ function getWorldPosWithPanAndZoom(viewportX: number, viewportY: number, pan: Po
   return result;
 }
 
-// TODO: Use use-gesture lib instead https://use-gesture.netlify.app/docs/
 // TODO: Use vector math functions instead of inline calculations
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [pointerPressed, setPointerPressed] = useState<boolean>(false);
@@ -34,15 +34,13 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [undoStack, setUndoStack] = useState<{ action: 'delete' | 'recreate', data: any }[]>([]);
   const [pressedPos, setPressedPos] = useState<Position>([0, 0]);
   const [pan, setPan] = useState<Position>([0, 0]);
-  const [panOrigin, setPanOrigin] = useState<Position>([0, 0]);
   const [zoomLevel, setZoomLevel] = useState<number>(1);
 
-  const startPressWorkspace = (e: React.PointerEvent) => {
+  const handleStartDrag = (xy: Position, dxy: Position, buttons: number) => {
     setPointerPressed(true);
-    setPressedPos([e.clientX, e.clientY]);
+    setPressedPos([xy[0], xy[1]]);
 
-    if (e.buttons === 2) {
-      setPanOrigin(pan);
+    if (buttons === 2) {
       return;
     }
 
@@ -50,7 +48,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       props.onSelectedObject(null);
     }
 
-    const clientPosWithPan = getWorldPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
+    const clientPosWithPan = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoomLevel);
     if (props.tool.toolType === 'placeMovable') {
       const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, props.time, props.tool.speedKnots, 0, '');
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
@@ -76,7 +74,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }
 
-  const stopPressWorkspace = (e: React.PointerEvent) => {
+  const handleStopDrag = () => {
     setPointerPressed(false);
 
     if (objectBeingPlaced) {
@@ -100,20 +98,19 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }
 
-  const movedPointer = (e: React.PointerEvent) => {
-    if (e.buttons === 2) {
-      const delta = PositionMath.delta([e.clientX, e.clientY], pressedPos);
-      setPan(PositionMath.delta(panOrigin, delta));
-      e.preventDefault();
+  const handleDrag = (xy: Position, dxy: Position, buttons: number, shiftKey: boolean, ctrlKey: boolean, metaKey: boolean, event: { buttons?: number, preventDefault: () => void} ) => {
+    if (buttons === 2 || (buttons === 1 && props.tool.toolType === 'select')) {
+      setPan(PositionMath.delta(pan, dxy));
+      event.preventDefault();
     }
     if (pointerPressed && objectBeingPlaced) {
       let timeUsed = props.time;
 
       if (props.tool.toolType === 'placeMovable') {
         let creationMode: PathCreationMode = 'fly_smooth';
-        if (e.shiftKey) { creationMode = 'fly_straight'; }
-        if (e.ctrlKey || e.metaKey) { creationMode = 'normal'; }
-        const newPoint = getWorldPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
+        if (shiftKey) { creationMode = 'fly_straight'; }
+        if (ctrlKey || metaKey) { creationMode = 'normal'; }
+        const newPoint = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoomLevel);
         objectBeingPlaced.path.considerAddingPoint(newPoint[0], newPoint[1], creationMode, props.tool.pathSmoothness);
         if (objectBeingPlaced.path.points.length > 0) {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
@@ -124,8 +121,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
           props.onPseudoTimeChange(timeUsed);
         }
       } else if (props.tool.toolType === 'placeStatic' || props.tool.toolType === 'placeLabel') {
-        const dx = e.clientX - pressedPos[0];
-        const dy = e.clientY - pressedPos[1];
+        const dx = xy[0] - pressedPos[0];
+        const dy = xy[1] - pressedPos[1];
         const heading = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) * (360 / (Math.PI * 2)) + 90 : 0;
         objectBeingPlaced.heading = heading;
         update(objectBeingPlaced, props.time);
@@ -135,7 +132,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         // TODO: Avoid recreating objects
 
         const p1: Position = getWorldPosWithPanAndZoom(pressedPos[0], pressedPos[1], pan, zoomLevel);
-        const p2 = getWorldPosWithPanAndZoom(e.clientX, e.clientY, pan, zoomLevel);
+        const p2 = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoomLevel);
         if (props.tool.subType !== 'line') {
           objectBeingPlaced.name = `${Math.round(PositionMath.getDistanceNm(p1, p2))} NM`;
         }
@@ -147,6 +144,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }
 
+  // TODO: Add redo functionality
   const undo = () => {
     if (undoStack.length > 0) {
       const action = undoStack[undoStack.length - 1];
@@ -187,14 +185,14 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     }
   }
 
-  const handleWheel = (event: React.WheelEvent) => {
+  const handleWheel = (xy: Position, wheelDeltaY: number) => {
     // TODO: Use a center point
     setZoomLevel((currentZoomLevel) => {
       const prevZoom = currentZoomLevel;
-      currentZoomLevel -= event.deltaY / 300;
+      currentZoomLevel -= wheelDeltaY / 300;
       currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel));
       const ratio = 1 - currentZoomLevel / prevZoom;
-      setPan([pan[0] + (-event.clientX - pan[0]) * ratio, pan[1] + (-event.clientY - pan[1]) * ratio]);
+      setPan([pan[0] + (-xy[0] - pan[0]) * ratio, pan[1] + (-xy[1] - pan[1]) * ratio]);
       return currentZoomLevel;
     });
   };
@@ -219,12 +217,32 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     transform: `translate(${-pan[0]}px, ${-pan[1]}px) scale(${zoomLevel})`,
   }
 
+  const bind = useGesture(
+    {
+      onDrag: (state) => handleDrag(state.xy, state.delta, state.buttons, state.shiftKey, state.ctrlKey, state.metaKey, state.event),
+      onDragStart: (state) => handleStartDrag(state.xy, state.delta, state.buttons),
+      onDragEnd: (state) => handleStopDrag(),
+      // onPinch: (state) => console.log("onPinch", state),
+      // onPinchStart: (state) => console.log("onPinchStart", state),
+      // onPinchEnd: (state) => console.log("onPinchEnd", state),
+      // onScroll: (state) => console.log("onScroll", state),
+      // onScrollStart: (state) => console.log("onScrollStart", state),
+      // onScrollEnd: (state) => console.log("onScrollEnd", state),
+      // onMove: (state) => console.log("onMove", state),
+      // onMoveStart: (state) => console.log("onMoveStart", state),
+      // onMoveEnd: (state) => console.log("onMoveEnd", state),
+      onWheel: (state) => handleWheel([state.event.clientX, state.event.clientY], state.delta[1]),
+      // onWheelStart: (state) => console.log("onWheelStart", state),
+      // onWheelEnd: (state) => console.log("onWheelEnd", state),
+      // onHover: (state) => console.log("onHover", state),
+    },
+    {
+      drag: { pointer: { buttons: [1, 2] } },
+    }
+  );
+
   return (
-    <div className="Workspace"  data-testid="Workspace"
-      onPointerDown={(e: React.PointerEvent) => startPressWorkspace(e)}
-      onPointerUp={(e: React.PointerEvent) => stopPressWorkspace(e)}
-      onPointerMove={(e: React.PointerEvent) => movedPointer(e)}
-      onWheel={(e: React.WheelEvent) => handleWheel(e) }>
+    <div {...bind()} className="Workspace" data-testid="Workspace">
       
       <div className="panner" style={panStyle}>
         <MapBackground map={props.map} />
