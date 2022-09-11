@@ -199,19 +199,6 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
     });
   };
 
-  const handlePinch = (xy: Position, offset: number) => {
-    // alert(`Pinching at ${xy[0]} , ${xy[1]} with ${delta}`);
-    setZoomLevel((currentZoomLevel) => {
-      const prevZoom = currentZoomLevel;
-      currentZoomLevel -= offset / 50;
-      currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel));
-      const ratio = 1 - currentZoomLevel / prevZoom;
-      setPan([pan[0] + (-xy[0] - pan[0]) * ratio, pan[1] + (-xy[1] - pan[1]) * ratio]);
-      return currentZoomLevel;
-    });
-  };
-
-
   useEffect(() => {
     // Setup global keypress handler
     window.document.addEventListener("keydown", handleKeydown);
@@ -236,19 +223,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       onDrag: (state) => handleDrag(state.xy, state.movement, state.initial, state.buttons, state.touches, state.shiftKey, state.ctrlKey, state.metaKey, state.event),
       onDragStart: (state) => handleStartDrag(state.xy, state.buttons, state.touches),
       onDragEnd: () => handleStopDrag(),
-      // onPinch: (state) => handlePinch(state.origin, state.delta[0]),
-      // onPinchStart: (state) => console.log("onPinchStart", state),
-      // onPinchEnd: (state) => console.log("onPinchEnd", state),
-      // onScroll: (state) => console.log("onScroll", state),
-      // onScrollStart: (state) => console.log("onScrollStart", state),
-      // onScrollEnd: (state) => console.log("onScrollEnd", state),
-      // onMove: (state) => console.log("onMove", state),
-      // onMoveStart: (state) => console.log("onMoveStart", state),
-      // onMoveEnd: (state) => console.log("onMoveEnd", state),
       onWheel: (state) => handleWheel([state.event.clientX, state.event.clientY], state.delta[1]),
-      // onWheelStart: (state) => console.log("onWheelStart", state),
-      // onWheelEnd: (state) => console.log("onWheelEnd", state),
-      // onHover: (state) => console.log("onHover", state),
     },
     {
       drag: { pointer: { buttons: [1, 2] } },
