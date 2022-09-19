@@ -2,7 +2,7 @@
 
 [https://fighterbrief.com/](https://fighterbrief.com/)
 
-Fighter Brief is a free-to-use drawing and animation tool designed to effectively illustrate procedures, maneuvers, tactics and troop movements in combat flight simulators. It could also be used for other types of milsim games.
+Fighter Brief is a free-to-use drawing and animation tool designed to effectively illustrate procedures, maneuvers, tactics and troop movements in combat flight simulators. It could also be used for other types of milsim games. The drawing data is stored compactly in the URL, so scenarios can be shared easily.
 
 Examples of usage scenarios include lectures, training, briefings, debriefings and collaborative tactics development.
 
