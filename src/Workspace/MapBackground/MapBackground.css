@@ -11,6 +11,7 @@
     transform-origin: 0 0;
     transform: scale(100%);
     touch-action: none;
+    -webkit-touch-callout: none;
 }
 
 .MapBackground > img.caucasus {
