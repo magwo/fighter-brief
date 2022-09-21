@@ -46,23 +46,23 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
 
     const clientPosWithPan = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoomLevel);
     if (props.tool.toolType === 'placeMovable') {
-      const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, props.time, props.tool.speedKnots, 0, '');
+      const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, props.time, props.tool.speedKnots, 0, '', Number.MAX_SAFE_INTEGER);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       setObjectBeingPlaced(newObj);
       props.onObjectsChange(props.objects, newObj, 'NOT_FINAL');
     }
     else if (props.tool.toolType === 'placeStatic') {
-      const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
+      const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '', Number.MAX_SAFE_INTEGER);
       setObjectBeingPlaced(newObj);
       props.onObjectsChange(props.objects, newObj, 'NOT_FINAL');
     }
     else if (props.tool.toolType === 'placeLabel') {
-      const newObj = createBattlefieldObject(null, "New", '' as CoalitionType, 'label', null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
+      const newObj = createBattlefieldObject(null, "New", '' as CoalitionType, 'label', null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '', Number.MAX_SAFE_INTEGER);
       setObjectBeingPlaced(newObj);
       props.onObjectsChange(props.objects, newObj, 'NOT_FINAL');
     }
     else if (props.tool.toolType === 'placeMeasurement') {
-      const newObj = createBattlefieldObject(null, '', '' as CoalitionType, props.tool.subType, null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '');
+      const newObj = createBattlefieldObject(null, '', '' as CoalitionType, props.tool.subType, null, clientPosWithPan, 0 as HeadingDegrees, props.time, 0 as SpeedKnots, 0, '', Number.MAX_SAFE_INTEGER);
       setObjectBeingPlaced(newObj);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
@@ -94,17 +94,20 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   }
 
   const handleDrag = (xy: Position, movement: Position, initial: Position, buttons: number, touches: number, shiftKey: boolean, ctrlKey: boolean, metaKey: boolean, event: { buttons?: number, preventDefault: () => void} ) => {
-    if (buttons === 2 || touches === 2 || (buttons === 1 && props.tool.toolType === 'select')) {
-      if (objectBeingPlaced) {
+    if (buttons === 2 || buttons === 3 || touches === 2 || (buttons === 1 && props.tool.toolType === 'select')) {
+      if (objectBeingPlaced && buttons !== 3) {
         setObjectBeingPlaced(null);
         props.onPseudoTimeChange(null);
       }
+      let _panStart = PositionMath.add(pan, movement);
       if (panStart === null) {
-        setPanStart(pan);
+        setPanStart(_panStart);
       }
-      setPan(PositionMath.delta(panStart ?? pan, movement));
+      setPan(PositionMath.delta(panStart ?? _panStart, movement));
       event.preventDefault();
       return;
+    } else {
+      setPanStart(null);
     }
     if (buttons === 1 && objectBeingPlaced) {
       let timeUsed = props.time;
@@ -226,7 +229,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       onWheel: (state) => handleWheel([state.event.clientX, state.event.clientY], state.delta[1]),
     },
     {
-      drag: { pointer: { buttons: [1, 2] } },
+      drag: { pointer: { buttons: [1, 2, 3] } },
     }
   );
 
