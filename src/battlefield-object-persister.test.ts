@@ -38,13 +38,23 @@ describe('loadData', () => {
         expect(loadedObjects[0].type).toEqual('viper');
     });
 
-    
-    test('it should be able to serialize to most recent data version', () => {
-        // TODO: Update to v4
+    test('it should be able to load version 4 data', () => {
         const data = `#v4;New%20scenario;;;;;;44binijf~~blue~viper~~279~268~67~0.000~400~0~~_7r__7g_8e7g7j9m9o/r7s7t7t;ivldpy4c~New~~label~~395~213~0~0.000~0~0~~;7gdz3eja~25%20NM~~measurement~~591~147~0~0.000~0~0~~_gf__43__58__25_;kz6jmio2~~red~bullseye~~521~183~133~0.000~0~0~~`;
         const { loadedObjects, scenarioName, mapBackground } = loadData(data);
 
-        const expected = `v4;New%20scenario;;;;;;44binijf~~blue~viper~~279~268~67~0.000~400~0~~_7r__7g_8e7g7j9m9o/r7s7t7t;ivldpy4c~New~~label~~395~213~0~0.000~0~0~~;7gdz3eja~25%20NM~~measurement~~591~147~0~0.000~0~0~~_gf__43__58__25_;kz6jmio2~~red~bullseye~~521~183~133~0.000~0~0~~`;
+        expect(scenarioName).toEqual('New scenario');
+        expect(mapBackground).toEqual('');
+        expect(loadedObjects.length).toEqual(4);
+        expect(loadedObjects[0].type).toEqual('viper');
+    });
+
+    
+    test('it should be able to serialize to most recent data version', () => {
+        // TODO: Update to v5
+        const data = `#v5;New%20scenario;;;;;;y9nr8wrz~New~~label~~283~185~-9~0.000~0~0~~9007199254740991~;i2dm6pwm~40%20NM~~measurement~~450~116~0~0.000~0~0~~9007199254740991~_ci__38_._97_;mczh4rnm~46%20NM~~arrow~~300~337~0~0.000~0~0~~9007199254740991~_8c__9d__aa__2b_;abzl509y~~~line~~491~342~0~0.000~0~0~~9007199254740991~_dn__9i__7c__-14_;fivp2cpn~~~viper~~478~514~1~0.000~400~0~~9007199254740991~_da__ea_nQpTtQ2M-K(R=a_14_i_14_p_13_v8x5w;2jaqvogx~~~bullseye~~607~188~137~0.000~0~0~~9007199254740991~`;
+        const { loadedObjects, scenarioName, mapBackground } = loadData(data);
+
+        const expected = `v5;New%20scenario;;;;;;y9nr8wrz~New~~label~~283~185~-9~0.000~0~0~~9007199254740991~;i2dm6pwm~40%20NM~~measurement~~450~116~0~0.000~0~0~~9007199254740991~_ci__38_._97_;mczh4rnm~46%20NM~~arrow~~300~337~0~0.000~0~0~~9007199254740991~_8c__9d__aa__2b_;abzl509y~~~line~~491~342~0~0.000~0~0~~9007199254740991~_dn__9i__7c__-14_;fivp2cpn~~~viper~~478~514~1~0.000~400~0~~9007199254740991~_da__ea_nQpTtQ2M-K(R=a_14_i_14_p_13_v8x5w;2jaqvogx~~~bullseye~~607~188~137~0.000~0~0~~9007199254740991~`;
         const serialized = serializeData(scenarioName, mapBackground, loadedObjects);
 
         expect(serialized).toEqual(expected);

@@ -176,6 +176,7 @@ export class Path {
 export const getRandomId = (size: number) => [...Array(size)].map(() => Math.floor(Math.random() * 36).toString(36)).join('');
 
 export interface BattlefieldObject {
+    // TODO: Maybe stop using mutating objects?
     id: string;
     name: string;
     coalition: CoalitionType;
@@ -188,11 +189,12 @@ export interface BattlefieldObject {
     wingmanCount: number;
     formation: FormationType;
     path: Path;
+    duration: number;
     isVisible: boolean;
     hasReachedEnd: boolean;
 }
 
-export function createBattlefieldObject(id: string | null, name: string, coalition: CoalitionType, type: BattleFieldObjectType, endType: EndType, position: Position, heading: HeadingDegrees, startTime: number, speed: SpeedKnots, wingmanCount: number, formation: FormationType): BattlefieldObject {
+export function createBattlefieldObject(id: string | null, name: string, coalition: CoalitionType, type: BattleFieldObjectType, endType: EndType, position: Position, heading: HeadingDegrees, startTime: number, speed: SpeedKnots, wingmanCount: number, formation: FormationType, duration: number): BattlefieldObject {
     if (id === null) {
         id = getRandomId(8);
     }
@@ -209,6 +211,7 @@ export function createBattlefieldObject(id: string | null, name: string, coaliti
         wingmanCount,
         formation,
         path: new Path(),
+        duration: duration,
         isVisible: false,
         hasReachedEnd: false,
     }
