@@ -189,12 +189,12 @@ export interface BattlefieldObject {
     wingmanCount: number;
     formation: FormationType;
     path: Path;
-    duration: number;
+    duration: number | null;
     isVisible: boolean;
     hasReachedEnd: boolean;
 }
 
-export function createBattlefieldObject(id: string | null, name: string, coalition: CoalitionType, type: BattleFieldObjectType, endType: EndType, position: Position, heading: HeadingDegrees, startTime: number, speed: SpeedKnots, wingmanCount: number, formation: FormationType, duration: number): BattlefieldObject {
+export function createBattlefieldObject(id: string | null, name: string, coalition: CoalitionType, type: BattleFieldObjectType, endType: EndType, position: Position, heading: HeadingDegrees, startTime: number, speed: SpeedKnots, wingmanCount: number, formation: FormationType, duration: number | null): BattlefieldObject {
     if (id === null) {
         id = getRandomId(8);
     }
@@ -219,7 +219,7 @@ export function createBattlefieldObject(id: string | null, name: string, coaliti
 
 
 export function update(obj: BattlefieldObject, timeSeconds: number) {
-    obj.isVisible = timeSeconds >= obj.startTime;
+    obj.isVisible = timeSeconds >= obj.startTime && timeSeconds <= (obj.startTime + (obj.duration ?? Number.MAX_SAFE_INTEGER));
     obj.hasReachedEnd = timeSeconds >= getStopTime(obj);
     // For some reason curve will throw exception if using less than 3 points
     if (obj.path.points.length > 2) {

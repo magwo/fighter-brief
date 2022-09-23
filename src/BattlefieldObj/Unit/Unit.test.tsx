@@ -7,7 +7,7 @@ import { CoalitionType } from '../../battlefield-object-types';
 
 describe('<Unit />', () => {
   test('it should mount', () => {
-    const object = createBattlefieldObject(null, "", '' as CoalitionType, 'viper', null, [0, 0], 0, 0, 0, 0, '', Number.MAX_SAFE_INTEGER);
+    const object = createBattlefieldObject(null, "", '' as CoalitionType, 'viper', null, [0, 0], 0, 0, 0, 0, '', null);
     render(<Unit object={object} isSelected={false} isInactive={false} shouldShowPath={true} />);
     
     const unit = screen.getByTestId('Unit');

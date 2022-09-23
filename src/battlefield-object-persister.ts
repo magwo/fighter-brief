@@ -55,7 +55,7 @@ function decodeVersion5(data: string): LoadedData {
             Number(tokens[i++]) as SpeedKnots,
             Number(tokens[i++]),
             tokens[i++] as FormationType,
-            Number(tokens[i++]),
+            tokens[i++] === '' ? null : Number(tokens[i - 1]),
         );
         obj.path.points = decodePositions(tokens[i++]);
         obj.path.refreshCurve();
@@ -85,7 +85,7 @@ function decodeVersion4(data: string): LoadedData {
             Number(tokens[i++]) as SpeedKnots,
             Number(tokens[i++]),
             tokens[i++] as FormationType,
-            Number.MAX_SAFE_INTEGER,
+            null,
         );
         obj.path.points = decodePositions(tokens[i++]);
         obj.path.refreshCurve();
@@ -115,7 +115,7 @@ function decodeVersion3(data: string): LoadedData {
             Number(tokens[i++]) as SpeedKnots,
             Number(tokens[i++]),
             tokens[i++] as FormationType,
-            Number.MAX_SAFE_INTEGER,
+            null,
         );
         obj.path.points = decodePositions(tokens[i++]);
         obj.path.refreshCurve();
@@ -145,7 +145,7 @@ function decodeVersion2(data: string): LoadedData {
             Number(tokens[i++]) as SpeedKnots,
             0,
             '' as FormationType,
-            Number.MAX_SAFE_INTEGER,
+            null,
         );
         obj.path.points = decodePositions(tokens[i++]);
         obj.path.refreshCurve();
@@ -175,7 +175,7 @@ function decodeVersion1(data: string): LoadedData {
             Number(tokens[i++]) as SpeedKnots,
             0,
             '' as FormationType,
-            Number.MAX_SAFE_INTEGER,
+            null,
         );
         for (; i < tokens.length - 1; i += 2) {
             obj.path.addPoint(decodeInt(tokens[i]), decodeInt(tokens[i + 1]));
@@ -206,7 +206,7 @@ export function serializeData(scenarioName: string, map: MapType, panX: number, 
             encodeStringSafely(o.name), 
             o.coalition, 
             o.type, 
-            o.endType ? o.endType : '',
+            o.endType ?? '',
             Math.round(o.position[0]), 
             Math.round(o.position[1]), 
             Math.round(o.heading), 
@@ -214,7 +214,7 @@ export function serializeData(scenarioName: string, map: MapType, panX: number, 
             Math.round(o.speed),
             Math.round(o.wingmanCount),
             o.formation,
-            o.duration,
+            o.duration ?? '',
         ].join(PROPERTY_DELIMITER);
         const pathPointsStr = encodePositions(o.path.points);
         return [propsStr, pathPointsStr].join(PROPERTY_DELIMITER);

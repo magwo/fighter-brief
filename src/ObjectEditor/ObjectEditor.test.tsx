@@ -6,8 +6,8 @@ import { createBattlefieldObject } from '../battlefield-object';
 
 describe('<ObjectEditor />', () => {
   test('it should mount', () => {
-    const object = createBattlefieldObject(null, "", '', 'viper', null, [0, 0], 0, 0, 0, 0, '', Number.MAX_SAFE_INTEGER);
-    render(<ObjectEditor object={object} onObjectModified={() => {}} />);
+    const object = createBattlefieldObject(null, "", '', 'viper', null, [0, 0], 0, 0, 0, 0, '', null);
+    render(<ObjectEditor object={object} time={0} onObjectModified={() => {}} />);
     
     const objectEditor = screen.getByTestId('ObjectEditor');
 

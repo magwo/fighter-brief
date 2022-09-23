@@ -16,6 +16,7 @@ describe('loadData', () => {
         expect(loadedObjects[0].type).toEqual('measurement');
         expect(loadedObjects[0].name).toEqual('Coast');
         expect(loadedObjects[loadedObjects.length - 1].name).toEqual('Overhead break'); // Due to known bug with comma handling
+        expect(loadedObjects[0].duration).toEqual(null);
     });
 
     test('it should be able to load version 2 data', () => {
@@ -26,6 +27,7 @@ describe('loadData', () => {
         expect(scenarioName).toEqual('Foo scenario');
         expect(loadedObjects.length).toEqual(17);
         expect(loadedObjects[0].type).toEqual('viper');
+        expect(loadedObjects[0].duration).toEqual(null);
     });
 
     test('it should be able to load version 3 data', () => {
@@ -36,6 +38,7 @@ describe('loadData', () => {
         expect(mapBackground).toEqual('ca');
         expect(loadedObjects.length).toEqual(17);
         expect(loadedObjects[0].type).toEqual('viper');
+        expect(loadedObjects[0].duration).toEqual(null);
     });
 
     test('it should be able to load version 4 data', () => {
@@ -46,6 +49,7 @@ describe('loadData', () => {
         expect(mapBackground).toEqual('');
         expect(loadedObjects.length).toEqual(4);
         expect(loadedObjects[0].type).toEqual('viper');
+        expect(loadedObjects[0].duration).toEqual(null);
     });
 
     

@@ -139,7 +139,7 @@ function App() {
       <Toolbar onToolSelected={(tool: Tool) => setSelectedTool(tool)} />
       <Controlbar time={time} stopTime={stopTime} onPlayPause={(shouldPlay: boolean) => setShouldPlay(shouldPlay)} onTimeChange={handleTimeChange} onShowPaths={(show) => setShouldShowPaths(show)} />
       {selectedObject && (
-        <ObjectEditor object={selectedObject} onObjectModified={(obj) => { handleObjectModified(obj); }} />
+        <ObjectEditor object={selectedObject} time={time} onObjectModified={(obj) => { handleObjectModified(obj); }} />
       )}
     </div>
   );
