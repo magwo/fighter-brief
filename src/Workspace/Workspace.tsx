@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useGesture } from '@use-gesture/react'
 import BattlefieldObj from '../BattlefieldObj/BattlefieldObj';
-import { BattlefieldObject, createBattlefieldObject, getStopTime, HeadingDegrees, PathCreationMode, Position, PositionMath, SpeedKnots, update } from '../battlefield-object';
+import { BattlefieldObject, createBattlefieldObject, getPositionAlongCurve, getStopTime, HeadingDegrees, PathCreationMode, Position, PositionMath, SpeedKnots, update } from '../battlefield-object';
 import { Tool } from '../Toolbar/tools';
 import './Workspace.css';
 import MapBackground from './MapBackground/MapBackground';
-import { CoalitionType, MapType } from '../battlefield-object-types';
+import { CoalitionType, MapType, weaponList, WeaponType } from '../battlefield-object-types';
 import { StateChangeType } from '../state-types';
 
 interface WorkspaceProps {
@@ -29,6 +29,22 @@ interface WorkspaceProps {
 function getWorldPosWithPanAndZoom(viewportX: number, viewportY: number, pan: Position, zoomLevel: number): Position {
   const result: Position = [(viewportX + pan[0]) / zoomLevel, (viewportY + pan[1]) / zoomLevel];
   return result;
+}
+
+function killNearbyObjectsAtEnd(weaponObject: BattlefieldObject, objects: BattlefieldObject[], killRadiusPx: number) {
+  const detonationTime = getStopTime(weaponObject);
+  const detonationPos = getPositionAlongCurve(weaponObject, detonationTime);
+  for (const otherObj of objects) {
+    // Don't kill other weapons
+    if (!weaponList.includes(otherObj.type as WeaponType)) {
+      const posAtDetonation = getPositionAlongCurve(otherObj, detonationTime);
+      const distance = PositionMath.length2D(PositionMath.delta(detonationPos, posAtDetonation));
+      if (distance < killRadiusPx) {
+        const newDuration = detonationTime - otherObj.startTime;
+        otherObj.duration = Math.min(otherObj.duration ?? Number.MAX_SAFE_INTEGER, newDuration);
+      } 
+    }
+  }
 }
 
 // TODO: Use vector math functions instead of inline calculations
@@ -94,7 +110,11 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       }
       setObjectBeingPlaced(null);
       props.onPseudoTimeChange(null);
-      // TODO: Let weapons set duration times of nearby objects
+
+      if (objectBeingPlaced.endType === 'expl_m') {
+        // TODO: Include all explosion types?
+        killNearbyObjectsAtEnd(objectBeingPlaced, newObjects, 30);
+      }
       props.onObjectsChange(newObjects, objectBeingPlaced, pan, zoom, 'FINAL');
     } else {
       props.onObjectsChange(props.objects, null, pan, zoom, 'FINAL');

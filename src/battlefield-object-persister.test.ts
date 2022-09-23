@@ -54,10 +54,10 @@ describe('loadData', () => {
 
     
     test('it should be able to serialize to most recent data version', () => {
-        const data = `#v5;New%20scenario;;10;10;1.50;;y9nr8wrz~New~~label~~283~185~-9~0.000~0~0~~9007199254740991~;i2dm6pwm~40%20NM~~measurement~~450~116~0~0.000~0~0~~9007199254740991~_ci__38_._97_;mczh4rnm~46%20NM~~arrow~~300~337~0~0.000~0~0~~9007199254740991~_8c__9d__aa__2b_;abzl509y~~~line~~491~342~0~0.000~0~0~~9007199254740991~_dn__9i__7c__-14_;fivp2cpn~~~viper~~478~514~1~0.000~400~0~~9007199254740991~_da__ea_nQpTtQ2M-K(R=a_14_i_14_p_13_v8x5w;2jaqvogx~~~bullseye~~607~188~137~0.000~0~0~~9007199254740991~`;
+        const data = `#v5;New%20scenario;;0;0;1.00;;4k2tvtmt~~~viper~~211~187~69~0.000~400~0~~~_5v__57_9f8f-e$e_13_d'i:m7q*y5y334?y6;mv0gibdd~~~bullseye~~316~225~117~0.000~0~0~~~;z7ppyy7y~New~~label~~326~129~0~0.000~0~0~~~;9f068ygh~17%20NM~~measurement~~235~119~0~0.000~0~0~~~_6j__3b__3c__24_;361hdl20~22%20NM~~arrow~~297~315~0~0.000~0~0~~~_89__8r__51_2;unzufbxd~~~line~~243~370~0~0.000~0~0~~~_6r__aa_!_-1v_;6if1ty0c~~~amraam~expl_m~202~285~88~0.000~1000~0~~~_5m__7x_+l/m/m(n`;
         const { loadedObjects, scenarioName, mapBackground, pan, zoom } = loadData(data);
 
-        const expected = `v5;New%20scenario;;10;10;1.50;;y9nr8wrz~New~~label~~283~185~-9~0.000~0~0~~9007199254740991~;i2dm6pwm~40%20NM~~measurement~~450~116~0~0.000~0~0~~9007199254740991~_ci__38_._97_;mczh4rnm~46%20NM~~arrow~~300~337~0~0.000~0~0~~9007199254740991~_8c__9d__aa__2b_;abzl509y~~~line~~491~342~0~0.000~0~0~~9007199254740991~_dn__9i__7c__-14_;fivp2cpn~~~viper~~478~514~1~0.000~400~0~~9007199254740991~_da__ea_nQpTtQ2M-K(R=a_14_i_14_p_13_v8x5w;2jaqvogx~~~bullseye~~607~188~137~0.000~0~0~~9007199254740991~`;
+        const expected = `v5;New%20scenario;;0;0;1.00;;4k2tvtmt~~~viper~~211~187~69~0.000~400~0~~~_5v__57_9f8f-e$e_13_d'i:m7q*y5y334?y6;mv0gibdd~~~bullseye~~316~225~117~0.000~0~0~~~;z7ppyy7y~New~~label~~326~129~0~0.000~0~0~~~;9f068ygh~17%20NM~~measurement~~235~119~0~0.000~0~0~~~_6j__3b__3c__24_;361hdl20~22%20NM~~arrow~~297~315~0~0.000~0~0~~~_89__8r__51_2;unzufbxd~~~line~~243~370~0~0.000~0~0~~~_6r__aa_!_-1v_;6if1ty0c~~~amraam~expl_m~202~285~88~0.000~1000~0~~~_5m__7x_+l/m/m(n`;
         const serialized = serializeData(scenarioName, mapBackground, pan[0], pan[1], zoom, loadedObjects);
 
         expect(serialized).toEqual(expected);
