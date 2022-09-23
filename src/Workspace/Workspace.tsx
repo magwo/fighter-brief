@@ -6,6 +6,7 @@ import { Tool } from '../Toolbar/tools';
 import './Workspace.css';
 import MapBackground from './MapBackground/MapBackground';
 import { CoalitionType, MapType } from '../battlefield-object-types';
+import { StateChangeType } from '../state-types';
 
 interface WorkspaceProps {
   objects: BattlefieldObject[];
@@ -16,10 +17,14 @@ interface WorkspaceProps {
   time: number;
   pseudoTime: number | null;
   map: MapType;
+  pan: Position;
+  zoom: number;
   onStopTimeChange: (stopTime: number) => void;
   onPseudoTimeChange: (pseudoTime: number | null) => void;
   onSelectedObject: (object: BattlefieldObject | null) => void;
-  onObjectsChange: (newObjects: BattlefieldObject[], objectBeingPlaced: BattlefieldObject | null, state: 'FINAL' | 'NOT_FINAL') => void;
+  onObjectsChange: (newObjects: BattlefieldObject[], objectBeingPlaced: BattlefieldObject | null, state: StateChangeType) => void;
+  onPanChange: (pan: Position, state: StateChangeType) => void;
+  onZoomChange: (zoom: number, state: StateChangeType) => void;
 }
 
 function getWorldPosWithPanAndZoom(viewportX: number, viewportY: number, pan: Position, zoomLevel: number): Position {
@@ -31,9 +36,10 @@ function getWorldPosWithPanAndZoom(viewportX: number, viewportY: number, pan: Po
 const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   const [objectBeingPlaced, setObjectBeingPlaced] = useState<BattlefieldObject | null>(null);
   const [undoStack, setUndoStack] = useState<{ action: 'delete' | 'recreate', data: any }[]>([]);
-  const [pan, setPan] = useState<Position>([0, 0]);
   const [panStart, setPanStart] = useState<Position | null>(null);
-  const [zoomLevel, setZoomLevel] = useState<number>(1);
+
+  // Destructure props for ease
+  const { pan, zoom } = props;
 
   const handleStartDrag = (xy: Position, buttons: number, touches: number) => {
     if (buttons === 2 || touches === 2) {
@@ -44,7 +50,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       props.onSelectedObject(null);
     }
 
-    const clientPosWithPan = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoomLevel);
+    const clientPosWithPan = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoom);
     if (props.tool.toolType === 'placeMovable') {
       const newObj = createBattlefieldObject(null, "", '' as CoalitionType, props.tool.objectType, props.tool.endType ? props.tool.endType : null, clientPosWithPan, 0, props.time, props.tool.speedKnots, 0, '', Number.MAX_SAFE_INTEGER);
       newObj.path.addPoint(clientPosWithPan[0], clientPosWithPan[1]);
@@ -91,6 +97,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       props.onPseudoTimeChange(null);
       props.onObjectsChange(newObjects, objectBeingPlaced, 'FINAL');
     }
+    props.onPanChange(pan, 'FINAL');
+    props.onZoomChange(zoom, 'FINAL');
   }
 
   const handleDrag = (xy: Position, movement: Position, initial: Position, buttons: number, touches: number, shiftKey: boolean, ctrlKey: boolean, metaKey: boolean, event: { buttons?: number, preventDefault: () => void} ) => {
@@ -103,7 +111,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       if (panStart === null) {
         setPanStart(_panStart);
       }
-      setPan(PositionMath.delta(panStart ?? _panStart, movement));
+      props.onPanChange(PositionMath.delta(panStart ?? _panStart, movement), 'NOT_FINAL');
       event.preventDefault();
       return;
     } else {
@@ -116,7 +124,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
         let creationMode: PathCreationMode = 'fly_smooth';
         if (shiftKey) { creationMode = 'fly_straight'; }
         if (ctrlKey || metaKey) { creationMode = 'normal'; }
-        const newPoint = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoomLevel);
+        const newPoint = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoom);
         objectBeingPlaced.path.considerAddingPoint(newPoint[0], newPoint[1], creationMode, props.tool.pathSmoothness);
         if (objectBeingPlaced.path.points.length > 0) {
           const startHdg = objectBeingPlaced.path.getHeadingAlongCurveNorm(0);
@@ -137,8 +145,8 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
       } else if (props.tool.toolType === 'placeMeasurement') {
         // TODO: Avoid recreating objects
 
-        const p1: Position = getWorldPosWithPanAndZoom(initial[0], initial[1], pan, zoomLevel);
-        const p2 = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoomLevel);
+        const p1: Position = getWorldPosWithPanAndZoom(initial[0], initial[1], pan, zoom);
+        const p2 = getWorldPosWithPanAndZoom(xy[0], xy[1], pan, zoom);
         if (props.tool.subType !== 'line') {
           objectBeingPlaced.name = `${Math.round(PositionMath.getDistanceNm(p1, p2))} NM`;
         }
@@ -192,14 +200,14 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   }
 
   const handleWheel = (xy: Position, wheelDeltaY: number) => {
-    setZoomLevel((currentZoomLevel) => {
-      const prevZoom = currentZoomLevel;
-      currentZoomLevel -= wheelDeltaY / 300;
-      currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel));
-      const ratio = 1 - currentZoomLevel / prevZoom;
-      setPan([pan[0] + (-xy[0] - pan[0]) * ratio, pan[1] + (-xy[1] - pan[1]) * ratio]);
-      return currentZoomLevel;
-    });
+    let currentZoomLevel = props.zoom;
+    const prevZoom = currentZoomLevel;
+    currentZoomLevel -= wheelDeltaY / 300;
+    currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel));
+    const ratio = 1 - currentZoomLevel / prevZoom;
+    const pan = props.pan;
+    props.onPanChange(([pan[0] + (-xy[0] - pan[0]) * ratio, pan[1] + (-xy[1] - pan[1]) * ratio]), 'FINAL');
+    props.onZoomChange(currentZoomLevel, 'FINAL');
   };
 
   useEffect(() => {
@@ -218,7 +226,7 @@ const Workspace: FC<WorkspaceProps> = (props: WorkspaceProps) => {
   }, [props.tool]);
 
   const panStyle = {
-    transform: `translate(${-pan[0]}px, ${-pan[1]}px) scale(${zoomLevel})`,
+    transform: `translate(${-pan[0]}px, ${-pan[1]}px) scale(${zoom})`,
   }
 
   const bind = useGesture(

@@ -1,17 +1,24 @@
-import { BattlefieldObject, createBattlefieldObject, HeadingDegrees, SpeedKnots } from "./battlefield-object";
+import { BattlefieldObject, createBattlefieldObject, HeadingDegrees, Position, SpeedKnots } from "./battlefield-object";
 import { decodeInt, decodePositions, encodePositions, encodeStringSafely, OBJECT_DELIMITER, PROPERTY_DELIMITER } from "./battlefield-object-encoding";
 import { BattleFieldObjectType, CoalitionType, EndType, FormationType, MapType } from "./battlefield-object-types";
 
 const CURRENT_VERSION = "v5";
 
+interface LoadedData {
+    scenarioName: string;
+    mapBackground: string;
+    loadedObjects: BattlefieldObject[];
+    pan: Position;
+    zoom: number;
+}
 
-export function loadData(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
+export function loadData(data: string): LoadedData {
     const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
 
     const version = objectStrings[0];
     console.log("Data version is", version, "Loading...");
     if (version === "v1") {
-        return { ...decodeVersion1(data), mapBackground: '' };
+        return decodeVersion1(data);
     } else if (version === "v2") {
         return decodeVersion2(data);
     } else if (version === "v3") {
@@ -25,13 +32,13 @@ export function loadData(data: string): { scenarioName: string, mapBackground: s
     }
 }
 
-function decodeVersion5(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
+function decodeVersion5(data: string): LoadedData {
     const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
     const name = decodeURI(objectStrings[1]);
     const mapBackground = decodeURI(objectStrings[2]);
-    const panX = decodeURI(objectStrings[3]);
-    const panY = decodeURI(objectStrings[4]);
-    const zoomLevel = decodeURI(objectStrings[5]);
+    const panX = Number(decodeURI(objectStrings[3]));
+    const panY = Number(decodeURI(objectStrings[4]));
+    const zoom = Number(decodeURI(objectStrings[5]));
     const reservedProperty = decodeURI(objectStrings[6]);
     const objects = objectStrings.slice(7).map((str) => {
         const tokens = str.split(PROPERTY_DELIMITER);
@@ -55,10 +62,10 @@ function decodeVersion5(data: string): { scenarioName: string, mapBackground: st
         return obj;
     });
 
-    return { scenarioName: name, mapBackground, loadedObjects: objects };
+    return { scenarioName: name, mapBackground, loadedObjects: objects, pan: [panX, panY], zoom: zoom };
 }
 
-function decodeVersion4(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
+function decodeVersion4(data: string): LoadedData {
     // DO NOT CHANGE
     const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
     const name = decodeURI(objectStrings[1]);
@@ -85,10 +92,10 @@ function decodeVersion4(data: string): { scenarioName: string, mapBackground: st
         return obj;
     });
 
-    return { scenarioName: name, mapBackground, loadedObjects: objects };
+    return { scenarioName: name, mapBackground, loadedObjects: objects, pan: [0, 0], zoom: 1 };
 }
 
-function decodeVersion3(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
+function decodeVersion3(data: string): LoadedData {
     // DO NOT CHANGE
     const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
     const name = decodeURI(objectStrings[1]);
@@ -115,10 +122,10 @@ function decodeVersion3(data: string): { scenarioName: string, mapBackground: st
         return obj;
     });
 
-    return { scenarioName: name, mapBackground, loadedObjects: objects };
+    return { scenarioName: name, mapBackground, loadedObjects: objects, pan: [0, 0], zoom: 1 };
 }
 
-function decodeVersion2(data: string): { scenarioName: string, mapBackground: string, loadedObjects: BattlefieldObject[] } {
+function decodeVersion2(data: string): LoadedData {
     // DO NOT CHANGE
     const objectStrings: string[] = data.replace(/^#/, "").split(OBJECT_DELIMITER);
     const name = decodeURI(objectStrings[1]);
@@ -145,11 +152,11 @@ function decodeVersion2(data: string): { scenarioName: string, mapBackground: st
         return obj;
     });
 
-    return { scenarioName: name, mapBackground, loadedObjects: objects };
+    return { scenarioName: name, mapBackground, loadedObjects: objects, pan: [0, 0], zoom: 1 };
     // DO NOT CHANGE
 }
 
-function decodeVersion1(data: string): { scenarioName: string, loadedObjects: BattlefieldObject[] } {
+function decodeVersion1(data: string): LoadedData {
     // DO NOT CHANGE
     const objectStrings: string[] = data.replace(/^#/, "").split(";");
     const name = decodeURI(objectStrings[1]);
@@ -176,18 +183,23 @@ function decodeVersion1(data: string): { scenarioName: string, loadedObjects: Ba
         return obj;
     });
 
-    return { scenarioName: name, loadedObjects: objects };
+    return { scenarioName: name, loadedObjects: objects, mapBackground: '', pan: [0, 0], zoom: 1 };
     // DO NOT CHANGE
 }
 
-export function serializeData(scenarioName: string, map: MapType, objects: BattlefieldObject[]): string {
+export function serializeData(scenarioName: string, map: MapType, panX: number, panY: number, zoom: number, objects: BattlefieldObject[]): string {
     const version = CURRENT_VERSION;
     const name = encodeStringSafely(scenarioName);
-    const panX = ''; // Reserved, not in use
-    const panY = ''; // Reserved, not in use
-    const zoomLevel = ''; // Reserved, not in use
     const reservedExtra = ''; // Reserved, not in use
-    const prefixStrings = [version, name, map, panX, panY, zoomLevel, reservedExtra];
+    const prefixStrings = [
+        version, 
+        name, 
+        map, 
+        Math.round(panX), 
+        Math.round(panY), 
+        zoom.toFixed(2), 
+        reservedExtra
+    ];
     const objectStrings: string[] = objects.map((o) => {
         const propsStr = [
             o.id, 
