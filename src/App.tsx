@@ -78,15 +78,15 @@ function App() {
     updateUrl(scenarioName, map, objects, pan, zoom);
   };
 
-  const handleObjectsChange = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null, state: 'FINAL' | 'NOT_FINAL') => {
+  const handleObjectsChange = (newObjects: BattlefieldObject[], extraObject: BattlefieldObject | null, pan: Position, zoom: number, state: 'FINAL' | 'NOT_FINAL') => {
+    // Note: Pan and zoom is baked into this to avoid
+    // overwriting objects due to React's deferred state updates
     updateAllObjects(newObjects, time); // TODO: Maybe consider pseudoTime?
     const newStopTime = getFinalStopTime(newObjects, extraObject);
     if (newStopTime !== stopTime) {
       setStopTime(newStopTime);
     }
     setObjects(newObjects);
-    // TODO: Differentiate between normal update and update that should update URL
-    // This spams the URL a lot causing security errors
     if (state === 'FINAL') {
       updateUrl(scenarioName, map, newObjects, pan, zoom);
     }
@@ -102,16 +102,11 @@ function App() {
     setPseudoTime(pseudoTime);
   }
 
-  const handlePanChange = (_pan: Position, state: StateChangeType) => {
+  const handlePanZoomChange = (_pan: Position, _zoom: number, state: StateChangeType) => {
     setPan(_pan);
-    if (state === 'FINAL') {
-      updateUrl(scenarioName, map, objects, _pan, zoom);
-    }
-  }
-  const handleZoomChange = (_zoom: number, state: StateChangeType) => {
     setZoom(_zoom);
     if (state === 'FINAL') {
-      updateUrl(scenarioName, map, objects, pan, _zoom);
+      updateUrl(scenarioName, map, objects, _pan, _zoom);
     }
   }
 
@@ -125,7 +120,7 @@ function App() {
     // The selected object (according to this component) no longer exists
     // in the workspace component.
     // It's a detached copy that might get outdated.
-    handleObjectsChange(newObjects, null, 'FINAL');
+    handleObjectsChange(newObjects, null, pan, zoom, 'FINAL');
   }
 
   useEffect(() => {
@@ -135,7 +130,7 @@ function App() {
   return (
     <div className="App" data-testid="App">
       <Mainbar scenarioName={scenarioName} map={map} fullUrl={fullUrl} onScenarioNameChange={handleScenarioNameChange} onMapChange={handleMapChange} />
-      <Workspace objects={objects} selectedObject={selectedObject} tool={selectedTool} map={map} shouldPlay={shouldPlay} shouldShowPaths={shouldShowPaths} time={time} pseudoTime={pseudoTime} pan={pan} zoom={zoom} onSelectedObject={handleObjectSelected} onPseudoTimeChange={handlePseudoTimeChange} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} onObjectsChange={handleObjectsChange} onPanChange={handlePanChange} onZoomChange={handleZoomChange} />
+      <Workspace objects={objects} selectedObject={selectedObject} tool={selectedTool} map={map} shouldPlay={shouldPlay} shouldShowPaths={shouldShowPaths} time={time} pseudoTime={pseudoTime} pan={pan} zoom={zoom} onSelectedObject={handleObjectSelected} onPseudoTimeChange={handlePseudoTimeChange} onStopTimeChange={(stopTime: number) => setStopTime(stopTime)} onObjectsChange={handleObjectsChange} onPanZoomChange={handlePanZoomChange} />
       <Toolbar onToolSelected={(tool: Tool) => setSelectedTool(tool)} />
       <Controlbar time={time} stopTime={stopTime} onPlayPause={(shouldPlay: boolean) => setShouldPlay(shouldPlay)} onTimeChange={handleTimeChange} onShowPaths={(show) => setShouldShowPaths(show)} />
       {selectedObject && (

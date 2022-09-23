@@ -7,7 +7,7 @@ import { toolCategories } from '../Toolbar/tools';
 describe('<Workspace />', () => {
   test('it should mount', () => {
     // TOOD: Test with objects actually being something
-    render(<Workspace objects={[]} selectedObject={null} onSelectedObject={() => {}} tool={toolCategories[0].tools[0]} map="" shouldPlay={false} shouldShowPaths={true} time={0} pseudoTime={0} pan={[0, 0]} zoom={1} onPseudoTimeChange={() => {}} onStopTimeChange={() => {}} onObjectsChange={() => {}} onPanChange={() => {}} onZoomChange={() => {}}/>);
+    render(<Workspace objects={[]} selectedObject={null} onSelectedObject={() => {}} tool={toolCategories[0].tools[0]} map="" shouldPlay={false} shouldShowPaths={true} time={0} pseudoTime={0} pan={[0, 0]} zoom={1} onPseudoTimeChange={() => {}} onStopTimeChange={() => {}} onObjectsChange={() => {}} onPanZoomChange={() => {}} />);
     
     const workspace = screen.getByTestId('Workspace');
 
