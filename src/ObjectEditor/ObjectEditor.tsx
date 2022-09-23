@@ -93,7 +93,7 @@ const ObjectEditor: FC<ObjectEditorProps> = (props: ObjectEditorProps) => {
   }
 
   useEffect(() => {
-    setValues({ name: props.object.name, coalition: props.object.coalition, duration: (props.object.duration ?? '').toString(), speed: props.object.speed, wingmanCount: props.object.wingmanCount, formation: props.object.formation });
+    setValues({ name: props.object.name, coalition: props.object.coalition, duration: (props.object.duration?.toFixed(1) ?? '').toString(), speed: props.object.speed, wingmanCount: props.object.wingmanCount, formation: props.object.formation });
   }, [props.object]);
 
 

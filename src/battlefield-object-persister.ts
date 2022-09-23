@@ -214,7 +214,7 @@ export function serializeData(scenarioName: string, map: MapType, panX: number, 
             Math.round(o.speed),
             Math.round(o.wingmanCount),
             o.formation,
-            o.duration ?? '',
+            o.duration?.toFixed(1) ?? '',
         ].join(PROPERTY_DELIMITER);
         const pathPointsStr = encodePositions(o.path.points);
         return [propsStr, pathPointsStr].join(PROPERTY_DELIMITER);
